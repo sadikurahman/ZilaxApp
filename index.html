@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#d9efe1">
+<title>Zilax — Shop • Rent • Live Better</title>
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zilax.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ HOME ============ -->
+  <section class="view on" id="v-home">
+    <div class="hdr">
+      <div class="top">
+        <div class="logo"><img src="mark.png" alt=""><span class="lw">Zilax</span></div>
+        <div class="top-r">
+          <div class="lang" role="group" aria-label="Language"><button id="lEn" type="button">EN</button><button id="lBn" type="button">বাংলা</button></div>
+          <button class="cartbtn" id="cartBtn" type="button" aria-label="Cart"><span id="cartIco"></span><span class="n" id="cartN" data-n="0"></span></button>
+          <button class="avatar" data-tab="account" type="button" aria-label="Account"><span id="avIco"></span></button>
+        </div>
+      </div>
+      <div class="loc"><span id="locIco"></span><span id="areaTxt"></span></div>
+      <div class="search">
+        <span class="si" id="siIco"></span>
+        <input id="q" type="search" autocomplete="off" data-i18n-ph="search1" aria-label="Search">
+        <button class="fbtn" id="filterBtn" type="button" aria-label="Filter"></button>
+      </div>
+      <div class="suggest" id="suggest"></div>
+    </div>
+
+    <div class="note" id="note"></div>
+
+    <div class="hs promo" id="heroes"></div>
+    <div class="dots" id="heroDots"></div>
+
+    <div class="mosaic" id="mosaic"></div>
+
+    <div class="qa"><span data-i18n="quick"></span></div>
+    <div class="hs" id="quick"></div>
+
+    <div class="sep"></div>
+    <div class="blk"><h3 data-i18n="deliv"></h3>
+      <button class="drow" type="button" data-stage="5"><span class="dic" id="delIco"></span><div><b data-i18n="rate"></b><span id="delFrom"></span></div><span class="ch ar"></span></button>
+    </div>
+    <div class="sep"></div>
+
+    <div class="blk"><h3 data-i18n="offers"></h3><p class="subt" data-i18n="offersSub"></p></div>
+    <div class="hs" id="offers"></div>
+    <div class="dots" id="offerDots"></div>
+
+    <div class="blk" style="margin-top:22px"><div class="hrow"><div><h3 data-i18n="plates"></h3><p class="subt" data-i18n="platesSub"></p></div><button class="see" data-see="food"><span data-i18n="seeAll"></span><span class="ar"></span></button></div></div>
+    <div class="hs" id="plates"></div>
+
+    <div class="blk" style="margin-top:22px"><div class="hrow"><div><h3 data-i18n="fashion"></h3><p class="subt" data-i18n="fashionSub"></p></div><button class="see" data-see="shop"><span data-i18n="seeAll"></span><span class="ar"></span></button></div></div>
+    <div class="hs" id="fashion"></div>
+
+    <div class="trust"><i id="trustIco"></i><span data-i18n="trust"></span></div>
+  </section>
+
+  <!-- ============ OFFERS ============ -->
+  <section class="view" id="v-offers">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nOffers"></h2></div>
+    <div class="vlist" id="offersList"></div>
+  </section>
+
+  <!-- ============ ACTIVITY ============ -->
+  <section class="view" id="v-activity">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nActivity"></h2></div>
+    <div class="soon"><b data-i18n="noOrders"></b><span data-i18n="noOrdersS"></span></div>
+    <div class="soon" style="border-style:solid;margin-top:12px"><b data-i18n="comingTitle"></b><span id="actSoon"></span></div>
+  </section>
+
+  <!-- ============ INBOX ============ -->
+  <section class="view" id="v-inbox">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nInbox"></h2></div>
+    <div class="list" id="inboxList"></div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section class="view" id="v-shop">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nShop"></h2></div>
+    <p class="subt" data-i18n="shopSub"></p>
+    <div class="hs" id="shopItems" style="margin-top:14px"></div>
+    <div class="soon"><b data-i18n="comingTitle"></b><span id="shopSoon"></span></div>
+  </section>
+
+  <!-- ============ FOOD ============ -->
+  <section class="view" id="v-food">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nFood"></h2></div>
+    <p class="subt" data-i18n="foodSub"></p>
+    <div class="hs" id="foodItems" style="margin-top:14px"></div>
+    <div class="soon"><b data-i18n="comingTitle"></b><span id="foodSoon"></span></div>
+  </section>
+
+  <!-- ============ SERVICE ============ -->
+  <section class="view" id="v-service">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nService"></h2></div>
+    <p class="subt" data-i18n="serviceSub"></p>
+    <div class="list" id="techList"></div>
+    <div class="soon"><b data-i18n="comingTitle"></b><span id="svcSoon"></span></div>
+  </section>
+
+  <!-- ============ ACCOUNT ============ -->
+  <section class="view" id="v-account">
+    <div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2 data-i18n="nAccount"></h2></div>
+    <img class="acclogo" src="icon-512.png" alt="Zilax">
+    <div id="accTop"></div>
+    <div id="demoBlock"><div class="list">
+      <a class="lrow" href="#join"><span class="le">🤝</span><div><b data-i18n="joinT"></b><span data-i18n="joinS"></span></div><span class="ch ar"></span></a>
+      <button class="lrow" id="loginDemo" type="button"><span class="le">📱</span><div><b data-i18n="loginT"></b><span data-i18n="loginS"></span></div><span class="ch ar"></span></button>
+    </div>
+    <h3 class="h3s" data-i18n="panelsT"></h3><p class="subt" data-i18n="panelsS"></p>
+    <div class="list" id="panelLinks"></div>
+    <h3 class="h3s" data-i18n="checksT"></h3><p class="subt" data-i18n="checksS"></p>
+    <div class="soon" style="text-align:left" id="checks"></div></div>
+  </section>
+
+  <!-- ============ JOIN AS PARTNER ============ -->
+  <section class="view" id="v-join">
+    <div class="pbar"><button class="bk" data-tab="account" type="button" aria-label="Back"></button><h2 data-i18n="joinT"></h2></div>
+    <p class="subt" data-i18n="joinHint"></p>
+    <div class="list" id="ptypes"></div>
+    <div class="soon"><b data-i18n="comingTitle"></b><span id="joinSoon"></span></div>
+  </section>
+
+  <!-- ============ LOGIN / SIGN UP ============ -->
+  <section class="view" id="v-login"></section>
+  <!-- ============ PARTNER APPLICATION ============ -->
+  <section class="view" id="v-apply"></section>
+  <!-- ============ MY APPLICATIONS ============ -->
+  <section class="view" id="v-myapps"></section>
+</div>
+
+<nav class="tabs" id="nav" aria-label="Main"></nav>
+<div class="sheet" id="sheet"><div class="pan" id="sheetPan"></div></div>
+
+<script src="data.js"></script>
+<script src="calc.js"></script>
+<script src="i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script src="stage1.js"></script>
+</body>
+</html>

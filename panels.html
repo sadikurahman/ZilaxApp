@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2C3E2C">
+<title>Zilax — Panels (Stage 0 preview)</title>
+<link rel="icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zilax.css">
+<style>
+ body{background:#f3f6f3}
+ .pw{max-width:1100px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+ .ptop{background:var(--forest);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+ .ptop .wm{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:-.3px}
+ .ptop .role{background:var(--gold);color:#2b2a1a;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800}
+ .ptop .sp{flex:1}
+ .ptop a.back{color:#cfe3d4;font-size:13px;font-weight:600}
+ .ptop .lang{background:rgba(255,255,255,.1);border-color:transparent}.ptop .lang button{color:#cfe3d4}.ptop .lang button.on{background:#fff;color:var(--forest)}
+ .swi{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);scrollbar-width:none}
+ .swi a{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
+ .swi a.on{background:var(--green);border-color:var(--green);color:#fff}
+ .body{display:flex;flex:1}
+ .side{display:none;width:230px;background:#fff;border-right:1px solid var(--line);padding:14px}
+ .side button{display:flex;width:100%;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;font-weight:600;font-size:14px;color:var(--ink);text-align:left}
+ .side button.on{background:var(--mint);color:var(--forest)}
+ .side .st{margin-left:auto;font-size:11px;color:var(--muted)}
+ .main{flex:1;padding:16px 16px 100px;min-width:0}
+ .mtabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:25;scrollbar-width:none}
+ .mtabs button{flex:none;min-width:84px;padding:6px 8px;font-size:11px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+ .mtabs button b{font-size:20px;font-weight:400}
+ .mtabs button.on{color:var(--green)}
+ h2.pt{margin:6px 0 4px;font-size:26px;color:var(--forest)} p.ps{margin:0 0 14px;color:var(--muted)}
+ .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+ .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi small{color:var(--muted);font-size:12px}.kpi b{display:block;font-size:22px;color:var(--forest);margin-top:4px}
+ .cardx{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+ .cardx h3{margin:0 0 10px;font-size:17px;color:var(--forest)}
+ .rowx{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.rowx:last-child{border-bottom:0}
+ .rowx .g{flex:1}.rowx small{color:var(--muted);display:block}
+ .tg{width:52px;height:30px;border-radius:15px;background:#c9d3ca;position:relative;flex:none;transition:.2s}.tg::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+ .tg.on{background:var(--green)}.tg.on::after{left:25px}.tg.out{background:#d9534f}.tg.out::after{left:25px}
+ .chip{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--mint);color:var(--forest)}.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.thumbs a{display:block;width:86px;text-align:center;font-size:11px;color:var(--muted)}.thumbs img{width:86px;height:86px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+ .chip.w{background:#fbf1d6;color:#7a5d00}.chip.r{background:#fde2e0;color:#a52a24}
+ .inp{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font:inherit;background:#fff}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .btn{background:var(--green);color:#fff;border-radius:999px;padding:11px 18px;font-weight:700}.btn.o{background:#fff;color:var(--forest);border:1px solid var(--line)}
+ table.t{width:100%;border-collapse:collapse;font-size:14px}.t td,.t th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.t th{color:var(--muted);font-weight:600;font-size:12px}
+ .bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.bk .col{background:#eef3ee;border-radius:14px;padding:10px}.bk .col h4{margin:0 0 8px;font-size:13px;color:var(--forest)}
+ .bk .tk{background:#fff;border-radius:10px;padding:8px;font-size:13px;margin-bottom:6px;border:1px solid var(--line)}
+ @media(min-width:900px){.side{display:block}.mtabs{display:none}.swi{display:none}.kpis{grid-template-columns:repeat(4,1fr)}.main{padding:24px 28px}}
+</style>
+</head>
+<body>
+<div class="pw">
+  <div class="ptop"><span class="wm">Zilax.</span><span class="role" id="roleChip"></span><span class="sp"></span>
+    <div class="lang"><button id="lEn">EN</button><button id="lBn">বাংলা</button></div><span id="who"></span><a class="back" href="index.html#account" id="backL"></a></div>
+  <nav class="swi" id="roleSwitch"></nav>
+  <div class="body"><aside class="side" id="side"></aside><main class="main" id="main"></main></div>
+</div>
+<nav class="mtabs" id="mtabs"></nav>
+<script src="data.js"></script><script src="calc.js"></script><script src="i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="auth.js"></script><script src="panels-live.js"></script>
+<script>
+(function(){
+var D=ZX.data, $=function(i){return document.getElementById(i)};
+function T(o){return ZX.t(o)}
+/* ---- panel map: sections per panel. st = the Stage that builds the real thing ---- */
+var ROLES={
+ merchant:{n:{en:'Merchant',bn:'মার্চেন্ট'},s:[
+  ['dash','📊',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3],['stock','🔴',{en:'Stock out',bn:'স্টক আউট'},3,'demo'],['menu','🍽️',{en:'Menu & new item',bn:'মেনু ও নতুন আইটেম'},3],
+  ['orders','🛎️',{en:'Orders',bn:'অর্ডার'},5],['offers','🏷️',{en:'Offers & reviews',bn:'অফার ও রিভিউ'},9],['earn','💰',{en:'Earnings',bn:'আয় ও সেটেলমেন্ট'},8]]},
+ rider:{n:{en:'Rider',bn:'রাইডার'},s:[
+  ['home','🏍️',{en:'Online & orders',bn:'অনলাইন ও অর্ডার'},6,'demo'],['earn','💵',{en:'Earnings & cash',bn:'আয় ও ক্যাশ'},6],['hist','🕘',{en:'History',bn:'ইতিহাস'},6]]},
+ sales:{n:{en:'Sales Admin',bn:'সেলস অ্যাডমিন'},s:[
+  ['leads','🤝',{en:'Partner leads',bn:'পার্টনার লিড'},1,'demo'],['targets','🎯',{en:'Targets',bn:'টার্গেট'},8],['visits','📍',{en:'Field visits',bn:'ফিল্ড ভিজিট'},8],['reports','📑',{en:'Reports',bn:'রিপোর্ট'},8]]},
+ admin:{n:{en:'Admin',bn:'অ্যাডমিন'},s:[
+  ['live','🧭',{en:'Live orders',bn:'লাইভ অর্ডার'},8,'demo'],['appr','✅',{en:'Approvals',bn:'অনুমোদন'},1],['support','💬',{en:'Support & refunds',bn:'সাপোর্ট ও রিফান্ড'},8],['content','🖼️',{en:'Content',bn:'কনটেন্ট'},9]]},
+ super:{n:{en:'Super Admin',bn:'সুপার অ্যাডমিন'},s:[
+  ['cmd','👑',{en:'Command dashboard',bn:'কমান্ড ড্যাশবোর্ড'},2],['price','🧮',{en:'Pricing & commission',bn:'মূল্য ও কমিশন'},2,'demo'],['hb','🏠',{en:'Home Builder',bn:'হোম বিল্ডার'},2],['svc','🧩',{en:'Services & categories',bn:'সার্ভিস ও ক্যাটাগরি'},2],
+  ['pay','💳',{en:'Payments',bn:'পেমেন্ট'},7],['roles','🔐',{en:'Roles & staff',bn:'রোল ও কর্মী'},1],['areas','🗺️',{en:'Areas',bn:'এলাকা'},2],['audit','📜',{en:'Audit log',bn:'অডিট লগ'},2]]}
+};
+var role='merchant', sec=null;
+function parse(){var h=location.hash.replace('#','').split('/');role=ROLES[h[0]]?h[0]:'merchant';sec=h[1]||ROLES[role].s[0][0];}
+function secDef(){return ROLES[role].s.filter(function(x){return x[0]===sec})[0]||ROLES[role].s[0];}
+
+/* ---- demos ---- */
+function dashKpis(a){return '<div class="kpis">'+a.map(function(k){return '<div class="kpi"><small>'+T(k[0])+'</small><b>'+k[1]+'</b></div>'}).join('')+'</div>';}
+function stageCard(st){return '<div class="soon"><b>'+(ZX.lang==='bn'?'শীঘ্রই আসছে':'Coming soon')+'</b>'+ZX.stageMsg(st)+'</div>';}
+function mockKpis(){var m={en:'Today',bn:'আজ'};return dashKpis([[{en:'Orders today',bn:'আজকের অর্ডার'},ZX.digits(24)],[{en:'Sales',bn:'বিক্রি'},ZX.money(18450)],[{en:'Avg. order',bn:'গড় অর্ডার'},ZX.money(769)],[{en:'Rating',bn:'রেটিং'},ZX.digits('4.8')]]);}
+var out=ZX.store.get('zx_out',{});
+function demoStock(){
+  var h='<div class="cardx"><h3>'+(ZX.lang==='bn'?'এক ক্লিকে স্টক আউট':'One-tap stock out')+'</h3><p class="ps" style="margin:0 0 6px">'+(ZX.lang==='bn'?'টগল চাপলে হোম পেজে সঙ্গে সঙ্গে “শেষ” দেখাবে (এই ফোনে)।':'Tap a toggle and the home page shows “Sold out” right away (on this phone).')+'</p>';
+  D.items.forEach(function(i){h+='<div class="rowx"><span style="font-size:26px">'+i.emoji+'</span><div class="g"><b>'+T(i)+'</b><small>'+ZX.money(i.price)+'</small></div><span class="chip '+(out[i.id]?'r':'')+'">'+(out[i.id]?(ZX.lang==='bn'?'শেষ':'Out of stock'):(ZX.lang==='bn'?'আছে':'In stock'))+'</span><button class="tg '+(out[i.id]?'out':'')+'" data-out="'+i.id+'" aria-label="toggle"></button></div>';});
+  return h+'</div>';
+}
+function demoRider(){
+  var on=ZX.store.get('zx_rider_on',false), acc=ZX.store.get('zx_rider_acc',false), skip=ZX.store.get('zx_rider_skip',false);
+  var h='<div class="cardx"><div class="rowx"><div class="g"><b>'+(on?(ZX.lang==='bn'?'আপনি অনলাইন':'You are online'):(ZX.lang==='bn'?'আপনি অফলাইন':'You are offline'))+'</b><small>'+(ZX.lang==='bn'?'অনলাইন থাকলে Ready অর্ডার আসবে':'Ready orders reach you when online')+'</small></div><button class="tg '+(on?'on':'')+'" data-ron="1"></button></div></div>';
+  if(on&&!acc&&!skip){var o=ZX.calc.foodOrder(1000,1.5);h+='<div class="cardx" style="border-color:var(--gold)"><h3>'+(ZX.lang==='bn'?'নতুন Ready অর্ডার':'New ready order')+'</h3><div class="rowx"><div class="g"><b>Sultan’s Dine → Islampur Bazar</b><small>1.5 km</small></div><b>'+ZX.money(o.riderEarning)+'</b></div><div class="grid2" style="margin-top:10px"><button class="btn" data-racc="1">'+(ZX.lang==='bn'?'গ্রহণ করুন':'Accept')+'</button><button class="btn o" data-rskip="1">'+(ZX.lang==='bn'?'বাদ দিন':'Skip')+'</button></div></div>';}
+  if(acc)h+='<div class="cardx"><span class="chip">'+(ZX.lang==='bn'?'অর্ডার গৃহীত':'Order accepted')+'</span><p class="ps" style="margin:8px 0 0">'+(ZX.lang==='bn'?'পুরো ডেলিভারি চার্জ আপনার।':'You keep the full delivery charge.')+'</p></div>';
+  return h;
+}
+function demoLeads(){
+  var L=[['Royal Kitchen','food','Pending',1],['Shuvo Fashion','shop','Visit set',2],['Rafiq (rider)','rider','Docs sent',3],['Tuhin AC Care','tech','Pending',1]];
+  var h='<div class="cardx"><h3>'+(ZX.lang==='bn'?'পার্টনার আবেদন':'Partner applications')+'</h3>';
+  L.forEach(function(l){var p=D.partnerTypes.filter(function(x){return x.id===l[1]})[0];h+='<div class="rowx"><span style="font-size:24px">'+p.emoji+'</span><div class="g"><b>'+l[0]+'</b><small>'+T(p.name)+'</small></div><span class="chip '+(l[3]===1?'w':'')+'">'+l[2]+'</span></div>';});
+  return h+'</div>';
+}
+function demoLive(){
+  var cols=[['New','নতুন',['#1043 · Biryani ×2','#1044 · Burger']],['Preparing','প্রস্তুত হচ্ছে',['#1041 · Kacchi']],['Waiting for rider','রাইডারের অপেক্ষায়',['#1040 · Thali']],['On the way','পথে',['#1038 · Pizza','#1039 · Rolls']]];
+  return '<div class="bk">'+cols.map(function(c){return '<div class="col"><h4>'+(ZX.lang==='bn'?c[1]:c[0])+'</h4>'+c[2].map(function(t){return '<div class="tk">'+t+'</div>'}).join('')+'</div>'}).join('')+'</div>';
+}
+function demoPrice(){
+  var s=D.settings, h='<div class="cardx"><h3>'+(ZX.lang==='bn'?'ডেলিভারি স্ল্যাব ও কমিশন (এখন শুধু দেখা)':'Delivery slabs & commission (view only for now)')+'</h3><table class="t"><tr><th>'+(ZX.lang==='bn'?'দূরত্ব':'Distance')+'</th><th>'+(ZX.lang==='bn'?'চার্জ':'Charge')+'</th></tr>';
+  var prev=0;s.slabs.forEach(function(x){h+='<tr><td>'+(x.upToKm>=9999?'> '+prev+' km':(prev?prev+' – ':'≤ ')+x.upToKm+' km')+'</td><td>'+ZX.money(x.charge)+'</td></tr>';prev=x.upToKm;});
+  h+='</table><p class="ps" style="margin:10px 0 0">'+(ZX.lang==='bn'?'ফুড কমিশন':'Food commission')+': <b>'+ZX.digits(s.foodCommissionPct)+'%</b></p></div>';
+  h+='<div class="cardx"><h3>'+(ZX.lang==='bn'?'হিসাব পরীক্ষা করুন':'Try the calculator')+'</h3><div class="grid2"><input class="inp" id="cSub" type="number" inputmode="numeric" value="1000" placeholder="Food subtotal"><input class="inp" id="cKm" type="number" step="0.1" inputmode="decimal" value="1.5" placeholder="km"></div><div id="cOut" style="margin-top:12px"></div></div>';
+  return h;
+}
+function calcOut(){
+  var el=$('cOut'); if(!el)return; var sub=+$('cSub').value||0, km=+$('cKm').value||0, o=ZX.calc.foodOrder(sub,km);
+  var rows=[['Food',o.subtotal],['Delivery',o.delivery],['Customer pays',o.total],['Commission ('+D.settings.foodCommissionPct+'%)',o.commission],['Merchant gets',o.merchantPayout],['Rider gets',o.riderEarning]];
+  el.innerHTML='<table class="t">'+rows.map(function(r){return '<tr><td>'+r[0]+'</td><td style="text-align:right"><b>'+ZX.money(r[1])+'</b></td></tr>'}).join('')+'</table>';
+}
+function content(){
+  var d=secDef(), key=role+'.'+d[0], h='<h2 class="pt serif">'+T(d[2])+'</h2><p class="ps">'+T(ROLES[role].n)+'</p>';
+  if(key==='merchant.dash')h+=mockKpis()+stageCard(d[3]);
+  else if(key==='merchant.stock')h+=demoStock()+'<p class="ps">'+ZX.stageMsg(3)+'</p>';
+  else if(key==='rider.home')h+=demoRider()+'<p class="ps">'+ZX.stageMsg(6)+'</p>';
+  else if(key==='sales.leads')h+=demoLeads()+'<p class="ps">'+ZX.stageMsg(1)+'</p>';
+  else if(key==='admin.live')h+=demoLive()+'<p class="ps" style="margin-top:12px">'+ZX.stageMsg(5)+'</p>';
+  else if(key==='super.price')h+=demoPrice()+'<p class="ps">'+ZX.stageMsg(2)+'</p>';
+  else if(key==='super.cmd')h+=dashKpis([[{en:'GMV today',bn:'আজকের মোট বিক্রি'},ZX.money(86200)],[{en:'Zilax income',bn:'Zilax-এর আয়'},ZX.money(9840)],[{en:'Active merchants',bn:'সক্রিয় মার্চেন্ট'},ZX.digits(18)],[{en:'Riders online',bn:'অনলাইন রাইডার'},ZX.digits(7)]])+stageCard(d[3]);
+  else h+=stageCard(d[3]);
+  return h;
+}
+function render(){
+  parse(); ZX.applyI18n();
+  $('roleChip').textContent=T(ROLES[role].n); $('backL').textContent=(ZX.lang==='bn'?'← অ্যাপে ফিরুন':'← Back to app');
+  $('lEn').classList.toggle('on',ZX.lang==='en');$('lBn').classList.toggle('on',ZX.lang==='bn');
+  $('roleSwitch').innerHTML=Object.keys(ROLES).map(function(r){return '<a href="#'+r+'" class="'+(r===role?'on':'')+'">'+T(ROLES[r].n)+'</a>'}).join('');
+  var S=ROLES[role].s;
+  $('side').innerHTML='<div style="font-weight:800;color:var(--forest);margin:4px 8px 10px">'+T(ROLES[role].n)+'</div>'+S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><span>'+x[1]+'</span>'+T(x[2])+'<span class="st">S'+x[3]+'</span></button>'}).join('')+'<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">'+Object.keys(ROLES).map(function(r){return '<button data-role="'+r+'">'+T(ROLES[r].n)+'</button>'}).join('')+'</div>';
+  $('mtabs').innerHTML=S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><b>'+x[1]+'</b>'+T(x[2])+'</button>'}).join('');
+  var mount=window.ZXLive?ZXLive.intercept(role,sec):null; if(mount){$('main').innerHTML='';mount($('main'));}else{$('main').innerHTML=content(); calcOut();}
+  if(window.ZXLive){$('who').innerHTML=ZXLive.who(); var po=$('plOut'); if(po)po.onclick=function(e){e.preventDefault();ZXLive.logout();};}
+}
+ZX.onLang=render;
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-sec],[data-role],[data-out],[data-ron],[data-racc],[data-rskip]');if(!t)return;
+  if(t.dataset.sec){location.hash=role+'/'+t.dataset.sec;return;}
+  if(t.dataset.role){location.hash=t.dataset.role;return;}
+  if(t.dataset.out){var id=t.dataset.out;out[id]?delete out[id]:out[id]=true;ZX.store.set('zx_out',out);render();return;}
+  if(t.dataset.ron){ZX.store.set('zx_rider_on',!ZX.store.get('zx_rider_on',false));ZX.store.set('zx_rider_acc',false);ZX.store.set('zx_rider_skip',false);render();return;}
+  if(t.dataset.racc){ZX.store.set('zx_rider_acc',true);render();return;}
+  if(t.dataset.rskip){ZX.store.set('zx_rider_skip',true);render();ZX.toast(ZX.lang==='bn'?'বাদ দেওয়া হয়েছে':'Skipped');return;}
+});
+document.addEventListener('input',function(e){if(e.target.id==='cSub'||e.target.id==='cKm')calcOut();});
+$('lEn').onclick=function(){ZX.setLang('en')};$('lBn').onclick=function(){ZX.setLang('bn')};
+window.addEventListener('hashchange',render);
+if(window.ZX&&ZX.auth&&ZX.live){ZX.auth.onChange(function(){render();});ZX.authReady.then(function(){ZXLive.ready=true;render();});}else{if(window.ZXLive)ZXLive.ready=true;render();}
+})();
+</script>
+</body>
+</html>
