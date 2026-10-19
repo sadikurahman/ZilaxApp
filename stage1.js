@@ -193,8 +193,12 @@
   /* ---------------- wiring ---------------- */
   var viewRender = { login: renderLogin, apply: renderApply, myapps: renderMyApps };
   ZX.onView = function (t) { if (viewRender[t]) viewRender[t](); if (t === 'account') { ensureAreas().then(renderAccountTop); renderAccountTop(); } };
-  var prevLang = ZX.onLang; ZX.onLang = function () { if (prevLang) prevLang(); renderAccountTop(); var cur = document.querySelector('.view.on'); if (cur && viewRender[cur.id.slice(2)]) viewRender[cur.id.slice(2)](); };
-  A.onChange(function () { renderAccountTop(); var av = $('avIco'); var p = A.me().profile; if (av) av.innerHTML = p && p.full_name ? '<b class="avl">' + esc(p.full_name.trim().charAt(0).toUpperCase()) + '</b>' : ZX.ico.user; });
+  var prevLang = ZX.onLang; ZX.onLang = function () { if (prevLang) prevLang(); renderAccountTop(); setHeaderAvatar(); var cur = document.querySelector('.view.on'); if (cur && viewRender[cur.id.slice(2)]) viewRender[cur.id.slice(2)](); };
+  function setHeaderAvatar() {
+    var av = $('avIco'), p = A.me().profile; if (!av) return;
+    av.innerHTML = p && p.avatar_url ? '<img class="avimg" src="' + esc(p.avatar_url) + '" alt="">' : (p && p.full_name ? '<b class="avl">' + esc(p.full_name.trim().charAt(0).toUpperCase()) + '</b>' : ZX.ico.user);
+  }
+  A.onChange(function () { renderAccountTop(); setHeaderAvatar(); });
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-mode],[data-go],[data-apply],#btnLogin,#btnSign,#btnApply,#btnGps'); if (!t) return;

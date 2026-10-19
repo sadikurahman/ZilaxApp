@@ -240,3 +240,4 @@ a.cta-big{display:block}
 .pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;color:var(--muted);font-size:20px;background:none;border:0}
 .pfsec{margin:26px -16px 0;padding:6px 16px 10px;border-top:8px solid var(--soft)}.pfsec h3{font-size:16px;font-weight:600;margin:14px 0 0}
 .pfwrap .acav{color:#fff}
+.avatar{overflow:hidden}.avatar .avimg{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
