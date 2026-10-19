@@ -99,6 +99,17 @@
     updateProfile: async function (patch) {
       need(); var r = await ZX.sb.from('profiles').update(patch).eq('id', me.user.id); if (r.error) throw r.error; await auth.refresh();
     },
+    listAddresses: async function () {
+      need(); var r = await ZX.sb.from('addresses').select('*').order('is_default', { ascending: false }).order('created_at', { ascending: false });
+      if (r.error) throw r.error; return r.data || [];
+    },
+    saveAddress: async function (a) {
+      need(); var row = { label: a.label, line: a.line, upazila_id: a.upazila_id || null, union_id: a.union_id || null, lat: a.lat == null ? null : a.lat, lng: a.lng == null ? null : a.lng, is_default: !!a.is_default }, r;
+      if (a.id) r = await ZX.sb.from('addresses').update(row).eq('id', a.id); else { row.user_id = me.user.id; r = await ZX.sb.from('addresses').insert(row); }
+      if (r.error) throw r.error;
+    },
+    deleteAddress: async function (id) { need(); var r = await ZX.sb.from('addresses').delete().eq('id', id); if (r.error) throw r.error; },
+    setDefaultAddress: async function (id) { need(); var r = await ZX.sb.from('addresses').update({ is_default: true }).eq('id', id); if (r.error) throw r.error; },
     changePassword: async function (oldPass, newPass) {
       need(); if (!newPass || newPass.length < 6) throw new Error(ZX.t(ERR.weak_password));
       var chk = await ZX.sb.auth.signInWithPassword({ email: emailOf((me.profile || {}).phone || ''), password: oldPass });

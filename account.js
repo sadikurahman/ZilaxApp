@@ -22,9 +22,15 @@
     a_info: S('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.500v.1"/>'),
     a_star: S('<path d="M12 3.500l2.700 5.500 6 .9-4.400 4.200 1 6-5.300-2.800-5.300 2.800 1-6L3.300 9.900l6-.9L12 3.500z"/>'),
     a_out: S('<path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9"/>'),
+    a_trash: S('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>'),
+    a_plus: S('<path d="M12 5v14M5 12h14"/>'),
+    a_gps: S('<circle cx="12" cy="12" r="3.500"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>'),
     a_cam: S('<path d="M4 8h3l1.500-2h7L17 8h3v11H4V8z"/><circle cx="12" cy="13" r="3.500"/>'),
     a_eye: S('<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
     a_eyeoff: S('<path d="M3 3l18 18M10.600 5.100A9.700 9.700 0 0 1 12 5c6.500 0 10 7 10 7a17 17 0 0 1-3.200 4.100M6.600 6.600A17 17 0 0 0 2 12s3.500 7 10 7a9.600 9.600 0 0 0 4-.9"/>'),
+    a_home: S('<path d="M4 11l8-7 8 7v9H4v-9z"/><path d="M10 20v-6h4v6"/>'),
+    a_pin: S('<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.500"/>'),
+    a_plus: S('<path d="M12 5v14M5 12h14"/>'),
     a_pencil: S('<path d="M4 20h4L19 9l-4-4L4 16v4z"/>'),
     a_box: S('<path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
     a_dash: S('<rect x="3" y="3" width="8" height="10" rx="2"/><rect x="13" y="3" width="8" height="6" rx="2"/><rect x="13" y="11" width="8" height="10" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/>')
@@ -66,7 +72,7 @@
   /* o = { user, name, phone, where, avatar, partner, panels:[{href,label}] } */
   ZX.accountHtml = function (o) {
     if (!o.user) {
-      return '<div class="achello"><span class="achi">' + ZX.ico.a_user + '</span><b>' + t('hi') + '</b><span>' + t('hiS') + '</span>' +
+      return '<div class="achello"><span class="achi">' + ZX.ico.a_user + '</span><b>' + t('hi') + '</b><p class="adsub">' + t('hiS') + '</p>' +
         '<button class="cta-big" type="button" data-go="login">' + t('login') + '</button></div>' +
         sec(t('sSet'), [row('a_globe', t('lang'), { lang: 1, val: t('curLang') })]) +
         sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' })]);
@@ -78,7 +84,7 @@
       '<button class="acedit" type="button" data-link="#profile">' + ZX.ico.a_pencil + t('edit') + '</button></div>' +
       '<div class="acq"><button type="button" data-soon="1">' + ZX.ico.a_box + t('orders') + '</button><button type="button" data-soon="1">' + ZX.ico.a_wallet + t('wallet') + '</button></div></div>';
     h += '<div class="acsec flat">' + row('mail', t('inbox'), { link: '#inbox' }) + '</div>';
-    var acc = [row('a_user', t('prof'), { link: '#profile' }), row('a_mark', t('addr')), row('a_hist', t('hist')), row('a_heart', t('fav')), row('a_card', t('pay'))];
+    var acc = [row('a_user', t('prof'), { link: '#profile' }), row('a_mark', t('addr'), { link: '#addresses' }), row('a_hist', t('hist')), row('a_heart', t('fav')), row('a_card', t('pay'))];
     if (o.partner) { acc.splice(1, 0, row('a_brief', t('biz'))); acc.splice(2, 0, row('a_wallet', t('payout'))); }
     acc.push(row('a_doc', t('apps'), { link: '#myapps' }));
     h += sec(t('sAcc'), acc);
@@ -169,6 +175,98 @@
       try { await A.uploadAvatar(x.files[0]); ZX.toast(m('saved')); renderProfile(); } catch (er) { ZX.toast(A.errMsg(er)); }
     }
   });
+
   var prevView = ZX.onView; ZX.onView = function (v) { if (prevView) prevView(v); if (v === 'profile') renderProfile(); };
   var prevLang = ZX.onLang; ZX.onLang = function () { if (prevLang) prevLang(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-profile') renderProfile(); };
+
+  /* ---------- Saved addresses page ---------- */
+  var N = {
+    title: { en: 'Saved addresses', bn: 'সেভ করা ঠিকানা' }, add: { en: 'Add new address', bn: 'নতুন ঠিকানা যোগ করুন' },
+    empty: { en: 'No saved address yet', bn: 'এখনো কোনো ঠিকানা সেভ করা নেই' }, emptyS: { en: 'Save your home or office to order faster.', bn: 'দ্রুত অর্ডার করতে বাসা বা অফিসের ঠিকানা সেভ করুন।' },
+    home: { en: 'Home', bn: 'বাসা' }, office: { en: 'Office', bn: 'অফিস' }, other: { en: 'Other', bn: 'অন্যান্য' },
+    def: { en: 'Default', bn: 'ডিফল্ট' }, mkdef: { en: 'Make default', bn: 'ডিফল্ট করুন' }, edit: { en: 'Edit', bn: 'এডিট' }, del: { en: 'Delete', bn: 'মুছুন' },
+    delQ: { en: 'Delete this address?', bn: 'এই ঠিকানা মুছে ফেলবেন?' }, formNew: { en: 'New address', bn: 'নতুন ঠিকানা' }, formEdit: { en: 'Edit address', bn: 'ঠিকানা এডিট' },
+    lbl: { en: 'Save as', bn: 'কী নামে সেভ করবেন' }, line: { en: 'Village, road, house no.', bn: 'গ্রাম, রাস্তা, বাড়ি নম্বর' }, lineP: { en: 'e.g. House 12, Bazar road', bn: 'যেমন: বাড়ি ১২, বাজার রোড' },
+    loc: { en: 'Use my current location', bn: 'আমার বর্তমান লোকেশন নিন' }, locOk: { en: 'Location saved', bn: 'লোকেশন সেভ হয়েছে' }, locClear: { en: 'Remove', bn: 'সরান' },
+    locWait: { en: 'Finding your location…', bn: 'লোকেশন খোঁজা হচ্ছে…' }, locNo: { en: 'Could not get location. Allow location access for your browser and try again.', bn: 'লোকেশন পাওয়া যায়নি। ব্রাউজারে লোকেশনের অনুমতি দিয়ে আবার চেষ্টা করুন।' },
+    asDef: { en: 'Set as default address', bn: 'ডিফল্ট ঠিকানা করুন' }, save: { en: 'Save address', bn: 'ঠিকানা সংরক্ষণ' }, cancel: { en: 'Cancel', bn: 'বাতিল' },
+    needLine: { en: 'Please enter the address.', bn: 'ঠিকানা লিখুন।' }, saved: { en: 'Saved', bn: 'সংরক্ষিত হয়েছে' }, gone: { en: 'Deleted', bn: 'মুছে ফেলা হয়েছে' }, load: { en: 'Loading…', bn: 'লোড হচ্ছে…' }
+  };
+  var n = function (k) { return ZX.t(N[k]); };
+  var ad = { list: [], f: null };
+  var LBL = { Home: ['home', 'a_home'], Office: ['office', 'a_brief'], Other: ['other', 'a_mark'] };
+  function areaName(id) { var a = areas.filter(function (x) { return x.id === id; })[0]; return a ? nm(a) : ''; }
+  function abar(back) { return '<div class="pbar"><button class="bk" ' + (back ? 'data-adback="1"' : 'data-tab="account"') + ' type="button" aria-label="Back">' + ZX.ico.back + '</button><h2>' + n('title') + '</h2></div>'; }
+
+  async function renderAddr(form) {
+    var v = $('v-addresses'); if (!v) return;
+    var me = A.me();
+    if (!ZX.live || !me.user) { v.innerHTML = abar() + '<div class="soon"><b>' + m('login1') + '</b></div><button class="cta-big" type="button" data-go="login">' + t('login') + '</button>'; return; }
+    if (!areas.length) { try { areas = await A.areas(); } catch (e) { areas = []; } }
+    if (form) return renderAddrForm();
+    v.innerHTML = abar() + '<div class="soon"><b>' + n('load') + '</b></div>';
+    try { ad.list = await A.listAddresses(); } catch (e) { v.innerHTML = abar() + '<div class="soon"><b>' + esc(A.errMsg(e)) + '</b></div>'; return; }
+    var h = abar();
+    if (!ad.list.length) h += '<div class="adempty"><span class="achi">' + ZX.ico.a_pin + '</span><b>' + n('empty') + '</b><p class="adsub">' + n('emptyS') + '</p></div>';
+    ad.list.forEach(function (a) {
+      var L0 = LBL[a.label] || LBL.Other, area = [areaName(a.union_id), areaName(a.upazila_id)].filter(Boolean).join(', ');
+      h += '<div class="adc"><div class="adh"><span class="adi">' + ZX.ico[L0[1]] + '</span><b>' + n(L0[0]) + '</b>' + (a.is_default ? '<em class="adb">' + n('def') + '</em>' : '') + (a.lat != null ? '<span class="adg" title="GPS">' + ZX.ico.a_pin + '</span>' : '') + '</div>' +
+        '<p>' + esc(a.line) + '</p>' + (area ? '<small>' + esc(area) + '</small>' : '') +
+        '<div class="ada"><button type="button" data-ad="edit:' + a.id + '">' + n('edit') + '</button><button type="button" data-ad="del:' + a.id + '">' + n('del') + '</button>' + (a.is_default ? '' : '<button type="button" data-ad="def:' + a.id + '">' + n('mkdef') + '</button>') + '</div></div>';
+    });
+    v.innerHTML = h + '<button class="cta-big" id="adAdd" type="button">' + ZX.ico.a_plus + ' ' + n('add') + '</button>';
+  }
+  function openForm(a) {
+    var p = A.me().profile || {};
+    ad.f = a ? { id: a.id, label: a.label, line: a.line, up: a.upazila_id || '', un: a.union_id || '', lat: a.lat, lng: a.lng, def: a.is_default, wasDef: a.is_default }
+             : { id: null, label: 'Home', line: '', up: p.upazila_id || '', un: p.union_id || '', lat: null, lng: null, def: !ad.list.length, wasDef: false };
+    renderAddr(true);
+  }
+  function locHtml() { return ad.f.lat != null ? '<span class="adok">' + ZX.ico.a_pin + n('locOk') + '</span><button type="button" id="adLocX">' + n('locClear') + '</button>' : ''; }
+  function renderAddrForm() {
+    var v = $('v-addresses'), f = ad.f, ups = areas.filter(function (a) { return a.level === 'upazila' && a.active; });
+    var chips = ['Home', 'Office', 'Other'].map(function (k) { return '<button type="button" class="adchip' + (f.label === k ? ' on' : '') + '" data-adlabel="' + k + '">' + ZX.ico[LBL[k][1]] + n(LBL[k][0]) + '</button>'; }).join('');
+    v.innerHTML = '<div class="pbar"><button class="bk" data-adback="1" type="button" aria-label="Back">' + ZX.ico.back + '</button><h2>' + (f.id ? n('formEdit') : n('formNew')) + '</h2></div>' +
+      '<div class="fld"><span>' + n('lbl') + '</span><div class="adchips">' + chips + '</div></div>' +
+      '<label class="fld"><span>' + m('up') + '</span><select id="aUp">' + opts(ups, f.up) + '</select></label>' +
+      '<label class="fld"><span>' + m('un') + '</span><select id="aUn">' + opts(unionsOf(f.up), f.un) + '</select></label>' +
+      '<label class="fld"><span>' + n('line') + '</span><input id="aLine" type="text" autocomplete="street-address" placeholder="' + esc(n('lineP')) + '" value="' + esc(f.line) + '"></label>' +
+      '<button class="adloc" id="adLoc" type="button">' + ZX.ico.a_pin + n('loc') + '</button><div class="adlocs" id="adLocS">' + locHtml() + '</div>' +
+      (f.wasDef ? '' : '<label class="adck"><input id="aDef" type="checkbox"' + (f.def ? ' checked' : '') + '><span>' + n('asDef') + '</span></label>') +
+      '<div id="aMsg" class="fmsg"></div><button class="cta-big" id="adSave" type="button">' + n('save') + '</button><button class="adcancel" data-adback="1" type="button">' + n('cancel') + '</button>';
+  }
+  function grab() { var f = ad.f; if (!f || !$('aLine')) return; f.line = val('aLine'); f.up = val('aUp'); f.un = val('aUn'); if ($('aDef')) f.def = $('aDef').checked; }
+  async function saveAddr() {
+    grab(); var f = ad.f; if (!f.line.trim()) { fmsg('aMsg', n('needLine')); return; }
+    var b = $('adSave'); b.disabled = true; fmsg('aMsg', m('wait'), true);
+    try { await A.saveAddress({ id: f.id, label: f.label, line: f.line.trim(), upazila_id: f.up, union_id: f.un, lat: f.lat, lng: f.lng, is_default: f.def || f.wasDef }); ZX.toast(n('saved')); ad.f = null; renderAddr(); }
+    catch (e) { fmsg('aMsg', A.errMsg(e)); b.disabled = false; }
+  }
+  function getLoc() {
+    var s = $('adLocS'); if (!navigator.geolocation) { s.textContent = n('locNo'); return; }
+    s.textContent = n('locWait');
+    navigator.geolocation.getCurrentPosition(function (p) { ad.f.lat = Math.round(p.coords.latitude * 1e6) / 1e6; ad.f.lng = Math.round(p.coords.longitude * 1e6) / 1e6; s.innerHTML = locHtml(); },
+      function () { s.textContent = n('locNo'); }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+  }
+  document.addEventListener('click', async function (e) {
+    var x = e.target.closest('#adAdd,#adSave,#adLoc,#adLocX,[data-ad],[data-adlabel],[data-adback]'); if (!x) return;
+    if (x.id === 'adAdd') return openForm(null);
+    if (x.id === 'adSave') return saveAddr();
+    if (x.id === 'adLoc') { grab(); return getLoc(); }
+    if (x.id === 'adLocX') { ad.f.lat = null; ad.f.lng = null; $('adLocS').innerHTML = ''; return; }
+    if (x.hasAttribute('data-adback')) { grab(); if (ad.f) { ad.f = null; return renderAddr(); } return ZX.go('account'); }
+    if (x.hasAttribute('data-adlabel')) { ad.f.label = x.getAttribute('data-adlabel'); document.querySelectorAll('.adchip').forEach(function (c) { c.classList.toggle('on', c === x); }); return; }
+    var pr = x.getAttribute('data-ad').split(':'), id = pr[1];
+    try {
+      if (pr[0] === 'edit') return openForm(ad.list.filter(function (a) { return a.id === id; })[0]);
+      if (pr[0] === 'del') { if (!window.confirm(n('delQ'))) return; await A.deleteAddress(id); ZX.toast(n('gone')); }
+      if (pr[0] === 'def') { await A.setDefaultAddress(id); ZX.toast(n('saved')); }
+      renderAddr();
+    } catch (er) { ZX.toast(A.errMsg(er)); }
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.id === 'aUp') { var un = $('aUn'); if (un) un.innerHTML = opts(unionsOf(e.target.value), ''); }
+  });
+  var pv2 = ZX.onView; ZX.onView = function (v) { if (pv2) pv2(v); if (v === 'addresses') { ad.f = null; renderAddr(); } };
+  var pl2 = ZX.onLang; ZX.onLang = function () { if (pl2) pl2(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-addresses') { if (ad.f) { grab(); renderAddrForm(); } else renderAddr(); } };
 })();
