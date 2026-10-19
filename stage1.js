@@ -108,18 +108,12 @@
     var box = $('accTop'); if (!box) return; var demo = $('demoBlock');
     if (!ZX.live) { box.innerHTML = notConfigured(); if (demo) demo.style.display = ''; return; }
     if (demo) demo.style.display = 'none';
-    var me = A.me();
-    if (!me.user) { box.innerHTML = '<div class="hello"><b>' + tt('welcome') + '</b><span>' + tt('welcomeS') + '</span></div><button class="cta-big" type="button" data-go="login">' + tt('login') + ' / ' + tt('signup') + '</button><div class="list"><a class="lrow" href="#join"><span class="le">🤝</span><div><b>' + ZX.d('joinT') + '</b><span>' + ZX.d('joinS') + '</span></div><span class="ch ar"></span></a></div>'; arrows(); return; }
+    var me = A.me(), lg = document.querySelector('#v-account .acclogo'); if (lg) lg.style.display = 'none';
     var p = me.profile || {}, up = areas.filter(function (a) { return a.id === p.upazila_id; })[0], un = areas.filter(function (a) { return a.id === p.union_id; })[0];
     var where = [un && ZX.t({ en: un.name_en, bn: un.name_bn }), up && ZX.t({ en: up.name_en, bn: up.name_bn })].filter(Boolean).join(', ');
-    var roles = me.roles.map(function (r) { return chip(A.roleLabel(r.role) + ' · ' + A.statusLabel(r.status), tone(r.status)); }).join(' ');
-    var panels = me.roles.filter(function (r) { return r.status === 'active' && PANEL_OF[r.role]; }).map(function (r) { return '<a class="lrow" href="panels.html#' + PANEL_OF[r.role] + '"><span class="le">🧭</span><div><b>' + esc(A.roleLabel(r.role)) + '</b><span>' + tt('openPanel') + '</span></div><span class="ch ar"></span></a>'; }).join('');
-    box.innerHTML = '<div class="pcardx"><div class="av">' + esc((p.full_name || '?').trim().charAt(0).toUpperCase()) + '</div><div><b>' + esc(p.full_name || '') + '</b><span>' + esc(p.phone || '') + '</span><span>' + esc(where) + '</span></div></div>' +
-      '<h3 class="h3s">' + tt('roles') + '</h3><div class="chips">' + roles + '</div>' +
-      '<div class="list">' + panels +
-      '<a class="lrow" href="#myapps"><span class="le">📄</span><div><b>' + tt('myApps') + '</b><span>' + tt('myAppsS') + '</span></div><span class="ch ar"></span></a>' +
-      '<a class="lrow" href="#join"><span class="le">🤝</span><div><b>' + ZX.d('joinT') + '</b><span>' + ZX.d('joinS') + '</span></div><span class="ch ar"></span></a></div>' +
-      '<button class="cta-big out" type="button" data-go="logout">' + tt('logout') + '</button>';
+    var panels = (me.roles || []).filter(function (r) { return r.status === 'active' && PANEL_OF[r.role]; }).map(function (r) { return { href: 'panels.html#' + PANEL_OF[r.role], label: A.roleLabel(r.role) }; });
+    var partner = (me.roles || []).some(function (r) { return r.status === 'active' && ROLE2TYPE[r.role]; });
+    box.innerHTML = ZX.accountHtml({ user: !!me.user, name: p.full_name, phone: p.phone, where: where, avatar: p.avatar_url, partner: partner, panels: panels });
     arrows();
   }
   function arrows() { document.querySelectorAll('.ar').forEach(function (e) { e.innerHTML = ZX.ico.arrowR; }); }
