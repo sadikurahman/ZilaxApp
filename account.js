@@ -28,6 +28,7 @@
     a_cam: S('<path d="M4 8h3l1.500-2h7L17 8h3v11H4V8z"/><circle cx="12" cy="13" r="3.500"/>'),
     a_eye: S('<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
     a_eyeoff: S('<path d="M3 3l18 18M10.600 5.100A9.700 9.700 0 0 1 12 5c6.500 0 10 7 10 7a17 17 0 0 1-3.200 4.100M6.600 6.600A17 17 0 0 0 2 12s3.500 7 10 7a9.600 9.600 0 0 0 4-.9"/>'),
+    a_map: S('<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>'),
     a_home: S('<path d="M4 11l8-7 8 7v9H4v-9z"/><path d="M10 20v-6h4v6"/>'),
     a_pin: S('<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.500"/>'),
     a_plus: S('<path d="M12 5v14M5 12h14"/>'),
@@ -187,6 +188,7 @@
     def: { en: 'Default', bn: 'ডিফল্ট' }, mkdef: { en: 'Make default', bn: 'ডিফল্ট করুন' }, edit: { en: 'Edit', bn: 'এডিট' }, del: { en: 'Delete', bn: 'মুছুন' },
     delQ: { en: 'Delete this address?', bn: 'এই ঠিকানা মুছে ফেলবেন?' }, formNew: { en: 'New address', bn: 'নতুন ঠিকানা' }, formEdit: { en: 'Edit address', bn: 'ঠিকানা এডিট' },
     lbl: { en: 'Save as', bn: 'কী নামে সেভ করবেন' }, line: { en: 'Village, road, house no.', bn: 'গ্রাম, রাস্তা, বাড়ি নম্বর' }, lineP: { en: 'e.g. House 12, Bazar road', bn: 'যেমন: বাড়ি ১২, বাজার রোড' },
+    mapPick: { en: 'Choose on map', bn: 'ম্যাপে বাছুন' },
     loc: { en: 'Use my current location', bn: 'আমার বর্তমান লোকেশন নিন' }, locOk: { en: 'Location saved', bn: 'লোকেশন সেভ হয়েছে' }, locClear: { en: 'Remove', bn: 'সরান' },
     locWait: { en: 'Finding your location…', bn: 'লোকেশন খোঁজা হচ্ছে…' }, locNo: { en: 'Could not get location. Allow location access for your browser and try again.', bn: 'লোকেশন পাওয়া যায়নি। ব্রাউজারে লোকেশনের অনুমতি দিয়ে আবার চেষ্টা করুন।' },
     asDef: { en: 'Set as default address', bn: 'ডিফল্ট ঠিকানা করুন' }, save: { en: 'Save address', bn: 'ঠিকানা সংরক্ষণ' }, cancel: { en: 'Cancel', bn: 'বাতিল' },
@@ -231,7 +233,7 @@
       '<label class="fld"><span>' + m('up') + '</span><select id="aUp">' + opts(ups, f.up) + '</select></label>' +
       '<label class="fld"><span>' + m('un') + '</span><select id="aUn">' + opts(unionsOf(f.up), f.un) + '</select></label>' +
       '<label class="fld"><span>' + n('line') + '</span><input id="aLine" type="text" autocomplete="street-address" placeholder="' + esc(n('lineP')) + '" value="' + esc(f.line) + '"></label>' +
-      '<button class="adloc" id="adLoc" type="button">' + ZX.ico.a_pin + n('loc') + '</button><div class="adlocs" id="adLocS">' + locHtml() + '</div>' +
+      '<div class="adlocrow"><button class="adloc" id="adLoc" type="button">' + ZX.ico.a_pin + n('loc') + '</button><button class="adloc" id="adMap" type="button">' + ZX.ico.a_map + n('mapPick') + '</button></div><div class="adlocs" id="adLocS">' + locHtml() + '</div>' +
       (f.wasDef ? '' : '<label class="adck"><input id="aDef" type="checkbox"' + (f.def ? ' checked' : '') + '><span>' + n('asDef') + '</span></label>') +
       '<div id="aMsg" class="fmsg"></div><button class="cta-big" id="adSave" type="button">' + n('save') + '</button><button class="adcancel" data-adback="1" type="button">' + n('cancel') + '</button>';
   }
@@ -242,17 +244,22 @@
     try { await A.saveAddress({ id: f.id, label: f.label, line: f.line.trim(), upazila_id: f.up, union_id: f.un, lat: f.lat, lng: f.lng, is_default: f.def || f.wasDef }); ZX.toast(n('saved')); ad.f = null; renderAddr(); }
     catch (e) { fmsg('aMsg', A.errMsg(e)); b.disabled = false; }
   }
+  function fillLine(lat, lng) {
+    if (!ZX.reverseGeocode) return;
+    ZX.reverseGeocode(lat, lng).then(function (g) { if (g && g.line && ad.f && $('aLine') && !val('aLine').trim()) { $('aLine').value = g.line; ad.f.line = g.line; } });
+  }
   function getLoc() {
     var s = $('adLocS'); if (!navigator.geolocation) { s.textContent = n('locNo'); return; }
     s.textContent = n('locWait');
-    navigator.geolocation.getCurrentPosition(function (p) { ad.f.lat = Math.round(p.coords.latitude * 1e6) / 1e6; ad.f.lng = Math.round(p.coords.longitude * 1e6) / 1e6; s.innerHTML = locHtml(); },
+    navigator.geolocation.getCurrentPosition(function (p) { ad.f.lat = Math.round(p.coords.latitude * 1e6) / 1e6; ad.f.lng = Math.round(p.coords.longitude * 1e6) / 1e6; s.innerHTML = locHtml(); fillLine(ad.f.lat, ad.f.lng); },
       function () { s.textContent = n('locNo'); }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
   }
   document.addEventListener('click', async function (e) {
-    var x = e.target.closest('#adAdd,#adSave,#adLoc,#adLocX,[data-ad],[data-adlabel],[data-adback]'); if (!x) return;
+    var x = e.target.closest('#adAdd,#adSave,#adLoc,#adMap,#adLocX,[data-ad],[data-adlabel],[data-adback]'); if (!x) return;
     if (x.id === 'adAdd') return openForm(null);
     if (x.id === 'adSave') return saveAddr();
     if (x.id === 'adLoc') { grab(); return getLoc(); }
+    if (x.id === 'adMap') { grab(); if (!ZX.pickOnMap) return; return ZX.pickOnMap({ lat: ad.f.lat, lng: ad.f.lng }, function (r) { ad.f.lat = r.lat; ad.f.lng = r.lng; if (r.line && !ad.f.line.trim()) { ad.f.line = r.line; if ($('aLine')) $('aLine').value = r.line; } if ($('adLocS')) $('adLocS').innerHTML = locHtml(); }); }
     if (x.id === 'adLocX') { ad.f.lat = null; ad.f.lng = null; $('adLocS').innerHTML = ''; return; }
     if (x.hasAttribute('data-adback')) { grab(); if (ad.f) { ad.f = null; return renderAddr(); } return ZX.go('account'); }
     if (x.hasAttribute('data-adlabel')) { ad.f.label = x.getAttribute('data-adlabel'); document.querySelectorAll('.adchip').forEach(function (c) { c.classList.toggle('on', c === x); }); return; }
@@ -267,6 +274,13 @@
   document.addEventListener('change', function (e) {
     if (e.target.id === 'aUp') { var un = $('aUn'); if (un) un.innerHTML = opts(unionsOf(e.target.value), ''); }
   });
-  var pv2 = ZX.onView; ZX.onView = function (v) { if (pv2) pv2(v); if (v === 'addresses') { ad.f = null; renderAddr(); } };
+  ZX.addrOpen = function (id) { ad.pending = id || 'new'; ZX.go('addresses'); };
+  async function openPending(pd) {
+    if (!ZX.live || !A.me().user) { renderAddr(); return; }
+    if (!areas.length) { try { areas = await A.areas(); } catch (e) { areas = []; } }
+    try { ad.list = await A.listAddresses(); } catch (e) { ad.list = []; }
+    openForm(pd === 'new' ? null : (ad.list.filter(function (a) { return a.id === pd; })[0] || null));
+  }
+  var pv2 = ZX.onView; ZX.onView = function (v) { if (pv2) pv2(v); if (v === 'addresses') { var pd = ad.pending; ad.pending = null; ad.f = null; if (pd) openPending(pd); else renderAddr(); } };
   var pl2 = ZX.onLang; ZX.onLang = function () { if (pl2) pl2(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-addresses') { if (ad.f) { grab(); renderAddrForm(); } else renderAddr(); } };
 })();
