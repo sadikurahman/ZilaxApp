@@ -22,6 +22,9 @@
     a_info: S('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.500v.1"/>'),
     a_star: S('<path d="M12 3.500l2.700 5.500 6 .9-4.400 4.200 1 6-5.300-2.800-5.300 2.800 1-6L3.300 9.900l6-.9L12 3.500z"/>'),
     a_out: S('<path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9"/>'),
+    a_cam: S('<path d="M4 8h3l1.500-2h7L17 8h3v11H4V8z"/><circle cx="12" cy="13" r="3.500"/>'),
+    a_eye: S('<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+    a_eyeoff: S('<path d="M3 3l18 18M10.600 5.100A9.700 9.700 0 0 1 12 5c6.500 0 10 7 10 7a17 17 0 0 1-3.200 4.100M6.600 6.600A17 17 0 0 0 2 12s3.500 7 10 7a9.600 9.600 0 0 0 4-.9"/>'),
     a_pencil: S('<path d="M4 20h4L19 9l-4-4L4 16v4z"/>'),
     a_box: S('<path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
     a_dash: S('<rect x="3" y="3" width="8" height="10" rx="2"/><rect x="13" y="3" width="8" height="6" rx="2"/><rect x="13" y="11" width="8" height="10" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/>')
@@ -72,10 +75,10 @@
     var av = o.avatar ? '<img src="' + esc(o.avatar) + '" alt="">' : ini;
     var h = '<div class="accard"><div class="acp"><div class="acav">' + av + '</div><div class="acin"><b>' + esc(o.name) + '</b><span>' + esc(o.phone) + '</span>' +
       (o.where ? '<span class="acw">' + esc(o.where) + '</span>' : '') + '</div>' +
-      '<button class="acedit" type="button" data-soon="1">' + ZX.ico.a_pencil + t('edit') + '</button></div>' +
+      '<button class="acedit" type="button" data-link="#profile">' + ZX.ico.a_pencil + t('edit') + '</button></div>' +
       '<div class="acq"><button type="button" data-soon="1">' + ZX.ico.a_box + t('orders') + '</button><button type="button" data-soon="1">' + ZX.ico.a_wallet + t('wallet') + '</button></div></div>';
     h += '<div class="acsec flat">' + row('mail', t('inbox'), { link: '#inbox' }) + '</div>';
-    var acc = [row('a_user', t('prof')), row('a_mark', t('addr')), row('a_hist', t('hist')), row('a_heart', t('fav')), row('a_card', t('pay'))];
+    var acc = [row('a_user', t('prof'), { link: '#profile' }), row('a_mark', t('addr')), row('a_hist', t('hist')), row('a_heart', t('fav')), row('a_card', t('pay'))];
     if (o.partner) { acc.splice(1, 0, row('a_brief', t('biz'))); acc.splice(2, 0, row('a_wallet', t('payout'))); }
     acc.push(row('a_doc', t('apps'), { link: '#myapps' }));
     h += sec(t('sAcc'), acc);
@@ -92,4 +95,80 @@
     var s = e.target.closest('[data-soon]'); if (s) { ZX.toast(t('soonMsg')); return; }
     var g = e.target.closest('[data-lang]'); if (g) ZX.setLang(ZX.lang === 'bn' ? 'en' : 'bn');
   });
+
+  /* ---------- Profile & password page ---------- */
+  var A = ZX.auth, areas = [];
+  var M = {
+    title: { en: 'Profile & password', bn: 'প্রোফাইল ও পাসওয়ার্ড' }, login1: { en: 'Log in first to continue.', bn: 'চালিয়ে যেতে আগে লগইন করুন।' },
+    name: { en: 'Full name', bn: 'পুরো নাম' }, phone: { en: 'Mobile number (cannot be changed)', bn: 'মোবাইল নম্বর (বদলানো যাবে না)' },
+    up: { en: 'Upazila', bn: 'উপজেলা' }, un: { en: 'Union / Paurashava', bn: 'ইউনিয়ন / পৌরসভা' }, addr: { en: 'Village, road, house', bn: 'গ্রাম, রাস্তা, বাড়ি' },
+    choose: { en: 'Choose…', bn: 'বাছাই করুন…' }, save: { en: 'Save changes', bn: 'পরিবর্তন সংরক্ষণ' }, wait: { en: 'Please wait…', bn: 'অপেক্ষা করুন…' },
+    saved: { en: 'Saved', bn: 'সংরক্ষিত হয়েছে' }, needName: { en: 'Please enter your name.', bn: 'আপনার নাম লিখুন।' },
+    pwT: { en: 'Change password', bn: 'পাসওয়ার্ড বদল' }, old: { en: 'Old password', bn: 'পুরোনো পাসওয়ার্ড' }, nw: { en: 'New password', bn: 'নতুন পাসওয়ার্ড' },
+    nw2: { en: 'Confirm new password', bn: 'নতুন পাসওয়ার্ড আবার লিখুন' }, hint: { en: 'At least 6 characters', bn: 'কমপক্ষে ৬ অক্ষর' },
+    pwBtn: { en: 'Change password', bn: 'পাসওয়ার্ড বদলান' }, pwFill: { en: 'Please fill all three fields.', bn: 'তিনটি ঘরই পূরণ করুন।' },
+    pwShort: { en: 'New password must be at least 6 characters.', bn: 'নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' },
+    pwMatch: { en: 'The two new passwords do not match.', bn: 'দুটি নতুন পাসওয়ার্ড মিলছে না।' }, pwSame: { en: 'New password must be different from the old one.', bn: 'নতুন পাসওয়ার্ড পুরোনোটার থেকে আলাদা হতে হবে।' },
+    pwOk: { en: 'Password changed.', bn: 'পাসওয়ার্ড বদলানো হয়েছে।' }, up1: { en: 'Uploading photo…', bn: 'ছবি আপলোড হচ্ছে…' }, photo: { en: 'Change photo', bn: 'ছবি বদলান' }
+  };
+  var m = function (k) { return ZX.t(M[k]); };
+  var $ = function (id) { return document.getElementById(id); };
+  var val = function (id) { var e = $(id); return e ? e.value : ''; };
+  var nm = function (a) { return ZX.t({ en: a.name_en, bn: a.name_bn }); };
+  function opts(list, sel) { return '<option value="">' + m('choose') + '</option>' + list.map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === sel ? ' selected' : '') + '>' + esc(nm(a)) + '</option>'; }).join(''); }
+  function unionsOf(up) { return areas.filter(function (a) { return a.level === 'union' && a.parent_id === up && a.active; }); }
+  function fmsg(id, text, ok) { var e = $(id); if (e) { e.textContent = text || ''; e.className = 'fmsg ' + (ok ? 'ok' : 'err'); } }
+  function pw(id, label, ph, auto) { return '<label class="fld"><span>' + label + '</span><div class="pw"><input id="' + id + '" type="password" autocomplete="' + auto + '"' + (ph ? ' placeholder="' + ph + '"' : '') + '><button type="button" data-eye="' + id + '" aria-label="Show">' + ZX.ico.a_eye + '</button></div></label>'; }
+
+  async function renderProfile() {
+    var v = $('v-profile'); if (!v) return;
+    var bar = '<div class="pbar"><button class="bk" data-tab="account" type="button" aria-label="Back">' + ZX.ico.back + '</button><h2>' + m('title') + '</h2></div>';
+    var me = A.me();
+    if (!ZX.live || !me.user) { v.innerHTML = bar + '<div class="soon"><b>' + m('login1') + '</b></div><button class="cta-big" type="button" data-go="login">' + t('login') + '</button>'; return; }
+    if (!areas.length) { try { areas = await A.areas(); } catch (e) { areas = []; } }
+    var p = me.profile || {}, ups = areas.filter(function (a) { return a.level === 'upazila' && a.active; });
+    var ini = esc((p.full_name || '?').trim().charAt(0).toUpperCase());
+    v.innerHTML = bar +
+      '<div class="pfav"><div class="pfwrap"><div class="acav">' + (p.avatar_url ? '<img src="' + esc(p.avatar_url) + '" alt="">' : ini) + '</div>' +
+      '<label class="pfcam" aria-label="' + m('photo') + '">' + ZX.ico.a_cam + '<input id="pAvatar" type="file" accept="image/*"></label></div></div>' +
+      '<label class="fld"><span>' + m('name') + '</span><input id="pName" type="text" autocomplete="name" value="' + esc(p.full_name || '') + '"></label>' +
+      '<label class="fld"><span>' + m('phone') + '</span><input type="tel" value="' + esc(p.phone || '') + '" disabled></label>' +
+      '<label class="fld"><span>' + m('up') + '</span><select id="pUp">' + opts(ups, p.upazila_id || '') + '</select></label>' +
+      '<label class="fld"><span>' + m('un') + '</span><select id="pUn">' + opts(unionsOf(p.upazila_id || ''), p.union_id || '') + '</select></label>' +
+      '<label class="fld"><span>' + m('addr') + '</span><input id="pAddr" type="text" autocomplete="street-address" value="' + esc(p.address || '') + '"></label>' +
+      '<div id="pMsg" class="fmsg"></div><button class="cta-big" id="pSave" type="button">' + m('save') + '</button>' +
+      '<div class="pfsec"><h3>' + m('pwT') + '</h3>' + pw('pOld', m('old'), '', 'current-password') + pw('pNew', m('nw'), m('hint'), 'new-password') + pw('pNew2', m('nw2'), '', 'new-password') +
+      '<div id="pwMsg" class="fmsg"></div><button class="cta-big" id="pwSave" type="button">' + m('pwBtn') + '</button></div>';
+  }
+  async function saveProfile() {
+    var name = val('pName').trim(); if (!name) { fmsg('pMsg', m('needName')); return; }
+    var b = $('pSave'); b.disabled = true; fmsg('pMsg', m('wait'), true);
+    try { await A.updateProfile({ full_name: name, upazila_id: val('pUp') || null, union_id: val('pUn') || null, address: val('pAddr').trim() }); fmsg('pMsg', m('saved'), true); ZX.toast(m('saved')); }
+    catch (e) { fmsg('pMsg', A.errMsg(e)); } b.disabled = false;
+  }
+  async function savePass() {
+    var o = val('pOld'), n = val('pNew'), n2 = val('pNew2');
+    if (!o || !n || !n2) { fmsg('pwMsg', m('pwFill')); return; }
+    if (n.length < 6) { fmsg('pwMsg', m('pwShort')); return; }
+    if (n !== n2) { fmsg('pwMsg', m('pwMatch')); return; }
+    if (n === o) { fmsg('pwMsg', m('pwSame')); return; }
+    var b = $('pwSave'); b.disabled = true; fmsg('pwMsg', m('wait'), true);
+    try { await A.changePassword(o, n); ['pOld', 'pNew', 'pNew2'].forEach(function (i) { $(i).value = ''; }); fmsg('pwMsg', m('pwOk'), true); ZX.toast(m('pwOk')); }
+    catch (e) { fmsg('pwMsg', e && e.zxMsg ? e.message : A.errMsg(e)); } b.disabled = false;
+  }
+  document.addEventListener('click', function (e) {
+    var t1 = e.target.closest('#pSave,#pwSave,[data-eye]'); if (!t1) return;
+    if (t1.id === 'pSave') saveProfile(); else if (t1.id === 'pwSave') savePass();
+    else { var i = $(t1.getAttribute('data-eye')); if (i) { var show = i.type === 'password'; i.type = show ? 'text' : 'password'; t1.innerHTML = show ? ZX.ico.a_eyeoff : ZX.ico.a_eye; } }
+  });
+  document.addEventListener('change', async function (e) {
+    var x = e.target;
+    if (x.id === 'pUp') { var un = $('pUn'); if (un) un.innerHTML = opts(unionsOf(x.value), ''); return; }
+    if (x.id === 'pAvatar' && x.files && x.files[0]) {
+      ZX.toast(m('up1'));
+      try { await A.uploadAvatar(x.files[0]); ZX.toast(m('saved')); renderProfile(); } catch (er) { ZX.toast(A.errMsg(er)); }
+    }
+  });
+  var prevView = ZX.onView; ZX.onView = function (v) { if (prevView) prevView(v); if (v === 'profile') renderProfile(); };
+  var prevLang = ZX.onLang; ZX.onLang = function () { if (prevLang) prevLang(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-profile') renderProfile(); };
 })();

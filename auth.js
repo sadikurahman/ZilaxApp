@@ -99,6 +99,20 @@
     updateProfile: async function (patch) {
       need(); var r = await ZX.sb.from('profiles').update(patch).eq('id', me.user.id); if (r.error) throw r.error; await auth.refresh();
     },
+    changePassword: async function (oldPass, newPass) {
+      need(); if (!newPass || newPass.length < 6) throw new Error(ZX.t(ERR.weak_password));
+      var chk = await ZX.sb.auth.signInWithPassword({ email: emailOf((me.profile || {}).phone || ''), password: oldPass });
+      if (chk.error) { var pe = new Error(ZX.t({ en: 'Old password is incorrect.', bn: 'পুরোনো পাসওয়ার্ড সঠিক নয়।' })); pe.zxMsg = true; throw pe; }
+      var u = await ZX.sb.auth.updateUser({ password: newPass }); if (u.error) throw u.error;
+    },
+    uploadAvatar: async function (file) {
+      need(); var blob = await auth.compress(file, 512, 0.85);
+      var path = me.user.id + '/avatar-' + Date.now() + '.jpg';
+      var up = await ZX.sb.storage.from('avatars').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+      if (up.error) throw up.error;
+      var url = ZX.sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      await auth.updateProfile({ avatar_url: url }); return url;
+    },
 
     areas: async function () {
       if (!ZX.live) return [];

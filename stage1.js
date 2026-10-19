@@ -105,7 +105,7 @@
 
   /* ---------------- account ---------------- */
   function renderAccountTop() {
-    var box = $('accTop'); if (!box) return; var demo = $('demoBlock');
+    var box = $('accTop'); if (!box || !ZX.accountHtml) return; var demo = $('demoBlock');
     if (!ZX.live) { box.innerHTML = notConfigured(); if (demo) demo.style.display = ''; return; }
     if (demo) demo.style.display = 'none';
     var me = A.me(), lg = document.querySelector('#v-account .acclogo'); if (lg) lg.style.display = 'none';
