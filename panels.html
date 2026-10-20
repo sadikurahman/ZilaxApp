@@ -182,13 +182,15 @@ function render(){
   var mount=window.ZXLive?ZXLive.intercept(role,sec):null; if(mount){$('main').innerHTML='';mount($('main'));}else{$('main').innerHTML=content(); calcOut();}
 }
 ZX.onLang=render;
+var depth=0;
+$('backL').addEventListener('click',function(e){if(depth>0){e.preventDefault();depth--;history.back();}});
 document.addEventListener('click',function(e){
   if(e.target===$('mSheet')){closeMore();return;}
   var t=e.target.closest('[data-sec],[data-role],[data-out],[data-ron],[data-racc],[data-rskip],[data-more],[data-plout]');if(!t)return;
   if(t.dataset.more){openMore();return;}
   if(t.dataset.plout){if(window.ZXLive)ZXLive.logout();return;}
-  if(t.dataset.sec){location.hash=role+'/'+t.dataset.sec;return;}
-  if(t.dataset.role){location.hash=t.dataset.role;return;}
+  if(t.dataset.sec){if(location.hash!=='#'+role+'/'+t.dataset.sec)depth++;location.hash=role+'/'+t.dataset.sec;return;}
+  if(t.dataset.role){if(location.hash!=='#'+t.dataset.role)depth++;location.hash=t.dataset.role;return;}
   if(t.dataset.out){var id=t.dataset.out;out[id]?delete out[id]:out[id]=true;ZX.store.set('zx_out',out);render();return;}
   if(t.dataset.ron){ZX.store.set('zx_rider_on',!ZX.store.get('zx_rider_on',false));ZX.store.set('zx_rider_acc',false);ZX.store.set('zx_rider_skip',false);render();return;}
   if(t.dataset.racc){ZX.store.set('zx_rider_acc',true);render();return;}
