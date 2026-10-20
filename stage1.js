@@ -76,22 +76,7 @@
   async function renderLogin() {
     var v = $('v-login'); if (!ZX.live) { v.innerHTML = bar(tt('login')) + notConfigured(); setBk(); return; }
     await ensureAreas();
-    var up0 = (A.me().profile || {}).upazila_id || '';
-    v.innerHTML = bar(mode === 'login' ? tt('login') : tt('signup')) +
-      '<div class="hello"><b>' + tt('welcome') + '</b><span>' + tt('welcomeS') + '</span></div>' +
-      '<div class="seg"><button type="button" data-mode="login" class="' + (mode === 'login' ? 'on' : '') + '">' + tt('login') + '</button><button type="button" data-mode="signup" class="' + (mode === 'signup' ? 'on' : '') + '">' + tt('signup') + '</button></div>' +
-      (mode === 'login'
-        ? '<label class="fld"><span>' + tt('phone') + '</span><input id="lPhone" type="tel" inputmode="numeric" autocomplete="username" placeholder="01XXXXXXXXX"></label>' +
-          '<label class="fld"><span>' + tt('pass') + '</span><input id="lPass" type="password" autocomplete="current-password"></label>' +
-          '<div id="lMsg" class="fmsg"></div><button class="cta-big" id="btnLogin" type="button">' + tt('login') + '</button>'
-        : '<label class="fld"><span>' + tt('name') + '</span><input id="sName" type="text" autocomplete="name"></label>' +
-          '<label class="fld"><span>' + tt('phone') + '</span><input id="sPhone" type="tel" inputmode="numeric" autocomplete="username" placeholder="01XXXXXXXXX"></label>' +
-          '<label class="fld"><span>' + tt('pass') + '</span><input id="sPass" type="password" autocomplete="new-password" placeholder="' + tt('passHint') + '"></label>' +
-          '<label class="fld"><span>' + tt('upazila') + '</span><select id="sUp">' + opts(upazilas(), up0) + '</select></label>' +
-          '<label class="fld"><span>' + tt('union') + '</span><select id="sUn">' + opts(unionsOf(up0), '') + '</select></label>' +
-          '<label class="fld"><span>' + tt('address') + '</span><input id="sAddr" type="text" autocomplete="street-address"></label>' +
-          '<div id="sMsg" class="fmsg"></div><button class="cta-big" id="btnSign" type="button">' + tt('signup') + '</button>');
-    setBk();
+    ZX.authView(v, { mode: mode, areas: areas, afterAuth: afterAuth, fresh: !v.firstChild || !v.querySelector('#authBox') });
   }
   function afterAuth(text) { ZX.toast(text); var n = next; next = null; ZX.go(n || 'account'); }
   async function doLogin() {

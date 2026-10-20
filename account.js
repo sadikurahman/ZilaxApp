@@ -288,6 +288,7 @@
 
   /* ---------- Help, support, policies, about, permissions ---------- */
   var SUPPORT = '01646921627';
+  ZX.support = { phone: SUPPORT, wa: '88' + SUPPORT };
   var I2 = {
     help: { en: 'Help & FAQ', bn: 'সাহায্য ও FAQ' }, support: { en: 'Support contact', bn: 'সাপোর্টে যোগাযোগ' }, policies: { en: 'Policies', bn: 'নীতিমালা' },
     about: { en: 'About Zilax', bn: 'জিলাক্স সম্পর্কে' }, perms: { en: 'Notifications & permissions', bn: 'নোটিফিকেশন ও অনুমতি' },
@@ -326,7 +327,7 @@
       return '<div class="sp"><span class="achi">' + ZX.ico.a_life + '</span><b>' + q('sTitle') + '</b><p class="adsub">' + q('sSub') + '</p><div class="spn">' + SUPPORT + '</div></div>' +
         '<a class="spbtn wa" href="' + wa + '" target="_blank" rel="noopener">' + ZX.ico.a_chat + q('wa') + '</a><a class="spbtn" href="tel:' + SUPPORT + '">' + ZX.ico.a_phone + q('call') + '</a>';
     }
-    if (pg === 'policies') return POL.map(function (p) { return '<details class="faq"><summary>' + ZX.t(p[0]) + '</summary>' + p[1].map(function (x) { return '<p>' + ZX.t(x) + '</p>'; }).join('') + '</details>'; }).join('') + '<p class="inote">' + q('upd') + '</p>';
+    if (pg === 'policies') return '<div class="acsec flat">' + ['terms', 'privacy', 'refund'].map(function (k) { return '<button class="acrow" type="button" data-legal="' + k + '"><span class="aci">' + ZX.ico[k === 'terms' ? 'a_doc' : k === 'privacy' ? 'a_shield' : 'a_card'] + '</span><span class="acl">' + ZX.t(ZX.legal[k].title) + '</span><span class="acr">' + ZX.ico.arrowR + '</span></button>'; }).join('') + '</div><p class="inote">' + q('upd') + '</p>';
     if (pg === 'about') return '<div class="ab"><img src="icon-512.png" alt="Zilax"><b>Zilax</b><span>Shop • Rent • Live Better</span><p>' + q('abt') + '</p><em>' + q('ver') + '</em></div>';
     if (pg === 'perms') return '<div class="pm"><div class="pmr"><span class="aci">' + ZX.ico.a_pin + '</span><b>' + q('pLoc') + '</b><em id="pmLoc">…</em></div><div class="pmr"><span class="aci">' + ZX.ico.a_bell + '</span><b>' + q('pNot') + '</b><em id="pmNot">…</em></div></div>' +
       '<button class="cta-big" id="pmBtn" type="button">' + q('enLoc') + '</button><p class="inote">' + q('how') + '</p>';

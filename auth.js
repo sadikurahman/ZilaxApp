@@ -84,7 +84,7 @@
       var phone = normPhone(f.phone); if (!phone) throw new Error(ZX.t(ERR.invalid_phone));
       if (!f.name || !f.name.trim()) throw new Error(ZX.t(ERR.missing_name));
       if (!f.password || f.password.length < 6) throw new Error(ZX.t(ERR.weak_password));
-      var res = await ZX.sb.auth.signUp({ email: emailOf(phone), password: f.password, options: { data: { full_name: f.name.trim(), upazila_id: f.upazila_id || '', union_id: f.union_id || '', address: (f.address || '').trim() } } });
+      var res = await ZX.sb.auth.signUp({ email: emailOf(phone), password: f.password, options: { data: { full_name: f.name.trim(), upazila_id: f.upazila_id || '', union_id: f.union_id || '', address: (f.address || '').trim(), terms_version: f.terms_version || '' } } });
       if (res.error) throw res.error;
       if (!res.data.session) throw new Error(ZX.t(ERR.confirm_on));
       await auth.refresh(); return me;
