@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2C3E2C">
+<meta name="theme-color" content="#ffffff">
 <title>Zilax — Panels (Stage 0 preview)</title>
 <link rel="icon" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,25 +11,12 @@
 <style>
  body{background:#f3f6f3}
  .pw{max-width:1100px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
- .ptop{background:var(--forest);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
- .ptop .wm{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:-.3px}
- .ptop .role{background:var(--gold);color:#2b2a1a;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800}
- .ptop .sp{flex:1}
- .ptop a.back{color:#cfe3d4;font-size:13px;font-weight:600}
- .ptop .lang{background:rgba(255,255,255,.1);border-color:transparent}.ptop .lang button{color:#cfe3d4}.ptop .lang button.on{background:#fff;color:var(--forest)}
- .swi{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);scrollbar-width:none}
- .swi a{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
- .swi a.on{background:var(--green);border-color:var(--green);color:#fff}
  .body{display:flex;flex:1}
  .side{display:none;width:230px;background:#fff;border-right:1px solid var(--line);padding:14px}
  .side button{display:flex;width:100%;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;font-weight:600;font-size:14px;color:var(--ink);text-align:left}
  .side button.on{background:var(--mint);color:var(--forest)}
  .side .st{margin-left:auto;font-size:11px;color:var(--muted)}
  .main{flex:1;padding:16px 16px 100px;min-width:0}
- .mtabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:25;scrollbar-width:none}
- .mtabs button{flex:none;min-width:84px;padding:6px 8px;font-size:11px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
- .mtabs button b{font-size:20px;font-weight:400}
- .mtabs button.on{color:var(--green)}
  h2.pt{margin:6px 0 4px;font-size:26px;color:var(--forest)} p.ps{margin:0 0 14px;color:var(--muted)}
  .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
  .kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi small{color:var(--muted);font-size:12px}.kpi b{display:block;font-size:22px;color:var(--forest);margin-top:4px}
@@ -47,17 +34,40 @@
  table.t{width:100%;border-collapse:collapse;font-size:14px}.t td,.t th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.t th{color:var(--muted);font-weight:600;font-size:12px}
  .bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.bk .col{background:#eef3ee;border-radius:14px;padding:10px}.bk .col h4{margin:0 0 8px;font-size:13px;color:var(--forest)}
  .bk .tk{background:#fff;border-radius:10px;padding:8px;font-size:13px;margin-bottom:6px;border:1px solid var(--line)}
+ .ptop{background:#fff;color:var(--ink);padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
+ .pback{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--ink);font-size:20px;flex:none}
+ .ptop .wm{font-family:inherit;font-size:19px;font-weight:700;color:var(--forest);letter-spacing:-.2px}
+ .ptop .role{background:var(--mint);color:var(--forest);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:32vw}
+ .ptop .sp{flex:1;min-width:0}
+ .ptop .lang{flex:none;background:var(--soft);border-color:transparent}.ptop .lang button{min-width:0;padding:6px 9px;white-space:nowrap}.ptop .wm{flex:none}
+ .swi{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);scrollbar-width:none}
+ .swi a{flex:none;padding:7px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+ .swi a.on{background:var(--green);border-color:var(--green);color:#fff}
+ .mtabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:25}
+ .mtabs button{flex:1;min-width:0;padding:6px 2px;font-size:10.5px;font-weight:600;color:#8a928d;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0}
+ .mtabs button span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .mtabs button b{font-size:24px;font-weight:400;display:grid;place-items:center;line-height:1}
+ .mtabs button.on{color:var(--green)}
+ h2.pt.serif{font-family:inherit;font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.2px}.demochip{vertical-align:middle;margin-left:6px;font-size:11px}
+ .side button span:first-child{font-size:20px;display:grid;place-items:center;color:#3d4b53}.side button.on span:first-child{color:var(--green)}
+ .side .st{font-size:10.5px;background:var(--soft);border-radius:999px;padding:2px 8px}
+ .mrole{display:flex;align-items:center;gap:12px;padding:12px 4px}.mrole .av{width:46px;height:46px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+ .mrole b{display:block;font-size:16px}.mrole small{color:var(--muted)}
+ #mPan .lsrow.on b{color:var(--green)}#mPan .lsrow .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);background:var(--soft);border-radius:999px;padding:2px 9px}
+ #mPan .lsrow.out b{color:#c0392b}#mPan .lsrow.out .lsi{color:#c0392b}#mPan h5{margin:14px 4px 2px;font-size:11.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:#8a928d}
+ @media(max-width:899px){.main{padding-top:14px}}
  @media(min-width:900px){.side{display:block}.mtabs{display:none}.swi{display:none}.kpis{grid-template-columns:repeat(4,1fr)}.main{padding:24px 28px}}
 </style>
 </head>
 <body>
 <div class="pw">
-  <div class="ptop"><span class="wm">Zilax.</span><span class="role" id="roleChip"></span><span class="sp"></span>
-    <div class="lang"><button id="lEn">EN</button><button id="lBn">বাংলা</button></div><span id="who"></span><a class="back" href="index.html#account" id="backL"></a></div>
+  <header class="ptop"><a class="pback" href="index.html#account" id="backL" aria-label="Back"></a><span class="wm">Zilax</span><span class="role" id="roleChip"></span><span class="sp"></span>
+    <div class="lang"><button id="lEn">EN</button><button id="lBn">বাংলা</button></div></header>
   <nav class="swi" id="roleSwitch"></nav>
   <div class="body"><aside class="side" id="side"></aside><main class="main" id="main"></main></div>
 </div>
 <nav class="mtabs" id="mtabs"></nav>
+<div class="sheet" id="mSheet"><div class="pan" id="mPan"></div></div>
 <script src="data.js"></script><script src="calc.js"></script><script src="i18n.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script><script src="auth.js"></script><script src="panels-live.js"></script>
@@ -68,18 +78,30 @@ function T(o){return ZX.t(o)}
 /* ---- panel map: sections per panel. st = the Stage that builds the real thing ---- */
 var ROLES={
  merchant:{n:{en:'Merchant',bn:'মার্চেন্ট'},s:[
-  ['dash','📊',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3],['stock','🔴',{en:'Stock out',bn:'স্টক আউট'},3,'demo'],['menu','🍽️',{en:'Menu & new item',bn:'মেনু ও নতুন আইটেম'},3],
-  ['orders','🛎️',{en:'Orders',bn:'অর্ডার'},5],['offers','🏷️',{en:'Offers & reviews',bn:'অফার ও রিভিউ'},9],['earn','💰',{en:'Earnings',bn:'আয় ও সেটেলমেন্ট'},8]]},
+  ['dash','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,'demo',{en:'Home',bn:'হোম'}],['stock','alert',{en:'Stock out',bn:'স্টক আউট'},3,'demo',{en:'Stock',bn:'স্টক'}],['menu','menu',{en:'Menu & new item',bn:'মেনু ও নতুন আইটেম'},3,0,{en:'Menu',bn:'মেনু'}],
+  ['orders','bag',{en:'Orders',bn:'অর্ডার'},5,0,{en:'Orders',bn:'অর্ডার'}],['offers','tag',{en:'Offers & reviews',bn:'অফার ও রিভিউ'},9],['earn','wallet',{en:'Earnings',bn:'আয় ও সেটেলমেন্ট'},8]]},
  rider:{n:{en:'Rider',bn:'রাইডার'},s:[
-  ['home','🏍️',{en:'Online & orders',bn:'অনলাইন ও অর্ডার'},6,'demo'],['earn','💵',{en:'Earnings & cash',bn:'আয় ও ক্যাশ'},6],['hist','🕘',{en:'History',bn:'ইতিহাস'},6]]},
+  ['home','bike',{en:'Online & orders',bn:'অনলাইন ও অর্ডার'},6,'demo',{en:'Home',bn:'হোম'}],['earn','cash',{en:'Earnings & cash',bn:'আয় ও ক্যাশ'},6,0,{en:'Earnings',bn:'আয়'}],['hist','clock',{en:'History',bn:'ইতিহাস'},6,0,{en:'History',bn:'ইতিহাস'}]]},
  sales:{n:{en:'Sales Admin',bn:'সেলস অ্যাডমিন'},s:[
-  ['leads','🤝',{en:'Partner leads',bn:'পার্টনার লিড'},1,'demo'],['targets','🎯',{en:'Targets',bn:'টার্গেট'},8],['visits','📍',{en:'Field visits',bn:'ফিল্ড ভিজিট'},8],['reports','📑',{en:'Reports',bn:'রিপোর্ট'},8]]},
+  ['leads','users',{en:'Partner leads',bn:'পার্টনার লিড'},1,'demo',{en:'Leads',bn:'লিড'}],['targets','target',{en:'Targets',bn:'টার্গেট'},8,0,{en:'Targets',bn:'টার্গেট'}],['visits','pin',{en:'Field visits',bn:'ফিল্ড ভিজিট'},8,0,{en:'Visits',bn:'ভিজিট'}],['reports','file',{en:'Reports',bn:'রিপোর্ট'},8,0,{en:'Reports',bn:'রিপোর্ট'}]]},
  admin:{n:{en:'Admin',bn:'অ্যাডমিন'},s:[
-  ['live','🧭',{en:'Live orders',bn:'লাইভ অর্ডার'},8,'demo'],['appr','✅',{en:'Approvals',bn:'অনুমোদন'},1],['support','💬',{en:'Support & refunds',bn:'সাপোর্ট ও রিফান্ড'},8],['content','🖼️',{en:'Content',bn:'কনটেন্ট'},9]]},
+  ['live','pulse',{en:'Live orders',bn:'লাইভ অর্ডার'},8,'demo',{en:'Live',bn:'লাইভ'}],['appr','check',{en:'Approvals',bn:'অনুমোদন'},1,0,{en:'Approvals',bn:'অনুমোদন'}],['support','chat',{en:'Support & refunds',bn:'সাপোর্ট ও রিফান্ড'},8,0,{en:'Support',bn:'সাপোর্ট'}],['content','image',{en:'Content',bn:'কনটেন্ট'},9,0,{en:'Content',bn:'কনটেন্ট'}]]},
  super:{n:{en:'Super Admin',bn:'সুপার অ্যাডমিন'},s:[
-  ['cmd','👑',{en:'Command dashboard',bn:'কমান্ড ড্যাশবোর্ড'},2],['price','🧮',{en:'Pricing & commission',bn:'মূল্য ও কমিশন'},2,'demo'],['hb','🏠',{en:'Home Builder',bn:'হোম বিল্ডার'},2],['svc','🧩',{en:'Services & categories',bn:'সার্ভিস ও ক্যাটাগরি'},2],
-  ['pay','💳',{en:'Payments',bn:'পেমেন্ট'},7],['roles','🔐',{en:'Roles & staff',bn:'রোল ও কর্মী'},1],['areas','🗺️',{en:'Areas',bn:'এলাকা'},2],['audit','📜',{en:'Audit log',bn:'অডিট লগ'},2]]}
+  ['cmd','gauge',{en:'Command dashboard',bn:'কমান্ড ড্যাশবোর্ড'},2,'demo',{en:'Home',bn:'হোম'}],['appr','check',{en:'Approvals',bn:'অনুমোদন'},1,0,{en:'Approvals',bn:'অনুমোদন'}],['roles','key',{en:'Roles & staff',bn:'রোল ও কর্মী'},1,0,{en:'Staff',bn:'কর্মী'}],['areas','map',{en:'Areas',bn:'এলাকা'},2,0,{en:'Areas',bn:'এলাকা'}],
+  ['audit','list',{en:'Audit log',bn:'অডিট লগ'},2],['price','percent',{en:'Pricing & commission',bn:'মূল্য ও কমিশন'},2,'demo'],['hb','home',{en:'Home Builder',bn:'হোম বিল্ডার'},2],['svc','layers',{en:'Services & categories',bn:'সার্ভিস ও ক্যাটাগরি'},2],['pay','card',{en:'Payments',bn:'পেমেন্ট'},7]]}
 };
+/* line icons (same style as the app) */
+var PI={dash:'<rect x="3" y="3" width="8" height="10" rx="2"/><rect x="13" y="3" width="8" height="6" rx="2"/><rect x="13" y="11" width="8" height="10" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/>',
+ gauge:'<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/>',alert:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.1"/>',menu:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M9 9h6M9 13h6"/>',
+ bag:'<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',tag:'<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8" r="1.4"/>',wallet:'<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M4 7a2 2 0 0 1 2-2h11v4"/><circle cx="16.5" cy="13.5" r="1.2"/>',
+ bike:'<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-7h5l3 7M10 9l2 7"/>',cash:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.8 0 4.5 1.8 4.5 4.5"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+ pin:'<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',file:'<path d="M7 3h7l4 4v14H7V3z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>',pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4V5z"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>',
+ map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',list:'<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',percent:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+ home:'<path d="M4 11l8-7 8 7v9H4v-9z"/><path d="M10 20v-6h4v6"/>',layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',card:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
+ more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',back:'<path d="M15 5l-7 7 7 7"/>',out:'<path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9"/>',swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>'};
+function ic(k){return '<svg viewBox="0 0 24 24">'+(PI[k]||PI.dash)+'</svg>';}
 var role='merchant', sec=null;
 function parse(){var h=location.hash.replace('#','').split('/');role=ROLES[h[0]]?h[0]:'merchant';sec=h[1]||ROLES[role].s[0][0];}
 function secDef(){return ROLES[role].s.filter(function(x){return x[0]===sec})[0]||ROLES[role].s[0];}
@@ -124,7 +146,7 @@ function calcOut(){
   el.innerHTML='<table class="t">'+rows.map(function(r){return '<tr><td>'+r[0]+'</td><td style="text-align:right"><b>'+ZX.money(r[1])+'</b></td></tr>'}).join('')+'</table>';
 }
 function content(){
-  var d=secDef(), key=role+'.'+d[0], h='<h2 class="pt serif">'+T(d[2])+'</h2><p class="ps">'+T(ROLES[role].n)+'</p>';
+  var d=secDef(), key=role+'.'+d[0], h='<h2 class="pt serif">'+T(d[2])+(d[4]==='demo'?'<span class="chip w demochip">'+(ZX.lang==='bn'?'ডেমো':'Demo')+'</span>':'')+'</h2><p class="ps">'+T(ROLES[role].n)+'</p>';
   if(key==='merchant.dash')h+=mockKpis()+stageCard(d[3]);
   else if(key==='merchant.stock')h+=demoStock()+'<p class="ps">'+ZX.stageMsg(3)+'</p>';
   else if(key==='rider.home')h+=demoRider()+'<p class="ps">'+ZX.stageMsg(6)+'</p>';
@@ -135,20 +157,36 @@ function content(){
   else h+=stageCard(d[3]);
   return h;
 }
+function shortOf(x){return T(x[5]||x[2]);}
+function visibleRoles(){var all=Object.keys(ROLES);if(!window.ZXLive||!ZX.live||!ZXLive.canSee)return all;return all.filter(function(r){return r===role||ZXLive.canSee(r);});}
+function stageTag(x){return (window.ZXLive&&ZX.live&&ZXLive.has&&ZXLive.has(role,x[0]))?'':'<span class="st">'+(ZX.lang==='bn'?'ধাপ ':'S')+ZX.digits(x[3])+'</span>';}
+function closeMore(){$('mSheet').classList.remove('show');}
+function openMore(){
+  var S=ROLES[role].s, rest=S.length>5?S.slice(4):[], u=window.ZXLive&&ZXLive.user?ZXLive.user():null, vr=visibleRoles(), h='<div class="lsgrip"></div>';
+  if(u)h+='<div class="mrole"><span class="av">'+(u.name||'?').trim().charAt(0).toUpperCase()+'</span><div><b>'+(u.name||'')+'</b><small>'+T(ROLES[role].n)+'</small></div></div>';
+  if(rest.length){h+='<h5>'+T(ROLES[role].n)+'</h5>'+rest.map(function(x){return '<button class="lsrow'+(x[0]===sec?' on':'')+'" type="button" data-sec="'+x[0]+'"><span class="lsi">'+ic(x[1])+'</span><b>'+T(x[2])+'</b>'+(stageTag(x)?stageTag(x).replace('class="st"','class="tag"'):'')+'</button>';}).join('');}
+  if(vr.length>1)h+='<h5>'+(ZX.lang==='bn'?'প্যানেল বদলান':'Switch panel')+'</h5>'+vr.map(function(r){return '<button class="lsrow'+(r===role?' on':'')+'" type="button" data-role="'+r+'"><span class="lsi">'+ic('swap')+'</span><b>'+T(ROLES[r].n)+'</b></button>';}).join('');
+  h+='<h5>&nbsp;</h5><a class="lsrow" href="index.html#account"><span class="lsi">'+ic('back')+'</span><b>'+(ZX.lang==='bn'?'অ্যাপে ফিরুন':'Back to app')+'</b></a>';
+  if(u)h+='<button class="lsrow out" type="button" data-plout="1"><span class="lsi">'+ic('out')+'</span><b>'+(ZX.lang==='bn'?'লগআউট':'Log out')+'</b></button>';
+  $('mPan').innerHTML=h;$('mSheet').classList.add('show');
+}
 function render(){
-  parse(); ZX.applyI18n();
-  $('roleChip').textContent=T(ROLES[role].n); $('backL').textContent=(ZX.lang==='bn'?'← অ্যাপে ফিরুন':'← Back to app');
+  parse(); ZX.applyI18n(); closeMore();
+  $('roleChip').textContent=T(ROLES[role].n); $('backL').innerHTML=ic('back');
   $('lEn').classList.toggle('on',ZX.lang==='en');$('lBn').classList.toggle('on',ZX.lang==='bn');
-  $('roleSwitch').innerHTML=Object.keys(ROLES).map(function(r){return '<a href="#'+r+'" class="'+(r===role?'on':'')+'">'+T(ROLES[r].n)+'</a>'}).join('');
-  var S=ROLES[role].s;
-  $('side').innerHTML='<div style="font-weight:800;color:var(--forest);margin:4px 8px 10px">'+T(ROLES[role].n)+'</div>'+S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><span>'+x[1]+'</span>'+T(x[2])+'<span class="st">S'+x[3]+'</span></button>'}).join('')+'<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">'+Object.keys(ROLES).map(function(r){return '<button data-role="'+r+'">'+T(ROLES[r].n)+'</button>'}).join('')+'</div>';
-  $('mtabs').innerHTML=S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><b>'+x[1]+'</b>'+T(x[2])+'</button>'}).join('');
+  var vr=visibleRoles(); $('roleSwitch').style.display=vr.length>1?'':'none';
+  $('roleSwitch').innerHTML=vr.map(function(r){return '<a href="#'+r+'" class="'+(r===role?'on':'')+'">'+T(ROLES[r].n)+'</a>'}).join('');
+  var S=ROLES[role].s, tabs=S.length>5?S.slice(0,4):S;
+  $('side').innerHTML='<div style="font-weight:700;color:var(--forest);margin:4px 8px 10px">'+T(ROLES[role].n)+'</div>'+S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><span>'+ic(x[1])+'</span>'+T(x[2])+stageTag(x)+'</button>'}).join('')+(vr.length>1?'<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">'+vr.map(function(r){return '<button data-role="'+r+'" class="'+(r===role?'on':'')+'"><span>'+ic('swap')+'</span>'+T(ROLES[r].n)+'</button>'}).join('')+'</div>':'');
+  $('mtabs').innerHTML=tabs.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><b>'+ic(x[1])+'</b><span>'+shortOf(x)+'</span></button>'}).join('')+(S.length>5?'<button data-more="1" class="'+(S.slice(4).some(function(x){return x[0]===sec})?'on':'')+'"><b>'+ic('more')+'</b><span>'+(ZX.lang==='bn'?'আরও':'More')+'</span></button>':'');
   var mount=window.ZXLive?ZXLive.intercept(role,sec):null; if(mount){$('main').innerHTML='';mount($('main'));}else{$('main').innerHTML=content(); calcOut();}
-  if(window.ZXLive){$('who').innerHTML=ZXLive.who(); var po=$('plOut'); if(po)po.onclick=function(e){e.preventDefault();ZXLive.logout();};}
 }
 ZX.onLang=render;
 document.addEventListener('click',function(e){
-  var t=e.target.closest('[data-sec],[data-role],[data-out],[data-ron],[data-racc],[data-rskip]');if(!t)return;
+  if(e.target===$('mSheet')){closeMore();return;}
+  var t=e.target.closest('[data-sec],[data-role],[data-out],[data-ron],[data-racc],[data-rskip],[data-more],[data-plout]');if(!t)return;
+  if(t.dataset.more){openMore();return;}
+  if(t.dataset.plout){if(window.ZXLive)ZXLive.logout();return;}
   if(t.dataset.sec){location.hash=role+'/'+t.dataset.sec;return;}
   if(t.dataset.role){location.hash=t.dataset.role;return;}
   if(t.dataset.out){var id=t.dataset.out;out[id]?delete out[id]:out[id]=true;ZX.store.set('zx_out',out);render();return;}

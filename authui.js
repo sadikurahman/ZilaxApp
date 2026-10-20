@@ -43,7 +43,7 @@
     v.innerHTML = '<div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back">' + ZX.ico.back + '</button><h2>' + t('login') + '</h2></div><div id="authBox" class="auth">' + head() +
       '<h1>' + t('welcome') + '</h1><p class="adsub">' + t('welcomeS') + '</p>' +
       fld(t('phone'), '<div class="ph"><i>+88</i><input id="lPhone" type="tel" inputmode="numeric" maxlength="11" autocomplete="username" placeholder="01XXXXXXXXX" value="' + esc(st.phone) + '"></div>', 'lPhoneE') +
-      fld(t('pass'), '<div class="pw"><input id="lPass" type="password" autocomplete="current-password">' + eye('lPass') + '</div>', 'lPassE') +
+      fld(t('pass'), '<div class="pwf"><input id="lPass" type="password" autocomplete="current-password">' + eye('lPass') + '</div>', 'lPassE') +
       '<div class="fgt"><a href="#" data-a="forgot">' + t('forgot') + '</a></div><div id="lMsg" class="fmsg"></div>' +
       '<button class="cta-big" id="aLogin" type="button" data-a="login">' + t('login') + '</button>' +
       '<p class="altm">' + t('newTo') + ' <a href="#" data-a="mode:signup">' + t('create') + '</a></p></div>';
@@ -53,8 +53,8 @@
     var s = st.step, body;
     if (s === 1) body = '<h1>' + t('s1') + '</h1><p class="adsub">' + t('s1s') + '</p>' + fld(t('phone'), '<div class="ph"><i>+88</i><input id="sPhone" type="tel" inputmode="numeric" maxlength="11" autocomplete="username" placeholder="01XXXXXXXXX" value="' + esc(st.phone) + '"></div>', 'sPhoneE');
     else if (s === 2) body = '<h1>' + t('s2') + '</h1><p class="adsub">' + t('s2s') + '</p>' + fld(t('name'), '<input id="sName" type="text" autocomplete="name" value="' + esc(st.name) + '">', 'sNameE') +
-      fld(t('pass'), '<div class="pw"><input id="sPass" type="password" autocomplete="new-password" placeholder="' + esc(t('hint')) + '" value="' + esc(st.pass) + '">' + eye('sPass') + '</div><div class="meter"><i id="mtr"></i></div><small id="mtrT" class="mtrt"></small>', 'sPassE') +
-      fld(t('pass2'), '<div class="pw"><input id="sPass2" type="password" autocomplete="new-password" value="' + esc(st.pass2) + '">' + eye('sPass2') + '</div>', 'sPass2E');
+      fld(t('pass'), '<div class="pwf"><input id="sPass" type="password" autocomplete="new-password" placeholder="' + esc(t('hint')) + '" value="' + esc(st.pass) + '">' + eye('sPass') + '</div><div class="meter"><i id="mtr"></i></div><small id="mtrT" class="mtrt"></small>', 'sPassE') +
+      fld(t('pass2'), '<div class="pwf"><input id="sPass2" type="password" autocomplete="new-password" value="' + esc(st.pass2) + '">' + eye('sPass2') + '</div>', 'sPass2E');
     else body = '<h1>' + t('s3') + '</h1><p class="adsub">' + t('s3s') + '</p>' + fld(t('up'), '<select id="sUp">' + opts(areas.filter(function (a) { return a.level === 'upazila' && a.active; }), st.up) + '</select>', 'sUpE') +
       fld(t('un'), '<select id="sUn">' + opts(unions(st.up), st.un) + '</select>', 'sUnE') + fld(t('addr'), '<input id="sAddr" type="text" autocomplete="street-address" value="' + esc(st.addr) + '">', 'sAddrE') +
       '<label class="agree"><input id="sAgree" type="checkbox"' + (st.agree ? ' checked' : '') + '><span>' + t('agree1') + '<a href="#" data-legal="terms">' + t('terms') + '</a>' + t('and') + '<a href="#" data-legal="privacy">' + t('priv') + '</a>' + t('agree2') + '</span></label><div class="ferr" id="sAgreeE"></div>';

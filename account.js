@@ -127,7 +127,7 @@
   function opts(list, sel) { return '<option value="">' + m('choose') + '</option>' + list.map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === sel ? ' selected' : '') + '>' + esc(nm(a)) + '</option>'; }).join(''); }
   function unionsOf(up) { return areas.filter(function (a) { return a.level === 'union' && a.parent_id === up && a.active; }); }
   function fmsg(id, text, ok) { var e = $(id); if (e) { e.textContent = text || ''; e.className = 'fmsg ' + (ok ? 'ok' : 'err'); } }
-  function pw(id, label, ph, auto) { return '<label class="fld"><span>' + label + '</span><div class="pw"><input id="' + id + '" type="password" autocomplete="' + auto + '"' + (ph ? ' placeholder="' + ph + '"' : '') + '><button type="button" data-eye="' + id + '" aria-label="Show">' + ZX.ico.a_eye + '</button></div></label>'; }
+  function pw(id, label, ph, auto) { return '<label class="fld"><span>' + label + '</span><div class="pwf"><input id="' + id + '" type="password" autocomplete="' + auto + '"' + (ph ? ' placeholder="' + ph + '"' : '') + '><button type="button" data-eye="' + id + '" aria-label="Show">' + ZX.ico.a_eye + '</button></div></label>'; }
 
   async function renderProfile() {
     var v = $('v-profile'); if (!v) return;

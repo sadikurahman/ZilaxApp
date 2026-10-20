@@ -1,7 +1,7 @@
 /* Zilax — Stage 1 live panels: access gate, application review, staff roles, areas, audit log. */
 (function () {
   var A = ZX.auth, D = ZX.data, esc = A.esc;
-  var NEED = { merchant: ['merchant_food', 'merchant_shop'], rider: ['rider'], sales: ['sales_admin', 'admin', 'super_admin'], admin: ['admin', 'super_admin'], super: ['super_admin'] };
+  var NEED = { merchant: ['merchant_food', 'merchant_shop', 'super_admin'], rider: ['rider', 'super_admin'], sales: ['sales_admin', 'admin', 'super_admin'], admin: ['admin', 'super_admin'], super: ['super_admin'] };
   var L = {
     loading: { en: 'Loading…', bn: 'লোড হচ্ছে…' }, loginT: { en: 'Staff & partner login', bn: 'স্টাফ ও পার্টনার লগইন' }, phone: { en: 'Mobile number', bn: 'মোবাইল নম্বর' }, pass: { en: 'Password', bn: 'পাসওয়ার্ড' }, login: { en: 'Log in', bn: 'লগইন' }, logout: { en: 'Log out', bn: 'লগআউট' },
     noAccess: { en: 'No access to this panel', bn: 'এই প্যানেলে আপনার প্রবেশাধিকার নেই' }, noAccessS: { en: 'Your account does not have this role. Ask a Super Admin or apply as a partner.', bn: 'আপনার অ্যাকাউন্টে এই ভূমিকা নেই। সুপার অ্যাডমিনকে বলুন অথবা পার্টনার হিসেবে আবেদন করুন।' },
@@ -118,7 +118,7 @@
     } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
   }
 
-  var LIVE = { 'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
+  var LIVE = { 'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {
@@ -128,6 +128,9 @@
       if (!A.hasAny(NEED[role] || [])) return function (el) { gateNoAccess(el, role); };
       return LIVE[role + '.' + sec] || null;
     },
+    canSee: function (r) { return this.ready && A.loggedIn() && A.hasAny(NEED[r] || []); },
+    has: function (r, s) { return !!LIVE[r + '.' + s]; },
+    user: function () { var p = A.me().profile; return p ? { name: p.full_name || '' } : null; },
     who: function () { var p = A.me().profile; return p ? '<span style="color:#cfe3d4;font-size:12px">' + esc(p.full_name) + '</span> <a href="#" id="plOut" style="color:#fff;font-size:12px;font-weight:700">' + l('logout') + '</a>' : ''; },
     logout: function () { return A.signOut(); }
   };

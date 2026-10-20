@@ -236,8 +236,8 @@ a.cta-big{display:block}
 .pfcam{position:absolute;right:-2px;bottom:-2px;width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;border:2px solid #fff;font-size:17px;overflow:hidden;cursor:pointer}
 .pfcam input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 .fld input:disabled{background:var(--soft);color:var(--muted)}
-.pw{position:relative}.pw input{padding-right:46px}
-.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;color:var(--muted);font-size:20px;background:none;border:0}
+.pwf{position:relative}.pwf input{padding-right:46px}
+.pwf button{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;color:var(--muted);font-size:20px;background:none;border:0}
 .pfsec{margin:26px -16px 0;padding:6px 16px 10px;border-top:8px solid var(--soft)}.pfsec h3{font-size:16px;font-weight:600;margin:14px 0 0}
 .pfwrap .acav{color:#fff}
 .avatar{overflow:hidden}.avatar .avimg{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
