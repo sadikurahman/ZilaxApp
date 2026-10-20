@@ -160,7 +160,10 @@ function content(){
 function shortOf(x){return T(x[5]||x[2]);}
 function visibleRoles(){var all=Object.keys(ROLES);if(!window.ZXLive||!ZX.live||!ZXLive.canSee)return all;return all.filter(function(r){return r===role||ZXLive.canSee(r);});}
 function stageTag(x){return (window.ZXLive&&ZX.live&&ZXLive.has&&ZXLive.has(role,x[0]))?'':'<span class="st">'+(ZX.lang==='bn'?'ধাপ ':'S')+ZX.digits(x[3])+'</span>';}
-function closeMore(){$('mSheet').classList.remove('show');}
+var moreOpen=false,depth=0;
+function closeMore(fromPop){var was=moreOpen;$('mSheet').classList.remove('show');moreOpen=false;if(was&&!fromPop&&history.state&&history.state.more)history.back();}
+function go(h){var same=h.indexOf('/')>-1?h===role+'/'+sec:h===role;if(same){if(moreOpen)closeMore();return;}depth++;if(moreOpen){moreOpen=false;$('mSheet').classList.remove('show');location.replace('#'+h);}else location.hash=h;}
+window.addEventListener('popstate',function(){if(moreOpen)closeMore(true);});
 function openMore(){
   var S=ROLES[role].s, rest=S.length>5?S.slice(4):[], u=window.ZXLive&&ZXLive.user?ZXLive.user():null, vr=visibleRoles(), h='<div class="lsgrip"></div>';
   if(u)h+='<div class="mrole"><span class="av">'+(u.name||'?').trim().charAt(0).toUpperCase()+'</span><div><b>'+(u.name||'')+'</b><small>'+T(ROLES[role].n)+'</small></div></div>';
@@ -168,7 +171,7 @@ function openMore(){
   if(vr.length>1)h+='<h5>'+(ZX.lang==='bn'?'প্যানেল বদলান':'Switch panel')+'</h5>'+vr.map(function(r){return '<button class="lsrow'+(r===role?' on':'')+'" type="button" data-role="'+r+'"><span class="lsi">'+ic('swap')+'</span><b>'+T(ROLES[r].n)+'</b></button>';}).join('');
   h+='<h5>&nbsp;</h5><a class="lsrow" href="index.html#account"><span class="lsi">'+ic('back')+'</span><b>'+(ZX.lang==='bn'?'অ্যাপে ফিরুন':'Back to app')+'</b></a>';
   if(u)h+='<button class="lsrow out" type="button" data-plout="1"><span class="lsi">'+ic('out')+'</span><b>'+(ZX.lang==='bn'?'লগআউট':'Log out')+'</b></button>';
-  $('mPan').innerHTML=h;$('mSheet').classList.add('show');
+  $('mPan').innerHTML=h;$('mSheet').classList.add('show');if(!moreOpen){history.pushState({more:1},'',location.href);moreOpen=true;}
 }
 function render(){
   parse(); ZX.applyI18n(); closeMore();
@@ -182,15 +185,14 @@ function render(){
   var mount=window.ZXLive?ZXLive.intercept(role,sec):null; if(mount){$('main').innerHTML='';mount($('main'));}else{$('main').innerHTML=content(); calcOut();}
 }
 ZX.onLang=render;
-var depth=0;
-$('backL').addEventListener('click',function(e){if(depth>0){e.preventDefault();depth--;history.back();}});
+$('backL').addEventListener('click',function(e){if(moreOpen){e.preventDefault();closeMore();return;}if(depth>0){e.preventDefault();depth--;history.back();}});
 document.addEventListener('click',function(e){
   if(e.target===$('mSheet')){closeMore();return;}
   var t=e.target.closest('[data-sec],[data-role],[data-out],[data-ron],[data-racc],[data-rskip],[data-more],[data-plout]');if(!t)return;
   if(t.dataset.more){openMore();return;}
   if(t.dataset.plout){if(window.ZXLive)ZXLive.logout();return;}
-  if(t.dataset.sec){if(location.hash!=='#'+role+'/'+t.dataset.sec)depth++;location.hash=role+'/'+t.dataset.sec;return;}
-  if(t.dataset.role){if(location.hash!=='#'+t.dataset.role)depth++;location.hash=t.dataset.role;return;}
+  if(t.dataset.sec){go(role+'/'+t.dataset.sec);return;}
+  if(t.dataset.role){go(t.dataset.role);return;}
   if(t.dataset.out){var id=t.dataset.out;out[id]?delete out[id]:out[id]=true;ZX.store.set('zx_out',out);render();return;}
   if(t.dataset.ron){ZX.store.set('zx_rider_on',!ZX.store.get('zx_rider_on',false));ZX.store.set('zx_rider_acc',false);ZX.store.set('zx_rider_skip',false);render();return;}
   if(t.dataset.racc){ZX.store.set('zx_rider_acc',true);render();return;}
