@@ -29,6 +29,7 @@
     a_eye: S('<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
     a_eyeoff: S('<path d="M3 3l18 18M10.600 5.100A9.700 9.700 0 0 1 12 5c6.500 0 10 7 10 7a17 17 0 0 1-3.200 4.100M6.600 6.600A17 17 0 0 0 2 12s3.500 7 10 7a9.600 9.600 0 0 0 4-.9"/>'),
     a_map: S('<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>'),
+    a_chat: S('<path d="M4 20l1.500-4.500A8 8 0 1 1 8.500 18.500L4 20z"/><path d="M9 10c0 3 2 5 5 5l1-1.500-2-1-1 .8c-.8-.4-1.400-1-1.800-1.800l.8-1-1-2L9 10z"/>'),
     a_home: S('<path d="M4 11l8-7 8 7v9H4v-9z"/><path d="M10 20v-6h4v6"/>'),
     a_pin: S('<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.500"/>'),
     a_plus: S('<path d="M12 5v14M5 12h14"/>'),
@@ -63,8 +64,8 @@
 
   function row(ico, label, o) {
     o = o || {};
-    var act = o.link ? 'data-link="' + o.link + '"' : o.href ? '' : o.lang ? 'data-lang="1"' : 'data-soon="1"';
-    var right = o.val ? '<em class="acv">' + esc(o.val) + '</em>' : (!o.link && !o.href && !o.lang ? '<em class="acs">' + t('soon') + '</em>' : '');
+    var act = o.link ? 'data-link="' + o.link + '"' : o.href ? '' : o.lang ? 'data-lang="1"' : o.info ? 'data-info="' + o.info + '"' : o.rate ? 'data-rate="1"' : 'data-soon="1"';
+    var right = o.val ? '<em class="acv">' + esc(o.val) + '</em>' : (!o.link && !o.href && !o.lang && !o.info && !o.rate ? '<em class="acs">' + t('soon') + '</em>' : '');
     var inner = '<span class="aci">' + ZX.ico[ico] + '</span><span class="acl">' + esc(label) + '</span>' + right + '<span class="acr">' + ZX.ico.arrowR + '</span>';
     return o.href ? '<a class="acrow" href="' + o.href + '">' + inner + '</a>' : '<button class="acrow" type="button" ' + act + '>' + inner + '</button>';
   }
@@ -76,7 +77,8 @@
       return '<div class="achello"><span class="achi">' + ZX.ico.a_user + '</span><b>' + t('hi') + '</b><p class="adsub">' + t('hiS') + '</p>' +
         '<button class="cta-big" type="button" data-go="login">' + t('login') + '</button></div>' +
         sec(t('sSet'), [row('a_globe', t('lang'), { lang: 1, val: t('curLang') })]) +
-        sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' })]);
+        sec(t('sHelp'), [row('a_life', t('help'), { info: 'help' }), row('a_phone', t('supp'), { info: 'support' }), row('a_shield', t('pol'), { info: 'policies' })]) +
+        sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' }), row('a_info', t('about'), { info: 'about' })]);
     }
     var ini = esc((o.name || '?').trim().charAt(0).toUpperCase());
     var av = o.avatar ? '<img src="' + esc(o.avatar) + '" alt="">' : ini;
@@ -91,9 +93,9 @@
     h += sec(t('sAcc'), acc);
     if (o.panels && o.panels.length) h += sec(t('sDash'), o.panels.map(function (p) { return row('a_dash', p.label, { href: p.href }); }));
     h += sec(t('sOff'), [row('a_pct', t('promo')), row('a_ticket', t('refer'))]);
-    h += sec(t('sSet'), [row('a_globe', t('lang'), { lang: 1, val: t('curLang') }), row('a_bell', t('notif'))]);
-    h += sec(t('sHelp'), [row('a_life', t('help')), row('a_phone', t('supp')), row('a_shield', t('pol'))]);
-    h += sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' }), row('a_info', t('about')), row('a_star', t('rate'))]);
+    h += sec(t('sSet'), [row('a_globe', t('lang'), { lang: 1, val: t('curLang') }), row('a_bell', t('notif'), { info: 'perms' })]);
+    h += sec(t('sHelp'), [row('a_life', t('help'), { info: 'help' }), row('a_phone', t('supp'), { info: 'support' }), row('a_shield', t('pol'), { info: 'policies' })]);
+    h += sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' }), row('a_info', t('about'), { info: 'about' }), row('a_star', t('rate'), { rate: 1 })]);
     h += '<button class="acout" type="button" data-go="logout">' + ZX.ico.a_out + t('out') + '</button>';
     return h;
   };
@@ -283,4 +285,69 @@
   }
   var pv2 = ZX.onView; ZX.onView = function (v) { if (pv2) pv2(v); if (v === 'addresses') { var pd = ad.pending; ad.pending = null; ad.f = null; if (pd) openPending(pd); else renderAddr(); } };
   var pl2 = ZX.onLang; ZX.onLang = function () { if (pl2) pl2(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-addresses') { if (ad.f) { grab(); renderAddrForm(); } else renderAddr(); } };
+
+  /* ---------- Help, support, policies, about, permissions ---------- */
+  var SUPPORT = '01646921627';
+  var I2 = {
+    help: { en: 'Help & FAQ', bn: 'সাহায্য ও FAQ' }, support: { en: 'Support contact', bn: 'সাপোর্টে যোগাযোগ' }, policies: { en: 'Policies', bn: 'নীতিমালা' },
+    about: { en: 'About Zilax', bn: 'জিলাক্স সম্পর্কে' }, perms: { en: 'Notifications & permissions', bn: 'নোটিফিকেশন ও অনুমতি' },
+    sTitle: { en: 'We are here to help', bn: 'আমরা সাহায্যের জন্য আছি' }, sSub: { en: 'Message or call us about orders, your account or partnership.', bn: 'অর্ডার, অ্যাকাউন্ট বা পার্টনারশিপ নিয়ে মেসেজ বা কল করুন।' },
+    wa: { en: 'Chat on WhatsApp', bn: 'WhatsApp-এ মেসেজ করুন' }, call: { en: 'Call us', bn: 'কল করুন' }, hello: { en: 'Hello Zilax support, I need help.', bn: 'হ্যালো জিলাক্স সাপোর্ট, আমার একটু সাহায্য দরকার।' },
+    upd: { en: 'Last updated: October 2026', bn: 'সর্বশেষ হালনাগাদ: অক্টোবর ২০২৬' }, ver: { en: 'Version 1.0', bn: 'ভার্সন ১.০' },
+    abt: { en: 'Zilax brings food, technical services, shopping, car rental, decoration and sound & light of your area to one app. We are starting in Islampur and Dewangonj.', bn: 'জিলাক্স আপনার এলাকার খাবার, টেকনিক্যাল সার্ভিস, শপিং, গাড়ি ভাড়া, ডেকোরেশন এবং সাউন্ড ও লাইট এক অ্যাপে এনে দেয়। আমরা শুরু করছি ইসলামপুর ও দেওয়ানগঞ্জে।' },
+    pLoc: { en: 'Location', bn: 'লোকেশন' }, pNot: { en: 'Notifications', bn: 'নোটিফিকেশন' }, on: { en: 'Allowed', bn: 'অনুমতি দেওয়া আছে' }, off: { en: 'Blocked', bn: 'বন্ধ করা আছে' },
+    ask: { en: 'Not asked yet', bn: 'এখনো জিজ্ঞেস করা হয়নি' }, nos: { en: 'Not supported here', bn: 'এখানে সমর্থিত নয়' }, enLoc: { en: 'Allow location now', bn: 'এখনই লোকেশনের অনুমতি দিন' },
+    how: { en: 'To change this on iPhone: Settings → Privacy & Security → Location Services → Safari Websites, or tap “aA” in Safari → Website Settings.', bn: 'আইফোনে বদলাতে: Settings → Privacy & Security → Location Services → Safari Websites, অথবা Safari-তে “aA” চেপে Website Settings এ যান।' },
+    thanks: { en: 'Thank you for your support!', bn: 'আপনার সাপোর্টের জন্য ধন্যবাদ!' }
+  };
+  var q = function (k) { return ZX.t(I2[k]); };
+  var FAQ = [
+    [{ en: 'What is Zilax?', bn: 'জিলাক্স কী?' }, { en: 'Zilax is a local super app: food, technical services, shopping, car rental, decoration and sound & light in one place. It starts in Islampur and Dewangonj.', bn: 'জিলাক্স একটি লোকাল সুপার অ্যাপ: খাবার, টেকনিক্যাল সার্ভিস, শপিং, গাড়ি ভাড়া, ডেকোরেশন এবং সাউন্ড ও লাইট এক জায়গায়। শুরুতে ইসলামপুর ও দেওয়ানগঞ্জে চালু হচ্ছে।' }],
+    [{ en: 'How do I create an account?', bn: 'কীভাবে অ্যাকাউন্ট খুলব?' }, { en: 'Open the Account page and tap Log in / Sign up. Your mobile number, name and a password are enough.', bn: 'Account পেজে Log in / Sign up চাপুন। মোবাইল নম্বর, নাম ও একটা পাসওয়ার্ড দিলেই অ্যাকাউন্ট তৈরি হবে।' }],
+    [{ en: 'How do I change my delivery location?', bn: 'ডেলিভারি লোকেশন কীভাবে বদলাব?' }, { en: 'Tap the location text at the top of the home page. You can use your current location, pick a saved address or add a new one.', bn: 'হোম পেজের ওপরের লোকেশনের লেখায় চাপুন। সেখানে বর্তমান লোকেশন নিতে, সেভ করা ঠিকানা বাছতে বা নতুন ঠিকানা যোগ করতে পারবেন।' }],
+    [{ en: 'How do I change my photo, name or password?', bn: 'ছবি, নাম বা পাসওয়ার্ড কীভাবে বদলাব?' }, { en: 'Go to Account → Profile & password.', bn: 'Account → Profile & password এ যান।' }],
+    [{ en: 'I forgot my password. What now?', bn: 'পাসওয়ার্ড ভুলে গেলে কী করব?' }, { en: 'Message us on WhatsApp with your mobile number and we will help you.', bn: 'আপনার মোবাইল নম্বর দিয়ে আমাদের WhatsApp-এ মেসেজ করুন, আমরা সাহায্য করব।' }],
+    [{ en: 'How can I become a partner?', bn: 'আমি কীভাবে পার্টনার হব?' }, { en: 'Go to Account → More → Join as Partner and submit the form. After we verify and approve it, you get your dashboard.', bn: 'Account → More → Join as Partner এ গিয়ে ফর্ম জমা দিন। আমরা যাচাই করে অনুমোদন দিলে আপনি ড্যাশবোর্ড পাবেন।' }]
+  ];
+  var POL = [
+    [{ en: 'Privacy policy', bn: 'গোপনীয়তা নীতি' }, [{ en: 'We keep only your name, mobile number, addresses, profile photo and, if you allow it, your location.', bn: 'আমরা শুধু আপনার নাম, মোবাইল নম্বর, ঠিকানা, প্রোফাইল ছবি এবং আপনি অনুমতি দিলে লোকেশন রাখি।' },
+      { en: 'This is used to run your account and deliver your orders. We do not sell your information.', bn: 'এগুলো অ্যাকাউন্ট চালাতে ও অর্ডার পৌঁছাতে ব্যবহার হয়। আপনার তথ্য আমরা বিক্রি করি না।' },
+      { en: 'To correct or delete your information, contact support.', bn: 'তথ্য ঠিক করতে বা মুছতে সাপোর্টে যোগাযোগ করুন।' }]],
+    [{ en: 'Terms of use', bn: 'ব্যবহারের শর্ত' }, [{ en: 'Create your account with correct information and use the app honestly.', bn: 'সঠিক তথ্য দিয়ে অ্যাকাউন্ট খুলুন এবং অ্যাপ সৎভাবে ব্যবহার করুন।' },
+      { en: 'Prices and quality are set by our partners. The delivery charge is shown when you order.', bn: 'দাম ও মান নির্ধারণ করেন আমাদের পার্টনাররা। ডেলিভারি চার্জ অর্ডারের সময় দেখানো হবে।' },
+      { en: 'Zilax may suspend accounts that misuse the app.', bn: 'অ্যাপের অপব্যবহার করলে জিলাক্স অ্যাকাউন্ট বন্ধ করে দিতে পারে।' }]],
+    [{ en: 'Refund policy', bn: 'রিফান্ড নীতি' }, [{ en: 'If there is a problem with an order, tell support within 24 hours.', bn: 'অর্ডারে সমস্যা হলে ২৪ ঘণ্টার মধ্যে সাপোর্টকে জানান।' },
+      { en: 'We check the issue and tell you whether a refund or replacement is possible.', bn: 'আমরা বিষয়টি যাচাই করে রিফান্ড বা বদল সম্ভব কি না জানাব।' },
+      { en: 'How and when a refund is paid depends on how you paid.', bn: 'রিফান্ড কীভাবে ও কখন পাবেন তা আপনার পেমেন্টের মাধ্যমের ওপর নির্ভর করে।' }]]
+  ];
+  function infoBody(pg) {
+    if (pg === 'support') {
+      var wa = 'https://wa.me/88' + SUPPORT + '?text=' + encodeURIComponent(q('hello'));
+      return '<div class="sp"><span class="achi">' + ZX.ico.a_life + '</span><b>' + q('sTitle') + '</b><p class="adsub">' + q('sSub') + '</p><div class="spn">' + SUPPORT + '</div></div>' +
+        '<a class="spbtn wa" href="' + wa + '" target="_blank" rel="noopener">' + ZX.ico.a_chat + q('wa') + '</a><a class="spbtn" href="tel:' + SUPPORT + '">' + ZX.ico.a_phone + q('call') + '</a>';
+    }
+    if (pg === 'policies') return POL.map(function (p) { return '<details class="faq"><summary>' + ZX.t(p[0]) + '</summary>' + p[1].map(function (x) { return '<p>' + ZX.t(x) + '</p>'; }).join('') + '</details>'; }).join('') + '<p class="inote">' + q('upd') + '</p>';
+    if (pg === 'about') return '<div class="ab"><img src="icon-512.png" alt="Zilax"><b>Zilax</b><span>Shop • Rent • Live Better</span><p>' + q('abt') + '</p><em>' + q('ver') + '</em></div>';
+    if (pg === 'perms') return '<div class="pm"><div class="pmr"><span class="aci">' + ZX.ico.a_pin + '</span><b>' + q('pLoc') + '</b><em id="pmLoc">…</em></div><div class="pmr"><span class="aci">' + ZX.ico.a_bell + '</span><b>' + q('pNot') + '</b><em id="pmNot">…</em></div></div>' +
+      '<button class="cta-big" id="pmBtn" type="button">' + q('enLoc') + '</button><p class="inote">' + q('how') + '</p>';
+    return FAQ.map(function (f) { return '<details class="faq"><summary>' + ZX.t(f[0]) + '</summary><p>' + ZX.t(f[1]) + '</p></details>'; }).join('');
+  }
+  function permStatus() {
+    var set = function (id, s) { var e = $(id); if (e) { e.textContent = q(s); e.className = 'pm-' + s; } };
+    if (navigator.permissions && navigator.permissions.query) navigator.permissions.query({ name: 'geolocation' }).then(function (r) { set('pmLoc', r.state === 'granted' ? 'on' : r.state === 'denied' ? 'off' : 'ask'); r.onchange = function () { permStatus(); }; }, function () { set('pmLoc', 'ask'); });
+    else set('pmLoc', navigator.geolocation ? 'ask' : 'nos');
+    set('pmNot', typeof Notification === 'undefined' ? 'nos' : Notification.permission === 'granted' ? 'on' : Notification.permission === 'denied' ? 'off' : 'ask');
+  }
+  function renderInfo() {
+    var v = $('v-info'); if (!v) return; var pg = ZX.info || 'help';
+    v.innerHTML = '<div class="pbar"><button class="bk" data-tab="account" type="button" aria-label="Back">' + ZX.ico.back + '</button><h2>' + (q(pg) || q('help')) + '</h2></div>' + infoBody(pg);
+    if (pg === 'perms') permStatus();
+  }
+  document.addEventListener('click', function (e) {
+    var i = e.target.closest('[data-info]'); if (i) { ZX.info = i.getAttribute('data-info'); ZX.go('info'); return; }
+    if (e.target.closest('[data-rate]')) { ZX.toast(q('thanks')); return; }
+    if (e.target.closest('#pmBtn') && navigator.geolocation) navigator.geolocation.getCurrentPosition(permStatus, permStatus);
+  });
+  var pv3 = ZX.onView; ZX.onView = function (v) { if (pv3) pv3(v); if (v === 'info') renderInfo(); };
+  var pl3 = ZX.onLang; ZX.onLang = function () { if (pl3) pl3(); var c = document.querySelector('.view.on'); if (c && c.id === 'v-info') renderInfo(); };
 })();

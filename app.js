@@ -156,7 +156,7 @@
     box.classList.add('show');
   }
   function go(t) {
-    if (['home', 'offers', 'activity', 'inbox', 'shop', 'food', 'service', 'account', 'join', 'login', 'apply', 'myapps', 'profile', 'addresses'].indexOf(t) < 0) t = 'home';
+    if (['home', 'offers', 'activity', 'inbox', 'shop', 'food', 'service', 'account', 'join', 'login', 'apply', 'myapps', 'profile', 'addresses', 'info'].indexOf(t) < 0) t = 'home';
     tab = t; document.querySelectorAll('.view').forEach(function (v) { v.classList.toggle('on', v.id === 'v-' + t); }); renderNav(); window.scrollTo(0, 0); if (ZX.onView) ZX.onView(t);
   }
   function wireDots(sc, dots, w) { sc.addEventListener('scroll', function () { var f = sc.firstElementChild; if (!f) return; var i = Math.round(sc.scrollLeft / (f.offsetWidth + 12)); i = Math.min(Math.max(i, 0), dots.children.length - 1); for (var j = 0; j < dots.children.length; j++) dots.children[j].classList.toggle('on', j === i); }, { passive: true }); }
