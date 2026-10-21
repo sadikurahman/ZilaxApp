@@ -118,7 +118,109 @@
     } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
   }
 
-  var LIVE = { 'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
+
+  /* ---------- Super Admin: real dashboard + users ---------- */
+  var IC = {
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.500 20c0-3.600 2.900-6 6.500-6s6.500 2.400 6.500 6"/><circle cx="17" cy="9" r="2.500"/><path d="M17 14c2.800 0 4.500 1.800 4.500 4.500"/>',
+    plus: '<circle cx="9" cy="8" r="3.500"/><path d="M2.500 20c0-3.600 2.900-6 6.500-6s6.500 2.400 6.500 6M19 8v6M16 11h6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', store: '<path d="M4 9l1.500-5h13L20 9M4 9v11h16V9M4 9c0 2 3 2 4 0 1 2 3 2 4 0 1 2 3 2 4 0 1 2 4 2 4 0"/>',
+    bike: '<circle cx="6" cy="16" r="3.500"/><circle cx="18" cy="16" r="3.500"/><path d="M6 16l4-7h5l3 7M10 9l2 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.500l2.700 2.700L16 9.500"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>', arrow: '<path d="M9 5l7 7-7 7"/>', phone: '<path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+    wa: '<path d="M3 21l1.500-4.500A9 9 0 1 1 8 19.500L3 21z"/><path d="M9 9c0 3 3 6 6 6l1.200-1.500-2-1-1 .7c-.8-.4-1.600-1.200-2-2l.7-1-1-2L9 9z"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'
+  };
+  var ic = function (k) { return '<svg viewBox="0 0 24 24">' + IC[k] + '</svg>'; };
+  var N = {
+    hi1: { en: 'Good morning', bn: 'সুপ্রভাত' }, hi2: { en: 'Good afternoon', bn: 'শুভ অপরাহ্ন' }, hi3: { en: 'Good evening', bn: 'শুভ সন্ধ্যা' },
+    heroS: { en: 'Here is how Zilax is doing right now.', bn: 'এই মুহূর্তে জিলাক্সের অবস্থা এক নজরে।' }, heroPend1: { en: 'application waiting for a decision', bn: 'টি আবেদন সিদ্ধান্তের অপেক্ষায়' }, heroPend: { en: 'applications waiting for a decision', bn: 'টি আবেদন সিদ্ধান্তের অপেক্ষায়' }, review: { en: 'Review now', bn: 'এখনই দেখুন' }, allClear: { en: 'No application is waiting. Nice work!', bn: 'কোনো আবেদন অপেক্ষায় নেই। দারুণ কাজ!' },
+    kUsers: { en: 'Total users', bn: 'মোট ইউজার' }, kNew: { en: 'New this week', bn: 'এই সপ্তাহে নতুন' }, kPend: { en: 'Pending applications', bn: 'অপেক্ষমাণ আবেদন' }, kPart: { en: 'Active partners', bn: 'সক্রিয় পার্টনার' }, kRider: { en: 'Active riders', bn: 'সক্রিয় রাইডার' }, kStaff: { en: 'Staff members', bn: 'স্টাফ সদস্য' },
+    quick: { en: 'Quick actions', bn: 'দ্রুত কাজ' }, qAppr: { en: 'Approvals', bn: 'অনুমোদন' }, qUsers: { en: 'Users', bn: 'ইউজার' }, qStaff: { en: 'Staff', bn: 'কর্মী' },
+    recent: { en: 'Latest applications', bn: 'সাম্প্রতিক আবেদন' }, seeAll: { en: 'See all', bn: 'সব দেখুন' }, sales: { en: 'Sales and income', bn: 'বিক্রি ও আয়' }, salesS: { en: 'These numbers will appear here once orders start.', bn: 'অর্ডার চালু হলে এই সংখ্যাগুলো এখানে আসবে।' },
+    users: { en: 'Users', bn: 'ইউজার' }, usersS: { en: 'Everyone who has signed up on Zilax.', bn: 'যারা জিলাক্সে সাইন আপ করেছেন সবাই।' }, searchP: { en: 'Search name or phone', bn: 'নাম বা ফোন নম্বর খুঁজুন' }, more: { en: 'Show more', bn: 'আরও দেখান' }, noUsers: { en: 'No user found.', bn: 'কোনো ইউজার পাওয়া যায়নি।' },
+    joined: { en: 'Joined', bn: 'যোগ দিয়েছেন' }, area: { en: 'Area', bn: 'এলাকা' }, addr: { en: 'Address', bn: 'ঠিকানা' }, roles: { en: 'Roles', bn: 'ভূমিকা' }, call: { en: 'Call', bn: 'কল' }, wa: { en: 'WhatsApp', bn: 'WhatsApp' }, suspended: { en: 'Suspended', bn: 'স্থগিত' }, activeU: { en: 'Active', bn: 'সক্রিয়' }, noRoles: { en: 'Customer', bn: 'গ্রাহক' },
+    shown: { en: 'shown', bn: 'টি দেখানো হচ্ছে' }
+  };
+  var n = function (k) { return ZX.t(N[k]); };
+  var PARTNER = ['merchant_food', 'merchant_shop', 'technician', 'car_partner', 'decoration', 'sound_light'];
+  var PALETTE = ['#2563eb', '#0d9488', '#7c3aed', '#e11d48', '#ea580c', '#0D5C3A'];
+  var hue = function (s) { var h = 0; String(s || '').split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) | 0; }); return PALETTE[Math.abs(h) % PALETTE.length]; };
+  var go = function (h) { location.hash = h; };
+  async function cnt(q) { var r = await q; if (r.error) throw r.error; return r.count || 0; }
+  function wa(phone) { var d = String(phone || '').replace(/\D/g, ''); if (d.length === 11 && d.charAt(0) === '0') d = '88' + d; return d; }
+
+  async function dashPanel(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    var sb = ZX.sb, week = new Date(Date.now() - 7 * 864e5).toISOString();
+    try {
+      var rs = await Promise.all([
+        cnt(sb.from('profiles').select('id', { count: 'exact', head: true })),
+        cnt(sb.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', week)),
+        cnt(sb.from('partner_applications').select('id', { count: 'exact', head: true }).in('status', ['pending', 'recommended', 'not_recommended'])),
+        cnt(sb.from('user_roles').select('user_id', { count: 'exact', head: true }).eq('status', 'active').in('role', PARTNER)),
+        cnt(sb.from('user_roles').select('user_id', { count: 'exact', head: true }).eq('status', 'active').eq('role', 'rider')),
+        cnt(sb.from('user_roles').select('user_id', { count: 'exact', head: true }).eq('status', 'active').in('role', STAFF_ROLES)),
+        sb.from('partner_applications').select('id,business_name,category,status,created_at').order('created_at', { ascending: false }).limit(5)
+      ]);
+      var apps = (rs[6].data || []), p = A.me().profile || {}, hr = new Date().getHours(), first = String(p.full_name || '').trim().split(' ')[0];
+      var greet = hr < 12 ? n('hi1') : hr < 17 ? n('hi2') : n('hi3');
+      var date = new Date().toLocaleDateString(ZX.lang === 'bn' ? 'bn-BD' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      var K = [['kUsers', rs[0], 'users', '#2563eb', 'super/users'], ['kNew', rs[1], 'plus', '#0d9488', 'super/users'], ['kPend', rs[2], 'clock', '#ea580c', 'super/appr'], ['kPart', rs[3], 'store', '#7c3aed', null], ['kRider', rs[4], 'bike', '#e11d48', null], ['kStaff', rs[5], 'key', '#0D5C3A', 'super/roles']];
+      var h = '<div class="hero2"><small>' + esc(date) + '</small><h2>' + esc(greet) + (first ? ', ' + esc(first) : '') + '</h2><p>' + (rs[2] ? '<b>' + ZX.digits(rs[2]) + '</b> ' + (rs[2] === 1 ? n('heroPend1') : n('heroPend')) : n('allClear')) + '</p>' +
+        (rs[2] ? '<button type="button" class="hbtn" data-g="super/appr">' + n('review') + ic('arrow') + '</button>' : '<p class="hs">' + n('heroS') + '</p>') + '</div>' +
+        '<div class="kgrid">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"' + (k[4] ? ' data-g="' + k[4] + '"' : '') + '><span class="kic">' + ic(k[2]) + '</span><b>' + ZX.digits(k[1]) + '</b><small>' + n(k[0]) + '</small></div>'; }).join('') + '</div>' +
+        '<h3 class="sh">' + n('quick') + '</h3><div class="qrow">' +
+        [['qAppr', 'check', '#ea580c', 'super/appr'], ['qUsers', 'users', '#2563eb', 'super/users'], ['qStaff', 'key', '#0D5C3A', 'super/roles']].map(function (q) { return '<button type="button" class="qb" style="--ac:' + q[2] + '" data-g="' + q[3] + '"><span>' + ic(q[1]) + '</span>' + n(q[0]) + '</button>'; }).join('') + '</div>' +
+        '<div class="shr"><h3 class="sh">' + n('recent') + '</h3><a href="#super/appr" class="sal">' + n('seeAll') + '</a></div>';
+      h += apps.length ? '<div class="cardx" style="padding:6px 16px">' + apps.map(function (a) { var pt = ptypeOf(a.category), col = hue(a.category); return '<div class="rowx"><span class="dot" style="background:' + col + '1f;color:' + col + '">' + esc(String(a.business_name || '?').trim().charAt(0).toUpperCase()) + '</span><div class="g"><b>' + esc(a.business_name) + '</b><small>' + esc(ZX.t(pt.name)) + ' · ' + esc(fdate(a.created_at)) + '</small></div>' + chip(a.status, tone(a.status)) + '</div>'; }).join('') + '</div>' : '<div class="soon">' + l('none') + '</div>';
+      h += '<div class="soft2"><span class="kic" style="--ac:#64748b">' + ic('chart') + '</span><div><b>' + n('sales') + '</b><small>' + n('salesS') + '</small></div></div>';
+      el.innerHTML = h;
+    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  }
+
+  async function usersPanel(el) {
+    var st = { q: '', rows: [], roles: {}, more: false, busy: false }, areas = [], timer = null;
+    try { areas = await A.areas(); } catch (e) { areas = []; }
+    var PAGE = 30;
+    function area(u) { return [areaName(areas, u.union_id), areaName(areas, u.upazila_id)].filter(Boolean).join(', '); }
+    function rchips(id) { var rs = (st.roles[id] || []).filter(function (r) { return r.status === 'active'; }); return rs.length ? rs.map(function (r) { return '<span class="rc rc-' + r.role + '">' + esc(A.roleLabel(r.role)) + '</span>'; }).join('') : '<span class="rc rc-customer">' + n('noRoles') + '</span>'; }
+    async function load(reset) {
+      if (st.busy) return; st.busy = true; var from = reset ? 0 : st.rows.length;
+      try {
+        var q = ZX.sb.from('profiles').select('id,full_name,phone,upazila_id,union_id,address,created_at,status,avatar_url').order('created_at', { ascending: false }).range(from, from + PAGE - 1);
+        var s = st.q.replace(/[%,()]/g, ' ').trim(); if (s) q = q.or('full_name.ilike.%' + s + '%,phone.ilike.%' + s + '%');
+        var r = await q; if (r.error) throw r.error; var rows = r.data || [];
+        if (rows.length) { var rr = await ZX.sb.from('user_roles').select('user_id,role,status').in('user_id', rows.map(function (x) { return x.id; })); (rr.data || []).forEach(function (x) { (st.roles[x.user_id] = st.roles[x.user_id] || []).push(x); }); }
+        st.rows = reset ? rows : st.rows.concat(rows); st.more = rows.length === PAGE;
+      } catch (e) { el.querySelector('#ulist').innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; st.busy = false; return; }
+      st.busy = false; list();
+    }
+    function list() {
+      var box = el.querySelector('#ulist'); if (!box) return;
+      box.innerHTML = st.rows.length ? '<div class="cardx" style="padding:4px 14px">' + st.rows.map(function (u) {
+        var col = hue(u.id), a = area(u);
+        return '<button type="button" class="urow" data-u="' + u.id + '"><span class="uav" style="background:' + col + '">' + (u.avatar_url ? '<img src="' + esc(u.avatar_url) + '" alt="">' : esc(String(u.full_name || '?').trim().charAt(0).toUpperCase())) + '</span><div class="g"><b>' + esc(u.full_name || '—') + '</b><small>' + esc(u.phone) + (a ? ' · ' + esc(a) : '') + '</small><span class="rcs">' + rchips(u.id) + '</span></div><span class="uar">' + ic('arrow') + '</span></button>';
+      }).join('') + '</div>' + (st.more ? '<button type="button" class="btn o umore" id="umore">' + n('more') + '</button>' : '') + '<p class="ucount">' + ZX.digits(st.rows.length) + ' ' + n('shown') + '</p>' : '<div class="soon">' + n('noUsers') + '</div>';
+    }
+    function sheet(u) {
+      var sh = document.getElementById('uSheet'); if (!sh) { sh = document.createElement('div'); sh.className = 'sheet'; sh.id = 'uSheet'; sh.innerHTML = '<div class="pan" id="uPan"></div>'; document.body.appendChild(sh); sh.addEventListener('click', function (e) { if (e.target === sh) sh.classList.remove('show'); }); }
+      var col = hue(u.id), a = area(u), ph = String(u.phone || '');
+      document.getElementById('uPan').innerHTML = '<div class="lsgrip"></div><div class="udet"><span class="uav big" style="background:' + col + '">' + (u.avatar_url ? '<img src="' + esc(u.avatar_url) + '" alt="">' : esc(String(u.full_name || '?').trim().charAt(0).toUpperCase())) + '</span><h3>' + esc(u.full_name || '—') + '</h3><p>' + esc(ph) + ' ' + chip(u.status === 'suspended' ? n('suspended') : n('activeU'), u.status === 'suspended' ? 'r' : 'ok') + '</p></div>' +
+        '<div class="cardx" style="margin:10px 0 0;padding:6px 14px"><div class="rowx"><small>' + n('joined') + '</small><div class="g" style="text-align:right"><b>' + esc(fdate(u.created_at)) + '</b></div></div>' + (a ? '<div class="rowx"><small>' + n('area') + '</small><div class="g" style="text-align:right"><b>' + esc(a) + '</b></div></div>' : '') + (u.address ? '<div class="rowx"><small>' + n('addr') + '</small><div class="g" style="text-align:right"><b>' + esc(u.address) + '</b></div></div>' : '') + '<div class="rowx"><small>' + n('roles') + '</small><div class="g" style="text-align:right">' + rchips(u.id) + '</div></div></div>' +
+        '<div class="grid2" style="margin-top:12px"><a class="btn" href="tel:' + esc(ph) + '" style="text-align:center">' + ic('phone') + n('call') + '</a><a class="btn wab" href="https://wa.me/' + wa(ph) + '" target="_blank" rel="noopener" style="text-align:center">' + ic('wa') + n('wa') + '</a></div>';
+      sh.classList.add('show');
+    }
+    el.innerHTML = '<h2 class="pt serif">' + n('users') + '</h2><p class="ps">' + n('usersS') + '</p><div class="srch"><span>' + ic('search') + '</span><input id="uq" type="search" placeholder="' + esc(n('searchP')) + '" autocomplete="off"></div><div id="ulist"><div class="soon">' + l('loading') + '</div></div>';
+    el.querySelector('#uq').addEventListener('input', function (e) { st.q = e.target.value; clearTimeout(timer); timer = setTimeout(function () { load(true); }, 350); });
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-u],#umore'); if (!b) return;
+      if (b.id === 'umore') { load(false); return; }
+      var u = st.rows.filter(function (x) { return x.id === b.getAttribute('data-u'); })[0]; if (u) sheet(u);
+    });
+    load(true);
+  }
+  document.addEventListener('click', function (e) { var g = e.target.closest('[data-g]'); if (g) { location.hash = g.getAttribute('data-g'); } });
+
+  var LIVE = { 'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {
