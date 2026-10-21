@@ -34,50 +34,96 @@
     el.innerHTML = '<div class="soon" style="border-style:solid"><b>' + (pend ? l('pendingT') : l('noAccess')) + '</b>' + (pend ? l('pendingS') : l('noAccessS')) + '</div><p><a class="btn" href="index.html#join" style="display:inline-block;margin-top:10px">' + ZX.d('joinT') + '</a></p>';
   }
 
-  /* ---------- applications board (Sales: recommend, Admin: approve) ---------- */
+  /* ---------- applications board (premium): Sales recommends, Admin approves ---------- */
+  var CATS = { merchant_food: ['food', '#ea580c'], merchant_shop: ['store', '#2563eb'], rider: ['bike', '#e11d48'], technician: ['tool', '#0d9488'], car_partner: ['car', '#7c3aed'], decoration: ['spark', '#db2777'], sound_light: ['speaker', '#ca8a04'] };
+  var OPEN = ['pending', 'recommended', 'not_recommended'];
+  var Q = {
+    tLead: { en: 'Partner leads', bn: 'পার্টনার লিড' }, sLead: { en: 'Check the papers, then recommend or not.', bn: 'কাগজ দেখে সুপারিশ করুন বা করবেন না।' },
+    tAppr: { en: 'Approvals', bn: 'অনুমোদন' }, sAppr: { en: 'Final decision on partner applications.', bn: 'পার্টনার আবেদনের চূড়ান্ত সিদ্ধান্ত।' },
+    srch: { en: 'Search business, name or phone', bn: 'দোকান, নাম বা ফোন খুঁজুন' }, all: { en: 'All', bn: 'সব' }, noMatch: { en: 'No application matches.', bn: 'কোনো আবেদন মেলেনি।' },
+    wait: { en: 'waiting', bn: 'অপেক্ষায়' }, now: { en: 'Just now', bn: 'এইমাত্র' }, contact: { en: 'Contact', bn: 'যোগাযোগ' }, loc: { en: 'Location', bn: 'অবস্থান' }, det: { en: 'Business details', bn: 'ব্যবসার তথ্য' },
+    dec: { en: 'Your decision', bn: 'আপনার সিদ্ধান্ত' }, call: { en: 'Call', bn: 'কল' }, wa: { en: 'WhatsApp', bn: 'WhatsApp' }, owner: { en: 'Owner', bn: 'মালিক' }, applied: { en: 'Applied', bn: 'আবেদনের সময়' },
+    confirmOk: { en: 'Approve this partner? They will get access to their panel.', bn: 'এই পার্টনারকে অনুমোদন দেবেন? তিনি নিজের প্যানেলে ঢুকতে পারবেন।' }, confirmNo: { en: 'Reject this application?', bn: 'এই আবেদন প্রত্যাখ্যান করবেন?' },
+    confirmRec: { en: 'Send this recommendation to Admin?', bn: 'অ্যাডমিনের কাছে এই সুপারিশ পাঠাবেন?' }, close: { en: 'Close', bn: 'বন্ধ করুন' }
+  };
+  var q = function (k) { return ZX.t(Q[k]); };
+  function ago(d) {
+    var m = Math.max(0, Math.round((Date.now() - new Date(d).getTime()) / 60000)); if (m < 60) return m < 2 ? q('now') : ZX.digits(m) + (ZX.lang === 'bn' ? ' মিনিট আগে' : 'm ago');
+    var h = Math.round(m / 60); if (h < 24) return ZX.digits(h) + (ZX.lang === 'bn' ? ' ঘণ্টা আগে' : 'h ago');
+    var dd = Math.round(h / 24); return ZX.digits(dd) + (ZX.lang === 'bn' ? ' দিন আগে' : 'd ago');
+  }
+  function stc(s) { return '<span class="stc st-' + esc(s) + '">' + esc(A.statusLabel(s)) + '</span>'; }
+  function wa2(phone) { var d = String(phone || '').replace(/\D/g, ''); if (d.length === 11 && d.charAt(0) === '0') d = '88' + d; return d; }
   function appsBoard(mode) {
     return async function (el) {
-      var tab = 'open', apps = [], areas = [], openId = null;
+      var tab = 'open', cat = 'all', qs = '', apps = [], areas = [], cur = null, old = document.getElementById('aSheet'); if (old) old.remove();
       el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
       try { areas = await A.areas(); } catch (e) { }
       async function load() { try { apps = await A.listApplications(null); } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; return false; } return true; }
-      function filtered() { return apps.filter(function (a) { return tab === 'open' ? ['pending', 'recommended', 'not_recommended'].indexOf(a.status) > -1 : a.status === tab; }); }
-      async function detail(a) {
-        var d = a.details || {}, rows = Object.keys(d).filter(function (k) { return d[k] !== '' && d[k] != null; }).map(function (k) { return '<tr><td>' + esc(k.replace(/_/g, ' ')) + '</td><td>' + esc(d[k]) + '</td></tr>'; }).join('');
-        var map = a.lat != null ? ' · <a href="https://www.google.com/maps?q=' + esc(a.lat) + ',' + esc(a.lng) + '" target="_blank" rel="noopener">' + l('map') + '</a>' : '';
-        var open = ['pending', 'recommended', 'not_recommended'].indexOf(a.status) > -1;
+      var isOpen = function (a) { return OPEN.indexOf(a.status) > -1; };
+      var inTab = function (a, t) { return t === 'open' ? isOpen(a) : a.status === t; };
+      function matches(a) { if (cat !== 'all' && a.category !== cat) return false; var s = qs.trim().toLowerCase(); if (!s) return true; return [a.business_name, (a.applicant || {}).full_name, a.owner_name, a.phone].join(' ').toLowerCase().indexOf(s) > -1; }
+      function catOf(c) { var k = CATS[c] || ['store', '#64748b']; return { ico: k[0], col: k[1], name: ZX.t(ptypeOf(c).name) }; }
+      function paintStats() {
+        var S = [['open', '#ea580c', 'clock'], ['approved', '#15803d', 'check'], ['rejected', '#dc2626', 'x']];
+        el.querySelector('#abStats').innerHTML = S.map(function (s) { var n0 = apps.filter(function (a) { return inTab(a, s[0]); }).length; return '<button type="button" class="ast' + (tab === s[0] ? ' on' : '') + '" style="--ac:' + s[1] + '" data-tab2="' + s[0] + '"><span>' + ic(s[2]) + '</span><b>' + ZX.digits(n0) + '</b><small>' + l(s[0]) + '</small></button>'; }).join('');
+      }
+      function paintCats() {
+        var present = []; apps.forEach(function (a) { if (present.indexOf(a.category) < 0) present.push(a.category); });
+        el.querySelector('#abCats').innerHTML = ['all'].concat(present).map(function (c) { var o = c === 'all' ? null : catOf(c); return '<button type="button" class="acat' + (cat === c ? ' on' : '') + '" data-cat="' + c + '"' + (o ? ' style="--ac:' + o.col + '"' : '') + '>' + (o ? '<i></i>' + esc(o.name) : q('all')) + '</button>'; }).join('');
+      }
+      function paintList() {
+        var list = apps.filter(function (a) { return inTab(a, tab) && matches(a); }), box = el.querySelector('#abList');
+        box.innerHTML = list.length ? list.map(function (a) {
+          var c = catOf(a.category), days = Math.floor((Date.now() - new Date(a.created_at).getTime()) / 864e5);
+          return '<button type="button" class="acard" data-open="' + a.id + '"><span class="aic" style="--ac:' + c.col + '">' + ic(c.ico) + '</span><div class="g"><b>' + esc(a.business_name) + '</b><small>' + esc(c.name) + ' · ' + esc((a.applicant || {}).full_name || a.owner_name || '') + '</small><small class="mut">' + esc(a.phone) + ' · ' + esc(ago(a.created_at)) + '</small></div><div class="aside">' + stc(a.status) + (isOpen(a) && days >= 3 ? '<em class="late">' + ZX.digits(days) + (ZX.lang === 'bn' ? ' দিন' : 'd') + ' ' + q('wait') + '</em>' : '') + '</div></button>';
+        }).join('') : '<div class="soon">' + (apps.length ? q('noMatch') : l('none')) + '</div>';
+      }
+      function shell() {
+        el.innerHTML = '<h2 class="pt serif">' + (mode === 'sales' ? q('tLead') : q('tAppr')) + '</h2><p class="ps">' + (mode === 'sales' ? q('sLead') : q('sAppr')) + '</p><div class="astats" id="abStats"></div>' +
+          '<div class="srch"><span>' + ic('search') + '</span><input id="abq" type="search" placeholder="' + esc(q('srch')) + '" autocomplete="off"></div><div class="acats" id="abCats"></div><div id="abList"></div>';
+        el.querySelector('#abq').addEventListener('input', function (e) { qs = e.target.value; paintList(); });
+        paintStats(); paintCats(); paintList();
+      }
+      function sheetEl() {
+        var sh = document.getElementById('aSheet'); if (sh) return sh;
+        sh = document.createElement('div'); sh.className = 'sheet'; sh.id = 'aSheet'; sh.innerHTML = '<div class="pan" id="aPan"></div>'; document.body.appendChild(sh);
+        sh.addEventListener('click', function (e) { if (e.target === sh || e.target.closest('[data-aclose]')) sh.classList.remove('show'); });
+        sh.addEventListener('click', onAct); return sh;
+      }
+      function pair(k, v) { return v ? '<div class="apair"><small>' + esc(k) + '</small><b>' + esc(v) + '</b></div>' : ''; }
+      async function openSheet(a) {
+        cur = a; var c = catOf(a.category), d = a.details || {}, sh = sheetEl(), open = isOpen(a), ph = String(a.phone || '');
+        var area = [areaName(areas, a.union_id), areaName(areas, a.upazila_id)].filter(Boolean).join(', ');
+        var rows = Object.keys(d).filter(function (k) { return d[k] !== '' && d[k] != null; }).map(function (k) { return pair(k.replace(/_/g, ' '), String(d[k])); }).join('');
         var acts = !open ? '' : mode === 'sales'
-          ? '<button class="btn" data-act="rec" data-id="' + a.id + '">' + l('recommend') + '</button> <button class="btn o" data-act="norec" data-id="' + a.id + '">' + l('notRec') + '</button>'
-          : '<button class="btn" data-act="ok" data-id="' + a.id + '">' + l('approve') + '</button> <button class="btn o" data-act="no" data-id="' + a.id + '">' + l('reject') + '</button>';
-        return '<div class="cardx adet"><table class="t">' + '<tr><td>' + l('applicant') + '</td><td>' + esc((a.applicant || {}).full_name) + ' · ' + esc(a.phone) + '</td></tr>' +
-          '<tr><td>' + l('address') + '</td><td>' + esc(areaName(areas, a.union_id)) + ' ' + esc(areaName(areas, a.upazila_id)) + ', ' + esc(a.address) + map + '</td></tr>' + rows + '</table>' +
-          (a.sales_note ? '<p class="ps"><b>' + l('salesNote') + ':</b> ' + esc(a.sales_note) + '</p>' : '') + (a.admin_note ? '<p class="ps"><b>' + l('adminNote') + ':</b> ' + esc(a.admin_note) + '</p>' : '') +
-          '<b>' + l('docs') + '</b><div class="thumbs" id="th_' + a.id + '">' + l('loading') + '</div>' +
-          (open ? '<label class="fld"><span>' + l('note') + '</span><textarea class="inp" id="nt_' + a.id + '" rows="2"></textarea></label><div id="am_' + a.id + '" class="fmsg"></div><div class="acts">' + acts + '</div>' : '') + '</div>';
+          ? '<button type="button" class="btn" data-act="rec">' + l('recommend') + '</button><button type="button" class="btn o" data-act="norec">' + l('notRec') + '</button>'
+          : '<button type="button" class="btn" data-act="ok">' + l('approve') + '</button><button type="button" class="btn o dng" data-act="no">' + l('reject') + '</button>';
+        document.getElementById('aPan').innerHTML = '<div class="lsgrip"></div><div class="ashead"><span class="aic big" style="--ac:' + c.col + '">' + ic(c.ico) + '</span><div class="g"><h3>' + esc(a.business_name) + '</h3><small>' + esc(c.name) + '</small></div>' + stc(a.status) + '</div>' +
+          '<div class="asec"><h4>' + q('contact') + '</h4>' + pair(l('applicant'), (a.applicant || {}).full_name) + pair(q('owner'), a.owner_name) + pair(q('applied'), fdate(a.created_at)) + '<div class="aqa"><a class="btn" href="tel:' + esc(ph) + '">' + ic('phone') + q('call') + '</a><a class="btn wab" href="https://wa.me/' + wa2(ph) + '" target="_blank" rel="noopener">' + ic('wa') + q('wa') + '</a></div></div>' +
+          '<div class="asec"><h4>' + q('loc') + '</h4>' + pair(l('address'), [area, a.address].filter(Boolean).join(', ')) + (a.lat != null ? '<a class="amap" href="https://www.google.com/maps?q=' + esc(a.lat) + ',' + esc(a.lng) + '" target="_blank" rel="noopener">' + ic('pin') + l('map') + '</a>' : '') + '</div>' +
+          (rows ? '<div class="asec"><h4>' + q('det') + '</h4>' + rows + '</div>' : '') +
+          '<div class="asec"><h4>' + l('docs') + '</h4><div class="adocs" id="adocs">' + l('loading') + '</div></div>' +
+          ((a.sales_note || a.admin_note) ? '<div class="asec">' + (a.sales_note ? '<p class="anote"><b>' + l('salesNote') + ':</b> ' + esc(a.sales_note) + '</p>' : '') + (a.admin_note ? '<p class="anote"><b>' + l('adminNote') + ':</b> ' + esc(a.admin_note) + '</p>' : '') + '</div>' : '') +
+          (open ? '<div class="asec"><h4>' + q('dec') + '</h4><textarea class="inp" id="anote" rows="2" placeholder="' + esc(l('note')) + '"></textarea><div id="amsg" class="fmsg"></div><div class="aacts">' + acts + '</div></div>' : '') +
+          '<button type="button" class="aclose" data-aclose="1">' + q('close') + '</button>';
+        sh.classList.add('show');
+        try { var ds = await A.docsOf(a.id), box = document.getElementById('adocs'); if (box && cur && cur.id === a.id) box.innerHTML = ds.length ? ds.map(function (x) { return x.url ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener"><img src="' + esc(x.url) + '" alt="' + esc(x.kind) + '"><small>' + esc(x.kind) + '</small></a>' : ''; }).join('') : '<span class="mut">' + l('noDocs') + '</span>'; } catch (e) { var b2 = document.getElementById('adocs'); if (b2) b2.textContent = A.errMsg(e); }
       }
-      async function paint() {
-        var list = filtered();
-        var h = head(mode === 'sales' ? ZX.t({ en: 'Partner leads', bn: 'পার্টনার লিড' }) : ZX.t({ en: 'Approvals', bn: 'অনুমোদন' }), mode === 'sales' ? ZX.t({ en: 'Check the papers, then recommend or not.', bn: 'কাগজ দেখে সুপারিশ করুন বা করবেন না।' }) : ZX.t({ en: 'Final decision on partner applications.', bn: 'পার্টনার আবেদনের চূড়ান্ত সিদ্ধান্ত।' })) +
-          '<div class="swi" style="padding:0 0 10px;background:none;border:0">' + ['open', 'approved', 'rejected'].map(function (k) { return '<a href="#" data-tab2="' + k + '" class="' + (tab === k ? 'on' : '') + '">' + l(k) + '</a>'; }).join('') + '</div>';
-        if (!list.length) h += '<div class="soon">' + l('none') + '</div>';
-        for (var i = 0; i < list.length; i++) {
-          var a = list[i], pt = ptypeOf(a.category);
-          h += '<div class="cardx"><div class="rowx" data-open="' + a.id + '" style="cursor:pointer"><span style="font-size:26px">' + pt.emoji + '</span><div class="g"><b>' + esc(a.business_name) + '</b><small>' + esc(ZX.t(pt.name)) + ' · ' + esc((a.applicant || {}).full_name) + ' · ' + esc(a.phone) + ' · ' + esc(fdate(a.created_at)) + '</small></div>' + chip(A.statusLabel(a.status), tone(a.status)) + '</div>' + (openId === a.id ? await detail(a) : '') + '</div>';
-        }
-        el.innerHTML = h;
-        if (openId) { var box = el.querySelector('#th_' + openId); if (box) { try { var ds = await A.docsOf(openId); box.innerHTML = ds.length ? ds.map(function (x) { return x.url ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener"><img src="' + esc(x.url) + '" alt="' + esc(x.kind) + '"><small>' + esc(x.kind) + '</small></a>' : ''; }).join('') : l('noDocs'); } catch (e) { box.textContent = A.errMsg(e); } } }
+      async function onAct(e) {
+        var b = e.target.closest('[data-act]'); if (!b || !cur) return; var act = b.getAttribute('data-act'), msg = document.getElementById('amsg'), note = (document.getElementById('anote') || {}).value || '';
+        if (!window.confirm(act === 'ok' ? q('confirmOk') : act === 'no' ? q('confirmNo') : q('confirmRec'))) return;
+        b.disabled = true;
+        try { if (act === 'rec' || act === 'norec') await A.salesReview(cur.id, act === 'rec', note); else await A.adminDecide(cur.id, act === 'ok', note); ZX.toast(l('done')); document.getElementById('aSheet').classList.remove('show'); cur = null; if (await load()) { shell(); } }
+        catch (er) { b.disabled = false; if (msg) { msg.className = 'fmsg err'; msg.textContent = A.errMsg(er); } }
       }
-      el.onclick = async function (e) {
-        var t = e.target.closest('[data-tab2],[data-open],[data-act]'); if (!t) return;
-        if (t.hasAttribute('data-tab2')) { e.preventDefault(); tab = t.getAttribute('data-tab2'); openId = null; paint(); return; }
-        if (t.hasAttribute('data-open')) { var id = t.getAttribute('data-open'); openId = openId === id ? null : id; paint(); return; }
-        var act = t.getAttribute('data-act'), id2 = t.getAttribute('data-id'), note = (el.querySelector('#nt_' + id2) || {}).value || '', msgEl = el.querySelector('#am_' + id2);
-        try {
-          if (act === 'rec' || act === 'norec') await A.salesReview(id2, act === 'rec', note); else await A.adminDecide(id2, act === 'ok', note);
-          ZX.toast(l('done')); openId = null; if (await load()) paint();
-        } catch (er) { if (msgEl) { msgEl.className = 'fmsg err'; msgEl.textContent = A.errMsg(er); } }
+      el.onclick = function (e) {
+        var t = e.target.closest('[data-tab2],[data-cat],[data-open]'); if (!t) return;
+        if (t.hasAttribute('data-tab2')) { tab = t.getAttribute('data-tab2'); paintStats(); paintList(); return; }
+        if (t.hasAttribute('data-cat')) { cat = t.getAttribute('data-cat'); paintCats(); paintList(); return; }
+        var a = apps.filter(function (x) { return x.id === t.getAttribute('data-open'); })[0]; if (a) openSheet(a);
       };
-      if (await load()) paint();
+      if (await load()) shell();
     };
   }
 
@@ -127,7 +173,9 @@
     bike: '<circle cx="6" cy="16" r="3.500"/><circle cx="18" cy="16" r="3.500"/><path d="M6 16l4-7h5l3 7M10 9l2 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.500l2.700 2.700L16 9.500"/>',
     key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>', arrow: '<path d="M9 5l7 7-7 7"/>', phone: '<path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
     wa: '<path d="M3 21l1.500-4.500A9 9 0 1 1 8 19.500L3 21z"/><path d="M9 9c0 3 3 6 6 6l1.200-1.500-2-1-1 .7c-.8-.4-1.600-1.200-2-2l.7-1-1-2L9 9z"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
-    chart: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'
+    chart: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
+    food: '<path d="M6 3v7a2 2 0 0 0 4 0V3M8 3v18M17 3c-2 2-3 4-3 7h3v11"/>', tool: '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9z"/>', car: '<path d="M5 16V11l2-5h10l2 5v5H5z"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>',
+    spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/>', speaker: '<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/>', pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>'
   };
   var ic = function (k) { return '<svg viewBox="0 0 24 24">' + IC[k] + '</svg>'; };
   var N = {

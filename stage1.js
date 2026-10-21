@@ -78,7 +78,26 @@
     await ensureAreas();
     ZX.authView(v, { mode: mode, areas: areas, afterAuth: afterAuth, fresh: !v.firstChild || !v.querySelector('#authBox') });
   }
-  function afterAuth(text) { ZX.toast(text); var n = next; next = null; ZX.go(n || 'account'); }
+  var ROLE_ORDER = ['super_admin', 'admin', 'sales_admin', 'merchant_food', 'merchant_shop', 'rider'];
+  function landing() {
+    var me = A.me(); if (!me.user) return null;
+    var act = (me.roles || []).filter(function (r) { return r.status === 'active'; }).map(function (r) { return r.role; });
+    for (var i = 0; i < ROLE_ORDER.length; i++) if (act.indexOf(ROLE_ORDER[i]) > -1) return PANEL_OF[ROLE_ORDER[i]];
+    return null;
+  }
+  function stayInApp() { try { return sessionStorage.getItem('zx_stay') === '1'; } catch (e) { return false; } }
+  function goPanel(p) { location.href = 'panels.html#' + p; }
+  var routed = false;
+  function autoRoute() {
+    if (routed) return; var me = A.me(); if (!me.user) return; routed = true;
+    var h = location.hash; if (h && h !== '#' && h !== '#home') return; if (stayInApp()) return;
+    var p = landing(); if (p) goPanel(p);
+  }
+  function afterAuth(text) {
+    ZX.toast(text); try { sessionStorage.removeItem('zx_stay'); } catch (e) { }
+    var p = landing(); if (p && !next) { routed = true; setTimeout(function () { goPanel(p); }, 350); return; }
+    var n = next; next = null; ZX.go(n || 'account');
+  }
   async function doLogin() {
     var b = $('btnLogin'); b.disabled = true; msg('lMsg', tt('saving'), true);
     try { await A.signIn(val('lPhone'), val('lPass')); afterAuth(tt('welcomeBack')); } catch (e) { msg('lMsg', A.errMsg(e)); } b.disabled = false;
@@ -183,7 +202,8 @@
     var av = $('avIco'), p = A.me().profile; if (!av) return;
     av.innerHTML = p && p.avatar_url ? '<img class="avimg" src="' + esc(p.avatar_url) + '" alt="">' : (p && p.full_name ? '<b class="avl">' + esc(p.full_name.trim().charAt(0).toUpperCase()) + '</b>' : ZX.ico.user);
   }
-  A.onChange(function () { renderAccountTop(); setHeaderAvatar(); });
+  A.onChange(function () { renderAccountTop(); setHeaderAvatar(); autoRoute(); });
+  if (ZX.authReady && ZX.authReady.then) ZX.authReady.then(function () { renderAccountTop(); setHeaderAvatar(); autoRoute(); });
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-mode],[data-go],[data-apply],#btnLogin,#btnSign,#btnApply,#btnGps'); if (!t) return;
