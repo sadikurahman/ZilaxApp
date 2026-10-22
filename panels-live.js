@@ -290,7 +290,12 @@
     mnT: { en: 'Menu', bn: 'মেনু' }, mnH: { en: 'Your menu is empty', bn: 'আপনার মেনু খালি' }, mnP: { en: 'Add categories and items with photos and prices. This arrives in the next stage.', bn: 'ছবি ও দামসহ ক্যাটাগরি ও আইটেম যোগ করবেন। এটা পরের ধাপে আসবে।' }, mnB: { en: 'Add item', bn: 'আইটেম যোগ করুন' },
     skT: { en: 'Stock out', bn: 'স্টক আউট' }, skH: { en: 'Nothing to mark yet', bn: 'চিহ্নিত করার কিছু নেই' }, skP: { en: 'When your menu is ready you can switch items on or off in one tap.', bn: 'মেনু তৈরি হলে এক ট্যাপে আইটেম চালু বা বন্ধ করতে পারবেন।' },
     ofT: { en: 'Offers & reviews', bn: 'অফার ও রিভিউ' }, ofH: { en: 'No offers or reviews yet', bn: 'এখনো অফার বা রিভিউ নেই' }, ofP: { en: 'Create discounts and read what customers say. This arrives in a later stage.', bn: 'ডিসকাউন্ট বানাবেন এবং ক্রেতারা কী বলছে পড়বেন। এটা পরের ধাপে আসবে।' },
-    erT: { en: 'Earnings', bn: 'আয় ও সেটেলমেন্ট' }, eToday: { en: 'Today', bn: 'আজ' }, eWeek: { en: 'This week', bn: 'এই সপ্তাহ' }, ePend: { en: 'Pending settlement', bn: 'সেটেলমেন্ট বাকি' }, eH: { en: 'No earnings yet', bn: 'এখনো কোনো আয় নেই' }, eP: { en: 'Your sales and payouts will show here once orders start.', bn: 'অর্ডার শুরু হলে আপনার বিক্রি ও পেআউট এখানে দেখা যাবে।' }
+    erT: { en: 'Earnings', bn: 'আয় ও সেটেলমেন্ট' }, eToday: { en: 'Today', bn: 'আজ' }, eWeek: { en: 'This week', bn: 'এই সপ্তাহ' }, ePend: { en: 'Pending settlement', bn: 'সেটেলমেন্ট বাকি' }, eH: { en: 'No earnings yet', bn: 'এখনো কোনো আয় নেই' }, eP: { en: 'Your sales and payouts will show here once orders start.', bn: 'অর্ডার শুরু হলে আপনার বিক্রি ও পেআউট এখানে দেখা যাবে।' },
+    rLbl: { en: 'Status', bn: 'অবস্থা' }, rOn: { en: 'Online', bn: 'অনলাইন' }, rOff: { en: 'Offline', bn: 'অফলাইন' }, rSwNote: { en: 'This switch will decide when you get orders, once deliveries start.', bn: 'ডেলিভারি চালু হলে এই সুইচ ঠিক করবে আপনি কখন অর্ডার পাবেন।' },
+    rDel: { en: 'Deliveries', bn: 'ডেলিভারি' }, rEarn: { en: 'Earnings', bn: 'আয়' }, rCash: { en: 'Cash in hand', bn: 'হাতে থাকা ক্যাশ' }, rReady: { en: 'Get ready to ride', bn: 'রাইড শুরুর প্রস্তুতি' },
+    rc2: { en: 'Add vehicle details', bn: 'গাড়ির তথ্য দিন' }, rc4: { en: 'Learn how deliveries work', bn: 'ডেলিভারি কীভাবে চলে জানুন' }, rQ2: { en: 'History', bn: 'ইতিহাস' }, rQ3: { en: 'Support', bn: 'সাপোর্ট' },
+    reT: { en: 'Earnings & cash', bn: 'আয় ও ক্যাশ' }, reHand: { en: 'Cash to hand over', bn: 'জমা দেওয়ার ক্যাশ' }, reH: { en: 'No earnings yet', bn: 'এখনো কোনো আয় নেই' }, reP: { en: 'Your delivery earnings and cash will show here once deliveries start.', bn: 'ডেলিভারি চালু হলে আপনার আয় ও ক্যাশ এখানে দেখা যাবে।' },
+    rhT: { en: 'History', bn: 'ইতিহাস' }, rhDone: { en: 'Delivered', bn: 'ডেলিভারি হয়েছে' }, rhCan: { en: 'Cancelled', bn: 'বাতিল' }, rhH: { en: 'No deliveries yet', bn: 'এখনো কোনো ডেলিভারি নেই' }, rhP: { en: 'Your finished deliveries will be listed here with date, shop and amount.', bn: 'শেষ হওয়া ডেলিভারি তারিখ, দোকান ও টাকাসহ এখানে থাকবে।' }
   };
   var m2 = function (k) { return ZX.t(M[k]); };
   var greetNow = function () { var hr = new Date().getHours(); return hr < 12 ? m2('hi1') : hr < 17 ? m2('hi2') : m2('hi3'); };
@@ -359,7 +364,36 @@
     el.innerHTML = pageHead(m2('erT'), '') + '<div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' + emptyState('wallet', '#15803d', m2('eH'), m2('eP'));
   }
 
-  var LIVE = { 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
+  async function myRider() {
+    var me = A.me(), mine = []; try { mine = (await A.myApplications()).filter(function (a) { return a.user_id === me.user.id && a.category === 'rider'; }); } catch (e) { }
+    mine.sort(function (a, b) { return (b.status === 'approved') - (a.status === 'approved'); }); return mine[0] || null;
+  }
+  async function riderHome(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    try {
+      var me = A.me(), p = me.profile || {}, app = await myRider(), areas = []; try { areas = await A.areas(); } catch (e) { }
+      var name = p.full_name || '', where = app ? [areaName(areas, app.union_id), areaName(areas, app.upazila_id)].filter(Boolean).join(', ') : '', online = ZX.store.get('zx_rider_online', false);
+      var K = [[m2('rDel'), ZX.digits(0), 'bike', '#2563eb', 'rider/hist'], [m2('rEarn'), '৳' + ZX.digits(0), 'wallet', '#15803d', 'rider/earn'], [m2('rCash'), '৳' + ZX.digits(0), 'tag', '#ea580c', 'rider/earn']];
+      var steps = [[m2('c1'), !!(app && app.status === 'approved')], [m2('rc2'), false], [m2('c4'), false], [m2('rc4'), false]];
+      el.innerHTML = '<div class="stcard" style="background:linear-gradient(135deg,#9f1239,#e11d48 60%,#fb7185)"><div class="stt"><span class="aic big" style="--ac:#e11d48;background:rgba(255,255,255,.2);color:#fff">' + ic('bike') + '</span><div class="g"><small>' + esc(ZX.t(ptypeOf('rider').name)) + '</small><h2>' + esc(name) + '</h2>' + (where ? '<small>' + esc(where) + '</small>' : '') + '</div></div>' +
+        '<div class="stsw"><div><b>' + m2('rLbl') + ': <span id="rdLbl">' + (online ? m2('rOn') : m2('rOff')) + '</span></b><small>' + m2('rSwNote') + '</small></div><button type="button" class="sw' + (online ? ' on' : '') + '" data-rsw="1" aria-label="toggle"><i></i></button></div></div>' +
+        '<h3 class="sh">' + m2('today') + '</h3><div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '" data-g="' + k[4] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' +
+        '<h3 class="sh">' + m2('rReady') + '</h3><div class="cardx" style="padding:6px 16px">' + steps.map(function (s) { return '<div class="rowx"><span class="chkc' + (s[1] ? ' done' : '') + '">' + (s[1] ? ic('check') : '') + '</span><div class="g"><b>' + esc(s[0]) + '</b></div>' + (s[1] ? '' : '<span class="chip">' + m2('soon') + '</span>') + '</div>'; }).join('') + '</div>' +
+        '<h3 class="sh">' + m2('quick') + '</h3><div class="qrow">' + [[m2('rEarn'), 'wallet', '#15803d', 'rider/earn'], [m2('rQ2'), 'clock', '#2563eb', 'rider/hist']].map(function (q) { return '<button type="button" class="qb" style="--ac:' + q[2] + '" data-g="' + q[3] + '"><span>' + ic(q[1]) + '</span>' + q[0] + '</button>'; }).join('') +
+        '<a class="qb" style="--ac:#16a34a" href="https://wa.me/' + ((ZX.support && ZX.support.wa) || '8801646921627') + '" target="_blank" rel="noopener"><span>' + ic('wa') + '</span>' + m2('rQ3') + '</a></div>';
+      el.onclick = function (e) { var s = e.target.closest('[data-rsw]'); if (!s) return; var on = !s.classList.contains('on'); s.classList.toggle('on', on); ZX.store.set('zx_rider_online', on); var lb = el.querySelector('#rdLbl'); if (lb) lb.textContent = on ? m2('rOn') : m2('rOff'); };
+    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  }
+  function riderEarn(el) {
+    var K = [[m2('eToday'), '৳' + ZX.digits(0), 'wallet', '#15803d'], [m2('eWeek'), '৳' + ZX.digits(0), 'chart', '#2563eb'], [m2('reHand'), '৳' + ZX.digits(0), 'tag', '#ea580c']];
+    el.innerHTML = pageHead(m2('reT'), '') + '<div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' + emptyState('wallet', '#15803d', m2('reH'), m2('reP'));
+  }
+  function riderHist(el) {
+    var chips = [['rhDone', '#15803d'], ['rhCan', '#dc2626']];
+    el.innerHTML = pageHead(m2('rhT'), '') + '<div class="acats">' + chips.map(function (c, i) { return '<button type="button" class="acat' + (i === 0 ? ' on' : '') + '" style="--ac:' + c[1] + '"><i></i>' + m2(c[0]) + ' · ' + ZX.digits(0) + '</button>'; }).join('') + '</div>' + emptyState('clock', '#2563eb', m2('rhH'), m2('rhP'));
+  }
+
+  var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
     'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
   window.ZXLive = {
