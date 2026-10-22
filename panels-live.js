@@ -175,7 +175,9 @@
     wa: '<path d="M3 21l1.500-4.500A9 9 0 1 1 8 19.500L3 21z"/><path d="M9 9c0 3 3 6 6 6l1.200-1.500-2-1-1 .7c-.8-.4-1.600-1.200-2-2l.7-1-1-2L9 9z"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
     chart: '<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
     food: '<path d="M6 3v7a2 2 0 0 0 4 0V3M8 3v18M17 3c-2 2-3 4-3 7h3v11"/>', tool: '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9z"/>', car: '<path d="M5 16V11l2-5h10l2 5v5H5z"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>',
-    spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/>', speaker: '<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/>', pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>'
+    spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/>', speaker: '<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/>', pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    bag: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>', menu: '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M9 9h6M9 13h6"/>', alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.1"/>',
+    tag: '<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8" r="1.4"/>', target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>', wallet: '<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M4 7a2 2 0 0 1 2-2h11v4"/><circle cx="16.5" cy="13.5" r="1.2"/>'
   };
   var ic = function (k) { return '<svg viewBox="0 0 24 24">' + IC[k] + '</svg>'; };
   var N = {
@@ -268,7 +270,98 @@
   }
   document.addEventListener('click', function (e) { var g = e.target.closest('[data-g]'); if (g) { location.hash = g.getAttribute('data-g'); } });
 
-  var LIVE = { 'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
+  /* ---------- Sales Admin + Merchant panels (premium; real data where it exists, honest empty states where it does not) ---------- */
+  var M = {
+    hi1: { en: 'Good morning', bn: 'শুভ সকাল' }, hi2: { en: 'Good afternoon', bn: 'শুভ অপরাহ্ন' }, hi3: { en: 'Good evening', bn: 'শুভ সন্ধ্যা' },
+    sWait: { en: 'leads waiting for your review', bn: 'টি লিড আপনার যাচাইয়ের অপেক্ষায়' }, sWait1: { en: 'lead waiting for your review', bn: 'টি লিড আপনার যাচাইয়ের অপেক্ষায়' }, sClear: { en: 'No lead is waiting. Great work!', bn: 'কোনো লিড অপেক্ষায় নেই। দারুণ কাজ!' },
+    review: { en: 'Review leads', bn: 'লিড যাচাই করুন' }, kWait: { en: 'Waiting for review', bn: 'যাচাইয়ের অপেক্ষায়' }, kMine: { en: 'Recommended by me', bn: 'আমার সুপারিশ' }, kAppr: { en: 'Approved partners', bn: 'অনুমোদিত পার্টনার' },
+    kNot: { en: 'Not recommended', bn: 'সুপারিশ হয়নি' }, kWeek: { en: 'New this week', bn: 'এই সপ্তাহে নতুন' }, kRej: { en: 'Rejected', bn: 'প্রত্যাখ্যাত' },
+    needs: { en: 'Needs your review', bn: 'আপনার যাচাই দরকার' }, seeAll: { en: 'See all', bn: 'সব দেখুন' }, quick: { en: 'Quick actions', bn: 'দ্রুত কাজ' }, qLeads: { en: 'Leads', bn: 'লিড' }, qRep: { en: 'Reports', bn: 'রিপোর্ট' },
+    repT: { en: 'Reports', bn: 'রিপোর্ট' }, repS: { en: 'How partner applications are moving. Based on the latest 100 applications.', bn: 'পার্টনার আবেদন কেমন এগোচ্ছে। সর্বশেষ ১০০টি আবেদনের ভিত্তিতে।' },
+    funnel: { en: 'Journey of applications', bn: 'আবেদনের যাত্রা' }, fRecv: { en: 'Received', bn: 'পাওয়া গেছে' }, fRec: { en: 'Recommended', bn: 'সুপারিশ হয়েছে' }, fAppr: { en: 'Approved', bn: 'অনুমোদিত' }, byCat: { en: 'By partner type', bn: 'পার্টনারের ধরন অনুযায়ী' },
+    tgT: { en: 'Targets', bn: 'টার্গেট' }, tgH: { en: 'Targets are not set yet', bn: 'এখনো টার্গেট ঠিক হয়নি' }, tgP: { en: 'Your admin will set monthly partner sign-up targets here. This arrives in a later stage.', bn: 'আপনার অ্যাডমিন এখানে মাসিক পার্টনার-যুক্ত করার টার্গেট ঠিক করবেন। এটা পরের ধাপে আসবে।' },
+    vsT: { en: 'Field visits', bn: 'ফিল্ড ভিজিট' }, vsH: { en: 'No visits logged', bn: 'কোনো ভিজিট লেখা নেই' }, vsP: { en: 'Log your shop and partner visits here, with location. This arrives in a later stage.', bn: 'দোকান ও পার্টনার ভিজিট লোকেশনসহ এখানে লিখে রাখবেন। এটা পরের ধাপে আসবে।' },
+    soon: { en: 'Coming soon', bn: 'শীঘ্রই আসছে' }, preview: { en: 'Preview as Super Admin', bn: 'সুপার অ্যাডমিন হিসেবে প্রিভিউ' }, store: { en: 'Your store', bn: 'আপনার দোকান' }, open: { en: 'Open', bn: 'খোলা' }, closed: { en: 'Closed', bn: 'বন্ধ' },
+    swNote: { en: 'This switch will control your store once ordering starts.', bn: 'অর্ডার চালু হলে এই সুইচ দিয়ে আপনার দোকান খোলা বা বন্ধ হবে।' }, today: { en: 'Today', bn: 'আজ' }, orders: { en: 'Orders', bn: 'অর্ডার' }, sales: { en: 'Sales', bn: 'বিক্রি' }, rating: { en: 'Rating', bn: 'রেটিং' },
+    start: { en: 'Get ready to sell', bn: 'বিক্রি শুরুর প্রস্তুতি' }, c1: { en: 'Application approved', bn: 'আবেদন অনুমোদিত' }, c2: { en: 'Add your menu items', bn: 'মেনুর আইটেম যোগ করুন' }, c3: { en: 'Set opening hours', bn: 'খোলার সময় ঠিক করুন' }, c4: { en: 'Add payout details', bn: 'পেআউটের তথ্য দিন' },
+    mQ1: { en: 'Orders', bn: 'অর্ডার' }, mQ2: { en: 'Menu', bn: 'মেনু' }, mQ3: { en: 'Offers', bn: 'অফার' }, mQ4: { en: 'Earnings', bn: 'আয়' },
+    oT: { en: 'Orders', bn: 'অর্ডার' }, oH: { en: 'No orders yet', bn: 'এখনো কোনো অর্ডার নেই' }, oP: { en: 'New orders will appear here with a sound alert. Ordering opens after the menu is ready.', bn: 'নতুন অর্ডার এখানে শব্দসহ আসবে। মেনু তৈরি হওয়ার পর অর্ডার চালু হবে।' },
+    oNew: { en: 'New', bn: 'নতুন' }, oPrep: { en: 'Preparing', bn: 'তৈরি হচ্ছে' }, oReady: { en: 'Ready', bn: 'তৈরি' }, oDone: { en: 'Delivered', bn: 'পৌঁছেছে' },
+    mnT: { en: 'Menu', bn: 'মেনু' }, mnH: { en: 'Your menu is empty', bn: 'আপনার মেনু খালি' }, mnP: { en: 'Add categories and items with photos and prices. This arrives in the next stage.', bn: 'ছবি ও দামসহ ক্যাটাগরি ও আইটেম যোগ করবেন। এটা পরের ধাপে আসবে।' }, mnB: { en: 'Add item', bn: 'আইটেম যোগ করুন' },
+    skT: { en: 'Stock out', bn: 'স্টক আউট' }, skH: { en: 'Nothing to mark yet', bn: 'চিহ্নিত করার কিছু নেই' }, skP: { en: 'When your menu is ready you can switch items on or off in one tap.', bn: 'মেনু তৈরি হলে এক ট্যাপে আইটেম চালু বা বন্ধ করতে পারবেন।' },
+    ofT: { en: 'Offers & reviews', bn: 'অফার ও রিভিউ' }, ofH: { en: 'No offers or reviews yet', bn: 'এখনো অফার বা রিভিউ নেই' }, ofP: { en: 'Create discounts and read what customers say. This arrives in a later stage.', bn: 'ডিসকাউন্ট বানাবেন এবং ক্রেতারা কী বলছে পড়বেন। এটা পরের ধাপে আসবে।' },
+    erT: { en: 'Earnings', bn: 'আয় ও সেটেলমেন্ট' }, eToday: { en: 'Today', bn: 'আজ' }, eWeek: { en: 'This week', bn: 'এই সপ্তাহ' }, ePend: { en: 'Pending settlement', bn: 'সেটেলমেন্ট বাকি' }, eH: { en: 'No earnings yet', bn: 'এখনো কোনো আয় নেই' }, eP: { en: 'Your sales and payouts will show here once orders start.', bn: 'অর্ডার শুরু হলে আপনার বিক্রি ও পেআউট এখানে দেখা যাবে।' }
+  };
+  var m2 = function (k) { return ZX.t(M[k]); };
+  var greetNow = function () { var hr = new Date().getHours(); return hr < 12 ? m2('hi1') : hr < 17 ? m2('hi2') : m2('hi3'); };
+  var HUE = function (c) { return { merchant_food: '#ea580c', merchant_shop: '#2563eb', rider: '#e11d48', technician: '#0d9488', car_partner: '#7c3aed', decoration: '#db2777', sound_light: '#ca8a04' }[c] || '#64748b'; };
+  function emptyState(ico, col, title, text, btn) { return '<div class="es" style="--ac:' + col + '"><span class="eic">' + ic(ico) + '</span><b>' + esc(title) + '</b><p>' + esc(text) + '</p>' + (btn ? '<button type="button" class="btn" disabled style="opacity:.55">' + esc(btn) + ' · ' + m2('soon') + '</button>' : '') + '</div>'; }
+  function pageHead(t, s) { return '<h2 class="pt serif">' + esc(t) + '</h2>' + (s ? '<p class="ps">' + esc(s) + '</p>' : ''); }
+  async function appsAll() { return await A.listApplications(null); }
+  function kcards(K) { return '<div class="kgrid">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"' + (k[4] ? ' data-g="' + k[4] + '"' : '') + '><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>'; }
+
+  async function salesHome(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    try {
+      var apps = await appsAll(), me = A.me(), uid = me.user.id, wk = Date.now() - 7 * 864e5, p = me.profile || {}, first = String(p.full_name || '').trim().split(' ')[0];
+      var c = function (f) { return apps.filter(f).length; }, wait = c(function (a) { return a.status === 'pending'; });
+      var date = new Date().toLocaleDateString(ZX.lang === 'bn' ? 'bn-BD' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+      var K = [[m2('kWait'), ZX.digits(wait), 'clock', '#ea580c', 'sales/leads'], [m2('kMine'), ZX.digits(c(function (a) { return a.sales_by === uid && a.status !== 'pending'; })), 'check', '#0d9488', 'sales/leads'],
+        [m2('kAppr'), ZX.digits(c(function (a) { return a.status === 'approved'; })), 'store', '#15803d', 'sales/reports'], [m2('kWeek'), ZX.digits(c(function (a) { return new Date(a.created_at).getTime() >= wk; })), 'plus', '#2563eb', 'sales/leads'],
+        [m2('kNot'), ZX.digits(c(function (a) { return a.status === 'not_recommended'; })), 'x', '#d97706', 'sales/leads'], [m2('kRej'), ZX.digits(c(function (a) { return a.status === 'rejected'; })), 'x', '#dc2626', 'sales/reports']];
+      var h = '<div class="hero2"><small>' + esc(date) + '</small><h2>' + esc(greetNow()) + (first ? ', ' + esc(first) : '') + '</h2><p>' + (wait ? '<b>' + ZX.digits(wait) + '</b> ' + (wait === 1 ? m2('sWait1') : m2('sWait')) : m2('sClear')) + '</p>' +
+        (wait ? '<button type="button" class="hbtn" data-g="sales/leads">' + m2('review') + ic('arrow') + '</button>' : '') + '</div>' + kcards(K) +
+        '<h3 class="sh">' + m2('quick') + '</h3><div class="qrow">' + [[m2('qLeads'), 'users', '#ea580c', 'sales/leads'], [m2('qRep'), 'chart', '#2563eb', 'sales/reports']].map(function (q) { return '<button type="button" class="qb" style="--ac:' + q[2] + '" data-g="' + q[3] + '"><span>' + ic(q[1]) + '</span>' + q[0] + '</button>'; }).join('') + '</div>';
+      var need = apps.filter(function (a) { return a.status === 'pending'; }).slice(0, 5);
+      if (need.length) h += '<div class="shr"><h3 class="sh">' + m2('needs') + '</h3><a href="#sales/leads" class="sal">' + m2('seeAll') + '</a></div><div class="cardx" style="padding:6px 16px">' + need.map(function (a) { var col = HUE(a.category); return '<div class="rowx"><span class="dot" style="background:' + col + '1f;color:' + col + '">' + esc(String(a.business_name || '?').trim().charAt(0).toUpperCase()) + '</span><div class="g"><b>' + esc(a.business_name) + '</b><small>' + esc(ZX.t(ptypeOf(a.category).name)) + ' · ' + esc(fdate(a.created_at)) + '</small></div>' + stc(a.status) + '</div>'; }).join('') + '</div>';
+      el.innerHTML = h;
+    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  }
+  async function salesReports(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    try {
+      var apps = await appsAll(), tot = apps.length, rec = apps.filter(function (a) { return a.status === 'recommended' || a.status === 'approved'; }).length, ap = apps.filter(function (a) { return a.status === 'approved'; }).length;
+      var bar = function (label, v, max, col) { return '<div class="brow"><span class="bl">' + esc(label) + '</span><div class="bar" style="--ac:' + col + '"><i style="width:' + (max ? Math.round(v * 100 / max) : 0) + '%"></i></div><b>' + ZX.digits(v) + '</b></div>'; };
+      var cats = {}; apps.forEach(function (a) { cats[a.category] = (cats[a.category] || 0) + 1; });
+      var cmax = Math.max.apply(null, Object.keys(cats).map(function (k) { return cats[k]; }).concat([0]));
+      el.innerHTML = pageHead(m2('repT'), m2('repS')) + '<div class="cardx"><h3>' + m2('funnel') + '</h3>' + bar(m2('fRecv'), tot, tot, '#2563eb') + bar(m2('fRec'), rec, tot, '#0d9488') + bar(m2('fAppr'), ap, tot, '#15803d') + '</div>' +
+        '<div class="cardx"><h3>' + m2('byCat') + '</h3>' + (Object.keys(cats).length ? Object.keys(cats).sort(function (a, b) { return cats[b] - cats[a]; }).map(function (k) { return bar(ZX.t(ptypeOf(k).name), cats[k], cmax, HUE(k)); }).join('') : '<p class="ps">' + l('none') + '</p>') + '</div>';
+    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  }
+  function simple(titleK, ico, col, hK, pK, btnK, subK) { return function (el) { el.innerHTML = pageHead(m2(titleK), subK ? m2(subK) : '') + emptyState(ico, col, m2(hK), m2(pK), btnK ? m2(btnK) : ''); }; }
+
+  async function myStore() {
+    var me = A.me(), mine = []; try { mine = (await A.myApplications()).filter(function (a) { return a.user_id === me.user.id && String(a.category).indexOf('merchant') === 0; }); } catch (e) { }
+    mine.sort(function (a, b) { return (b.status === 'approved') - (a.status === 'approved'); }); return mine[0] || null;
+  }
+  async function merchantHome(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    try {
+      var me = A.me(), p = me.profile || {}, app = await myStore(), areas = []; try { areas = await A.areas(); } catch (e) { }
+      var name = app ? app.business_name : (p.full_name || ''), cat = app ? ZX.t(ptypeOf(app.category).name) : m2('preview'), where = app ? [areaName(areas, app.union_id), areaName(areas, app.upazila_id)].filter(Boolean).join(', ') : '';
+      var openNow = ZX.store.get('zx_store_open', true);
+      var K = [[m2('orders'), ZX.digits(0), 'bag', '#ea580c', 'merchant/orders'], [m2('sales'), '৳' + ZX.digits(0), 'chart', '#15803d', 'merchant/earn'], [m2('rating'), '—', 'check', '#ca8a04', 'merchant/offers']];
+      var steps = [[m2('c1'), true], [m2('c2'), false], [m2('c3'), false], [m2('c4'), false]];
+      el.innerHTML = '<div class="stcard"><div class="stt"><span class="aic big" style="--ac:' + HUE(app ? app.category : 'merchant_food') + ';background:rgba(255,255,255,.2);color:#fff">' + ic('store') + '</span><div class="g"><small>' + esc(cat) + '</small><h2>' + esc(name) + '</h2>' + (where ? '<small>' + esc(where) + '</small>' : '') + '</div></div>' +
+        '<div class="stsw"><div><b>' + m2('store') + ': <span id="stLbl">' + (openNow ? m2('open') : m2('closed')) + '</span></b><small>' + m2('swNote') + '</small></div><button type="button" class="sw' + (openNow ? ' on' : '') + '" data-sw="1" aria-label="toggle"><i></i></button></div></div>' +
+        '<h3 class="sh">' + m2('today') + '</h3>' + '<div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '" data-g="' + k[4] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' +
+        '<h3 class="sh">' + m2('start') + '</h3><div class="cardx" style="padding:6px 16px">' + steps.map(function (s) { return '<div class="rowx"><span class="chkc' + (s[1] ? ' done' : '') + '">' + (s[1] ? ic('check') : '') + '</span><div class="g"><b>' + esc(s[0]) + '</b></div>' + (s[1] ? '' : '<span class="chip">' + m2('soon') + '</span>') + '</div>'; }).join('') + '</div>' +
+        '<h3 class="sh">' + m2('quick') + '</h3><div class="qrow q4">' + [[m2('mQ1'), 'bag', '#ea580c', 'merchant/orders'], [m2('mQ2'), 'menu', '#2563eb', 'merchant/menu'], [m2('mQ3'), 'tag', '#7c3aed', 'merchant/offers'], [m2('mQ4'), 'wallet', '#15803d', 'merchant/earn']].map(function (q) { return '<button type="button" class="qb" style="--ac:' + q[2] + '" data-g="' + q[3] + '"><span>' + ic(q[1]) + '</span>' + q[0] + '</button>'; }).join('') + '</div>';
+      el.onclick = function (e) { var s = e.target.closest('[data-sw]'); if (!s) return; var on = !s.classList.contains('on'); s.classList.toggle('on', on); ZX.store.set('zx_store_open', on); var lb = el.querySelector('#stLbl'); if (lb) lb.textContent = on ? m2('open') : m2('closed'); };
+    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  }
+  function merchantOrders(el) {
+    var chips = [['oNew', '#ea580c'], ['oPrep', '#2563eb'], ['oReady', '#0d9488'], ['oDone', '#15803d']];
+    el.innerHTML = pageHead(m2('oT'), '') + '<div class="acats">' + chips.map(function (c, i) { return '<button type="button" class="acat' + (i === 0 ? ' on' : '') + '" style="--ac:' + c[1] + '"><i></i>' + m2(c[0]) + ' · ' + ZX.digits(0) + '</button>'; }).join('') + '</div>' + emptyState('bag', '#ea580c', m2('oH'), m2('oP'));
+  }
+  function merchantEarn(el) {
+    var K = [[m2('eToday'), '৳' + ZX.digits(0), 'wallet', '#15803d'], [m2('eWeek'), '৳' + ZX.digits(0), 'chart', '#2563eb'], [m2('ePend'), '৳' + ZX.digits(0), 'clock', '#ea580c']];
+    el.innerHTML = pageHead(m2('erT'), '') + '<div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' + emptyState('wallet', '#15803d', m2('eH'), m2('eP'));
+  }
+
+  var LIVE = { 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
+    'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
+    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {
