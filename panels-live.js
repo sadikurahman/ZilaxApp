@@ -1,7 +1,7 @@
 /* Zilax — Stage 1 live panels: access gate, application review, staff roles, areas, audit log. */
 (function () {
   var A = ZX.auth, D = ZX.data, esc = A.esc;
-  var NEED = { merchant: ['merchant_food', 'merchant_shop', 'super_admin'], rider: ['rider', 'super_admin'], sales: ['sales_admin', 'admin', 'super_admin'], admin: ['admin', 'super_admin'], super: ['super_admin'] };
+  var NEED = { merchant: ['merchant_food', 'super_admin'], shop: ['merchant_shop', 'super_admin'], tech: ['technician', 'super_admin'], car: ['car_partner', 'super_admin'], decor: ['decoration', 'super_admin'], sound: ['sound_light', 'super_admin'], rider: ['rider', 'super_admin'], sales: ['sales_admin', 'admin', 'super_admin'], admin: ['admin', 'super_admin'], super: ['super_admin'] };
   var L = {
     loading: { en: 'Loading…', bn: 'লোড হচ্ছে…' }, loginT: { en: 'Staff & partner login', bn: 'স্টাফ ও পার্টনার লগইন' }, phone: { en: 'Mobile number', bn: 'মোবাইল নম্বর' }, pass: { en: 'Password', bn: 'পাসওয়ার্ড' }, login: { en: 'Log in', bn: 'লগইন' }, logout: { en: 'Log out', bn: 'লগআউট' },
     noAccess: { en: 'No access to this panel', bn: 'এই প্যানেলে আপনার প্রবেশাধিকার নেই' }, noAccessS: { en: 'Your account does not have this role. Ask a Super Admin or apply as a partner.', bn: 'আপনার অ্যাকাউন্টে এই ভূমিকা নেই। সুপার অ্যাডমিনকে বলুন অথবা পার্টনার হিসেবে আবেদন করুন।' },
@@ -177,6 +177,7 @@
     food: '<path d="M6 3v7a2 2 0 0 0 4 0V3M8 3v18M17 3c-2 2-3 4-3 7h3v11"/>', tool: '<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9z"/>', car: '<path d="M5 16V11l2-5h10l2 5v5H5z"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>',
     spark: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/>', speaker: '<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/>', pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
     bag: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>', menu: '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M9 9h6M9 13h6"/>', alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.1"/>',
+    pulse: '<path d="M3 12h4l3-8 4 16 3-8h4"/>', cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/>', box: '<path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
     tag: '<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8" r="1.4"/>', target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>', wallet: '<rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M4 7a2 2 0 0 1 2-2h11v4"/><circle cx="16.5" cy="13.5" r="1.2"/>'
   };
   var ic = function (k) { return '<svg viewBox="0 0 24 24">' + IC[k] + '</svg>'; };
@@ -393,6 +394,61 @@
     el.innerHTML = pageHead(m2('rhT'), '') + '<div class="acats">' + chips.map(function (c, i) { return '<button type="button" class="acat' + (i === 0 ? ' on' : '') + '" style="--ac:' + c[1] + '"><i></i>' + m2(c[0]) + ' · ' + ZX.digits(0) + '</button>'; }).join('') + '</div>' + emptyState('clock', '#2563eb', m2('rhH'), m2('rhP'));
   }
 
+  /* ---------- Partner panels: Shop, Technician, Car, Decoration, Sound & Light ---------- */
+  var STAFF = ['sales_admin', 'admin', 'super_admin'];
+  var PCFG = {
+    shop: { cat: 'merchant_shop', ico: 'store', g: 'linear-gradient(135deg,#1e3a8a,#2563eb 60%,#60a5fa)', open: { en: 'Store open', bn: 'দোকান খোলা' }, closed: { en: 'Store closed', bn: 'দোকান বন্ধ' }, k: [['pk1', 'bag', '#2563eb', 'orders'], ['pk2', 'wallet', '#15803d', 'earn'], ['pk3', 'menu', '#ea580c', 'products']], steps: ['c1', 'ps1', 'ps2', 'c4'], q: [['products', 'menu', '#2563eb'], ['stock', 'alert', '#e11d48'], ['orders', 'bag', '#ea580c'], ['earn', 'wallet', '#15803d']], secs: ['products', 'stock', 'orders', 'earn'] },
+    tech: { cat: 'technician', ico: 'tool', g: 'linear-gradient(135deg,#115e59,#0d9488 60%,#5eead4)', open: { en: 'Available for jobs', bn: 'কাজের জন্য প্রস্তুত' }, closed: { en: 'Not available', bn: 'এখন প্রস্তুত নই' }, k: [['pk4', 'pulse', '#0d9488', 'jobs'], ['pk2', 'wallet', '#15803d', 'earn'], ['pk5', 'spark', '#ca8a04', 'services']], steps: ['c1', 'ps3', 'ps4', 'c4'], q: [['services', 'tool', '#0d9488'], ['jobs', 'pulse', '#2563eb'], ['schedule', 'cal', '#7c3aed'], ['earn', 'wallet', '#15803d']], secs: ['services', 'jobs', 'schedule', 'earn'] },
+    car: { cat: 'car_partner', ico: 'car', g: 'linear-gradient(135deg,#4c1d95,#7c3aed 60%,#a78bfa)', open: { en: 'Open for bookings', bn: 'বুকিংয়ের জন্য খোলা' }, closed: { en: 'Bookings paused', bn: 'বুকিং বন্ধ' }, k: [['pk6', 'cal', '#7c3aed', 'bookings'], ['pk2', 'wallet', '#15803d', 'earn'], ['pk7', 'car', '#2563eb', 'cars']], steps: ['c1', 'ps5', 'ps6', 'c4'], q: [['cars', 'car', '#7c3aed'], ['bookings', 'cal', '#2563eb'], ['avail', 'clock', '#ea580c'], ['earn', 'wallet', '#15803d']], secs: ['cars', 'bookings', 'avail', 'earn'] },
+    decor: { cat: 'decoration', ico: 'spark', g: 'linear-gradient(135deg,#9d174d,#db2777 60%,#f9a8d4)', open: { en: 'Taking bookings', bn: 'বুকিং নিচ্ছি' }, closed: { en: 'Bookings paused', bn: 'বুকিং বন্ধ' }, k: [['pk6', 'cal', '#db2777', 'bookings'], ['pk2', 'wallet', '#15803d', 'earn'], ['pk8', 'spark', '#7c3aed', 'packages']], steps: ['c1', 'ps7', 'ps8', 'c4'], q: [['packages', 'spark', '#db2777'], ['bookings', 'cal', '#2563eb'], ['gallery', 'image', '#ea580c'], ['earn', 'wallet', '#15803d']], secs: ['packages', 'bookings', 'gallery', 'earn'] },
+    sound: { cat: 'sound_light', ico: 'speaker', g: 'linear-gradient(135deg,#854d0e,#ca8a04 60%,#fde047)', open: { en: 'Taking bookings', bn: 'বুকিং নিচ্ছি' }, closed: { en: 'Bookings paused', bn: 'বুকিং বন্ধ' }, k: [['pk6', 'cal', '#ca8a04', 'bookings'], ['pk2', 'wallet', '#15803d', 'earn'], ['pk9', 'speaker', '#2563eb', 'equip']], steps: ['c1', 'ps9', 'ps8', 'c4'], q: [['equip', 'speaker', '#ca8a04'], ['packages', 'box', '#7c3aed'], ['bookings', 'cal', '#2563eb'], ['earn', 'wallet', '#15803d']], secs: ['equip', 'packages', 'bookings', 'earn'] }
+  };
+  var PT = {
+    pk1: { en: 'Orders', bn: 'অর্ডার' }, pk2: { en: 'Earnings', bn: 'আয়' }, pk3: { en: 'Products', bn: 'পণ্য' }, pk4: { en: 'Jobs', bn: 'কাজ' }, pk5: { en: 'Services', bn: 'সার্ভিস' }, pk6: { en: 'Bookings', bn: 'বুকিং' }, pk7: { en: 'Cars', bn: 'গাড়ি' }, pk8: { en: 'Packages', bn: 'প্যাকেজ' }, pk9: { en: 'Equipment', bn: 'যন্ত্র' },
+    ps1: { en: 'Add your products', bn: 'আপনার পণ্য যোগ করুন' }, ps2: { en: 'Set stock levels', bn: 'স্টক ঠিক করুন' }, ps3: { en: 'Choose the services you do', bn: 'কোন কোন সার্ভিস করেন বেছে নিন' }, ps4: { en: 'Set your working area', bn: 'কাজের এলাকা ঠিক করুন' },
+    ps5: { en: 'Add your cars', bn: 'আপনার গাড়ি যোগ করুন' }, ps6: { en: 'Set when cars are free', bn: 'গাড়ি কবে খালি তা ঠিক করুন' }, ps7: { en: 'Create your packages', bn: 'আপনার প্যাকেজ বানান' }, ps8: { en: 'Upload photos of your work', bn: 'কাজের ছবি তুলুন' }, ps9: { en: 'Add your equipment', bn: 'আপনার যন্ত্র যোগ করুন' },
+    rateT: { en: 'Rates are set by Zilax', bn: 'দাম জিলাক্স ঠিক করে দেয়' }, rateP: { en: 'Every service has one fixed rate for your area, so customers always see the same price. You only choose which services you do.', bn: 'প্রতিটি সার্ভিসের জন্য আপনার এলাকায় একটাই নির্দিষ্ট দাম থাকে, ফলে ক্রেতা সবসময় একই দাম দেখে। আপনি শুধু বেছে নেবেন কোন কোন সার্ভিস করেন।' },
+    hiF: { en: 'Your business', bn: 'আপনার ব্যবসা' },
+    swN: { en: 'This switch will control when you receive requests, once the service opens.', bn: 'সার্ভিস চালু হলে এই সুইচ ঠিক করবে আপনি কখন অনুরোধ পাবেন।' }, readyT: { en: 'Get ready to start', bn: 'শুরুর প্রস্তুতি' }
+  };
+  var pt = function (k) { return ZX.t(PT[k]); };
+  /* title / text / icon / colour for each page: [icon, colour, headline, text] */
+  var PP = {
+    shop: { products: ['menu', '#2563eb', { en: 'Products', bn: 'পণ্য' }, { en: 'No products yet', bn: 'এখনো কোনো পণ্য নেই' }, { en: 'Add products with photos, prices and categories. This arrives in the next stage.', bn: 'ছবি, দাম ও ক্যাটাগরিসহ পণ্য যোগ করুন। এটা পরের ধাপে আসছে।' }], stock: ['alert', '#e11d48', { en: 'Stock', bn: 'স্টক' }, { en: 'Nothing to mark yet', bn: 'চিহ্নিত করার কিছু নেই' }, { en: 'When your products are ready you can mark them in or out of stock in one tap.', bn: 'পণ্য তৈরি হলে এক ট্যাপে স্টকে আছে বা নেই চিহ্নিত করতে পারবেন।' }], orders: ['bag', '#ea580c', { en: 'Orders', bn: 'অর্ডার' }, { en: 'No orders yet', bn: 'এখনো কোনো অর্ডার নেই' }, { en: 'New orders will appear here with a sound alert once ordering opens.', bn: 'অর্ডার চালু হলে নতুন অর্ডার শব্দসহ এখানে আসবে।' }] },
+    tech: { services: ['tool', '#0d9488', { en: 'My services', bn: 'আমার সার্ভিস' }, { en: 'Choose your services', bn: 'আপনার সার্ভিস বেছে নিন' }, { en: 'Pick the services you do, such as AC, electric or plumbing. Rates are fixed by Zilax.', bn: 'AC, ইলেকট্রিক বা প্লাম্বিংয়ের মতো যেসব সার্ভিস করেন তা বেছে নিন। দাম জিলাক্স ঠিক করে দেয়।' }], jobs: ['pulse', '#2563eb', { en: 'Job requests', bn: 'কাজের অনুরোধ' }, { en: 'No job requests yet', bn: 'এখনো কোনো কাজের অনুরোধ নেই' }, { en: 'Customer requests near you will appear here. Accept a job and go.', bn: 'আপনার কাছের ক্রেতাদের অনুরোধ এখানে আসবে। কাজ নিয়ে রওনা দিন।' }], schedule: ['cal', '#7c3aed', { en: 'Schedule', bn: 'সময়সূচি' }, { en: 'Nothing scheduled', bn: 'কিছু নির্ধারিত নেই' }, { en: 'Your accepted jobs and times will be listed here.', bn: 'আপনার নেওয়া কাজ ও সময় এখানে থাকবে।' }] },
+    car: { cars: ['car', '#7c3aed', { en: 'My cars', bn: 'আমার গাড়ি' }, { en: 'No cars listed', bn: 'কোনো গাড়ি যোগ করা নেই' }, { en: 'Add each car with photos, seats and the daily rent.', bn: 'প্রতিটি গাড়ি ছবি, আসন সংখ্যা ও দৈনিক ভাড়াসহ যোগ করুন।' }], bookings: ['cal', '#2563eb', { en: 'Bookings', bn: 'বুকিং' }, { en: 'No bookings yet', bn: 'এখনো কোনো বুকিং নেই' }, { en: 'Customer booking requests will appear here for you to accept.', bn: 'ক্রেতার বুকিংয়ের অনুরোধ এখানে আসবে, আপনি গ্রহণ করবেন।' }], avail: ['clock', '#ea580c', { en: 'Availability', bn: 'কবে খালি' }, { en: 'Set your free days', bn: 'খালি দিনগুলো ঠিক করুন' }, { en: 'Mark the days each car is free so nobody books it twice.', bn: 'প্রতিটি গাড়ি কোন কোন দিন খালি তা চিহ্নিত করুন, যাতে একই গাড়ি দুজন বুক না করে।' }] },
+    decor: { packages: ['spark', '#db2777', { en: 'Packages', bn: 'প্যাকেজ' }, { en: 'No packages yet', bn: 'এখনো কোনো প্যাকেজ নেই' }, { en: 'Create packages for weddings, birthdays and more, with a price for each.', bn: 'বিয়ে, জন্মদিন ইত্যাদির প্যাকেজ বানান, প্রতিটার দামসহ।' }], bookings: ['cal', '#2563eb', { en: 'Bookings', bn: 'বুকিং' }, { en: 'No bookings yet', bn: 'এখনো কোনো বুকিং নেই' }, { en: 'Event bookings with date, place and package will appear here.', bn: 'তারিখ, জায়গা ও প্যাকেজসহ অনুষ্ঠানের বুকিং এখানে আসবে।' }], gallery: ['image', '#ea580c', { en: 'Gallery', bn: 'গ্যালারি' }, { en: 'Show your best work', bn: 'আপনার সেরা কাজ দেখান' }, { en: 'Upload photos of past events so customers can see your style.', bn: 'আগের অনুষ্ঠানের ছবি দিন, যাতে ক্রেতা আপনার কাজ দেখতে পায়।' }] },
+    sound: { equip: ['speaker', '#ca8a04', { en: 'Equipment', bn: 'যন্ত্র' }, { en: 'No equipment listed', bn: 'কোনো যন্ত্র যোগ করা নেই' }, { en: 'List your speakers, lights and mixers with a daily rent.', bn: 'স্পিকার, লাইট ও মিক্সার দৈনিক ভাড়াসহ তালিকাভুক্ত করুন।' }], packages: ['box', '#7c3aed', { en: 'Packages', bn: 'প্যাকেজ' }, { en: 'No packages yet', bn: 'এখনো কোনো প্যাকেজ নেই' }, { en: 'Bundle equipment into ready packages for events.', bn: 'অনুষ্ঠানের জন্য যন্ত্র মিলিয়ে তৈরি প্যাকেজ বানান।' }], bookings: ['cal', '#2563eb', { en: 'Bookings', bn: 'বুকিং' }, { en: 'No bookings yet', bn: 'এখনো কোনো বুকিং নেই' }, { en: 'Event bookings will appear here for you to accept.', bn: 'অনুষ্ঠানের বুকিং এখানে আসবে, আপনি গ্রহণ করবেন।' }] }
+  };
+  async function myPartnerApp(cat) {
+    var me = A.me(), mine = []; try { mine = (await A.myApplications()).filter(function (a) { return a.user_id === me.user.id && a.category === cat; }); } catch (e) { }
+    mine.sort(function (a, b) { return (b.status === 'approved') - (a.status === 'approved'); }); return mine[0] || null;
+  }
+  function partnerHome(kind) {
+    return async function (el) {
+      var C = PCFG[kind]; el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+      try {
+        var me = A.me(), prof = me.profile || {}, app = await myPartnerApp(C.cat), areas = []; try { areas = await A.areas(); } catch (e) { }
+        var name = app ? app.business_name : (prof.full_name || ''), where = app ? [areaName(areas, app.union_id), areaName(areas, app.upazila_id)].filter(Boolean).join(', ') : '', key = 'zx_open_' + kind, open = ZX.store.get(key, true);
+        var K = C.k.map(function (k) { return [pt(k[0]), k[0] === 'pk2' ? '৳' + ZX.digits(0) : ZX.digits(0), k[1], k[2], kind + '/' + k[3]]; });
+        var steps = C.steps.map(function (s) { var done = s === 'c1' ? !!(app && app.status === 'approved') : false; return [PT[s] ? pt(s) : m2(s), done]; });
+        el.innerHTML = '<div class="stcard" style="background:' + C.g + '"><div class="stt"><span class="aic big" style="--ac:#000;background:rgba(255,255,255,.2);color:#fff">' + ic(C.ico) + '</span><div class="g"><small>' + esc(ZX.t(ptypeOf(C.cat).name)) + '</small><h2>' + esc(name) + '</h2>' + (where ? '<small>' + esc(where) + '</small>' : '') + '</div></div>' +
+          '<div class="stsw"><div><b><span id="pwLbl">' + (open ? ZX.t(C.open) : ZX.t(C.closed)) + '</span></b><small>' + pt('swN') + '</small></div><button type="button" class="sw' + (open ? ' on' : '') + '" data-psw="1" aria-label="toggle"><i></i></button></div></div>' +
+          '<h3 class="sh">' + m2('today') + '</h3><div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '" data-g="' + k[4] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + esc(k[0]) + '</small></div>'; }).join('') + '</div>' +
+          '<h3 class="sh">' + pt('readyT') + '</h3><div class="cardx" style="padding:6px 16px">' + steps.map(function (s) { return '<div class="rowx"><span class="chkc' + (s[1] ? ' done' : '') + '">' + (s[1] ? ic('check') : '') + '</span><div class="g"><b>' + esc(s[0]) + '</b></div>' + (s[1] ? '' : '<span class="chip">' + m2('soon') + '</span>') + '</div>'; }).join('') + '</div>' +
+          '<h3 class="sh">' + m2('quick') + '</h3><div class="qrow q4">' + C.q.map(function (q) { var d = PP[kind][q[0]]; return '<button type="button" class="qb" style="--ac:' + q[2] + '" data-g="' + kind + '/' + q[0] + '"><span>' + ic(q[1]) + '</span>' + (d ? ZX.t(d[2]) : pt('pk2')) + '</button>'; }).join('') + '</div>';
+        el.onclick = function (e) { var s = e.target.closest('[data-psw]'); if (!s) return; var on = !s.classList.contains('on'); s.classList.toggle('on', on); ZX.store.set(key, on); var lb = el.querySelector('#pwLbl'); if (lb) lb.textContent = on ? ZX.t(C.open) : ZX.t(C.closed); };
+      } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+    };
+  }
+  function partnerPage(kind, sec) {
+    return function (el) {
+      if (sec === 'earn') { var K = [[m2('eToday'), '৳' + ZX.digits(0), 'wallet', '#15803d'], [m2('eWeek'), '৳' + ZX.digits(0), 'chart', '#2563eb'], [m2('ePend'), '৳' + ZX.digits(0), 'clock', '#ea580c']];
+        el.innerHTML = pageHead(m2('erT'), '') + '<div class="kgrid k3">' + K.map(function (k) { return '<div class="kc" style="--ac:' + k[3] + '"><span class="kic">' + ic(k[2]) + '</span><b>' + k[1] + '</b><small>' + k[0] + '</small></div>'; }).join('') + '</div>' + emptyState('wallet', '#15803d', m2('eH'), m2('eP')); return; }
+      var d = PP[kind][sec]; el.innerHTML = pageHead(ZX.t(d[2]), '') + (kind === 'tech' && sec === 'services' ? '<div class="ratebox"><span>' + ic('tag') + '</span><div><b>' + pt('rateT') + '</b><p>' + pt('rateP') + '</p></div></div>' : '') + emptyState(d[0], d[1], ZX.t(d[3]), ZX.t(d[4]), '');
+    };
+  }
+
   var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
     'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
@@ -405,10 +461,13 @@
       if (!A.hasAny(NEED[role] || [])) return function (el) { gateNoAccess(el, role); };
       return LIVE[role + '.' + sec] || null;
     },
+    partnerOnly: function () { var rs = (A.me().roles || []).filter(function (r) { return r.status === 'active'; }).map(function (r) { return r.role; }); return this.ready && A.loggedIn() && rs.length > 0 && !rs.some(function (r) { return STAFF.indexOf(r) > -1; }); },
     canSee: function (r) { return this.ready && A.loggedIn() && A.hasAny(NEED[r] || []); },
     has: function (r, s) { return !!LIVE[r + '.' + s]; },
     user: function () { var p = A.me().profile; return p ? { name: p.full_name || '' } : null; },
     who: function () { var p = A.me().profile; return p ? '<span style="color:#cfe3d4;font-size:12px">' + esc(p.full_name) + '</span> <a href="#" id="plOut" style="color:#fff;font-size:12px;font-weight:700">' + l('logout') + '</a>' : ''; },
     logout: function () { return A.signOut(); }
   };
+  ['shop', 'tech', 'car', 'decor', 'sound'].forEach(function (k) { LIVE[k + '.home'] = partnerHome(k); Object.keys(PP[k]).concat(['earn']).forEach(function (s) { LIVE[k + '.' + s] = partnerPage(k, s); }); });
+
 })();

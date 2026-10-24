@@ -123,6 +123,8 @@
  .chkc{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid #cfd8d2;flex:none;font-size:15px;color:#fff}.chkc.done{background:var(--green);border-color:var(--green)}
  .brow{display:flex;align-items:center;gap:10px;margin:10px 0}.brow .bl{width:112px;font-size:13px;color:var(--muted);flex:none}.brow b{width:28px;text-align:right;font-size:14px}
  .bar{flex:1;height:12px;border-radius:8px;background:#e8eeea;overflow:hidden}.bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--ac),color-mix(in srgb,var(--ac) 70%,#fff))}
+
+ .ratebox{display:flex;gap:12px;align-items:flex-start;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:18px;padding:14px;margin-bottom:12px}.ratebox>span{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#0d9488;color:#fff;font-size:21px;flex:none}.ratebox b{display:block;font-size:15px}.ratebox p{margin:3px 0 0;font-size:13.5px;line-height:1.5;color:#3f4a45}
 </style>
 </head>
 <body>
@@ -146,6 +148,16 @@ var ROLES={
  merchant:{n:{en:'Merchant',bn:'মার্চেন্ট'},s:[
   ['dash','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['stock','alert',{en:'Stock out',bn:'স্টক আউট'},3,'demo',{en:'Stock',bn:'স্টক'}],['menu','menu',{en:'Menu & new item',bn:'মেনু ও নতুন আইটেম'},3,0,{en:'Menu',bn:'মেনু'}],
   ['orders','bag',{en:'Orders',bn:'অর্ডার'},5,0,{en:'Orders',bn:'অর্ডার'}],['offers','tag',{en:'Offers & reviews',bn:'অফার ও রিভিউ'},9],['earn','wallet',{en:'Earnings',bn:'আয় ও সেটেলমেন্ট'},8]]},
+ shop:{n:{en:'Shop',bn:'দোকান'},s:[
+  ['home','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['products','menu',{en:'Products',bn:'পণ্য'},3,0,{en:'Products',bn:'পণ্য'}],['stock','alert',{en:'Stock',bn:'স্টক'},3,0,{en:'Stock',bn:'স্টক'}],['orders','bag',{en:'Orders',bn:'অর্ডার'},5,0,{en:'Orders',bn:'অর্ডার'}],['earn','wallet',{en:'Earnings',bn:'আয়'},8,0,{en:'Earnings',bn:'আয়'}]]},
+ tech:{n:{en:'Technician',bn:'টেকনিশিয়ান'},s:[
+  ['home','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['services','tool',{en:'My services',bn:'আমার সার্ভিস'},3,0,{en:'Services',bn:'সার্ভিস'}],['jobs','pulse',{en:'Job requests',bn:'কাজের অনুরোধ'},5,0,{en:'Jobs',bn:'কাজ'}],['schedule','cal',{en:'Schedule',bn:'সময়সূচি'},5,0,{en:'Schedule',bn:'সময়সূচি'}],['earn','wallet',{en:'Earnings',bn:'আয়'},8,0,{en:'Earnings',bn:'আয়'}]]},
+ car:{n:{en:'Car Partner',bn:'কার পার্টনার'},s:[
+  ['home','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['cars','car',{en:'My cars',bn:'আমার গাড়ি'},3,0,{en:'Cars',bn:'গাড়ি'}],['bookings','cal',{en:'Bookings',bn:'বুকিং'},5,0,{en:'Bookings',bn:'বুকিং'}],['avail','clock',{en:'Availability',bn:'কবে খালি'},5,0,{en:'Free days',bn:'খালি দিন'}],['earn','wallet',{en:'Earnings',bn:'আয়'},8,0,{en:'Earnings',bn:'আয়'}]]},
+ decor:{n:{en:'Decoration',bn:'ডেকোরেশন'},s:[
+  ['home','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['packages','spark',{en:'Packages',bn:'প্যাকেজ'},3,0,{en:'Packages',bn:'প্যাকেজ'}],['bookings','cal',{en:'Bookings',bn:'বুকিং'},5,0,{en:'Bookings',bn:'বুকিং'}],['gallery','image',{en:'Gallery',bn:'গ্যালারি'},3,0,{en:'Gallery',bn:'গ্যালারি'}],['earn','wallet',{en:'Earnings',bn:'আয়'},8,0,{en:'Earnings',bn:'আয়'}]]},
+ sound:{n:{en:'Sound & Light',bn:'সাউন্ড ও লাইট'},s:[
+  ['home','dash',{en:'Dashboard',bn:'ড্যাশবোর্ড'},3,0,{en:'Home',bn:'হোম'}],['equip','speaker',{en:'Equipment',bn:'যন্ত্র'},3,0,{en:'Equipment',bn:'যন্ত্র'}],['packages','box',{en:'Packages',bn:'প্যাকেজ'},3,0,{en:'Packages',bn:'প্যাকেজ'}],['bookings','cal',{en:'Bookings',bn:'বুকিং'},5,0,{en:'Bookings',bn:'বুকিং'}],['earn','wallet',{en:'Earnings',bn:'আয়'},8,0,{en:'Earnings',bn:'আয়'}]]},
  rider:{n:{en:'Rider',bn:'রাইডার'},s:[
   ['home','bike',{en:'Online & orders',bn:'অনলাইন ও অর্ডার'},6,0,{en:'Home',bn:'হোম'}],['earn','cash',{en:'Earnings & cash',bn:'আয় ও ক্যাশ'},6,0,{en:'Earnings',bn:'আয়'}],['hist','clock',{en:'History',bn:'ইতিহাস'},6,0,{en:'History',bn:'ইতিহাস'}]]},
  sales:{n:{en:'Sales Admin',bn:'সেলস অ্যাডমিন'},s:[
@@ -166,6 +178,7 @@ var PI={dash:'<rect x="3" y="3" width="8" height="10" rx="2"/><rect x="13" y="3"
  chat:'<path d="M4 5h16v11H9l-5 4V5z"/>',image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>',
  map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',list:'<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',percent:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
  home:'<path d="M4 11l8-7 8 7v9H4v-9z"/><path d="M10 20v-6h4v6"/>',layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',card:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
+ tool:'<path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3l9-9z"/>',car:'<path d="M5 16V11l2-5h10l2 5v5H5z"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>',spark:'<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z"/>',speaker:'<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="15" r="3"/><circle cx="12" cy="7" r="1"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',box:'<path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',back:'<path d="M15 5l-7 7 7 7"/>',out:'<path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9"/>',swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>'};
 function ic(k){return '<svg viewBox="0 0 24 24">'+(PI[k]||PI.dash)+'</svg>';}
 var role='merchant', sec=null;
@@ -223,6 +236,8 @@ function content(){
   else h+=stageCard(d[3]);
   return h;
 }
+function isPO(){return !!(window.ZXLive&&ZX.live&&ZXLive.partnerOnly&&ZXLive.partnerOnly());}
+function S0(){return ROLES[role].s;}
 function shortOf(x){return T(x[5]||x[2]);}
 function visibleRoles(){var all=Object.keys(ROLES);if(!window.ZXLive||!ZX.live||!ZXLive.canSee)return all;return all.filter(function(r){return r===role||ZXLive.canSee(r);});}
 function stageTag(x){return (window.ZXLive&&ZX.live&&ZXLive.has&&ZXLive.has(role,x[0]))?'':'<span class="st">'+(ZX.lang==='bn'?'ধাপ ':'S')+ZX.digits(x[3])+'</span>';}
@@ -231,11 +246,11 @@ function closeMore(fromPop){var was=moreOpen;$('mSheet').classList.remove('show'
 function go(h){var same=h.indexOf('/')>-1?h===role+'/'+sec:h===role;if(same){if(moreOpen)closeMore();return;}depth++;if(moreOpen){moreOpen=false;$('mSheet').classList.remove('show');location.replace('#'+h);}else location.hash=h;}
 window.addEventListener('popstate',function(){if(moreOpen)closeMore(true);});
 function openMore(){
-  var S=ROLES[role].s, rest=S.length>5?S.slice(4):[], u=window.ZXLive&&ZXLive.user?ZXLive.user():null, vr=visibleRoles(), h='<div class="lsgrip"></div>';
+  var S=ROLES[role].s, po=isPO(), rest=(S.length>5||po)?S.slice(4):[], u=window.ZXLive&&ZXLive.user?ZXLive.user():null, vr=visibleRoles(), h='<div class="lsgrip"></div>';
   if(u)h+='<div class="mrole"><span class="av">'+(u.name||'?').trim().charAt(0).toUpperCase()+'</span><div><b>'+(u.name||'')+'</b><small>'+T(ROLES[role].n)+'</small></div></div>';
   if(rest.length){h+='<h5>'+T(ROLES[role].n)+'</h5>'+rest.map(function(x){return '<button class="lsrow'+(x[0]===sec?' on':'')+'" type="button" data-sec="'+x[0]+'"><span class="lsi">'+ic(x[1])+'</span><b>'+T(x[2])+'</b>'+(stageTag(x)?stageTag(x).replace('class="st"','class="tag"'):'')+'</button>';}).join('');}
   if(vr.length>1)h+='<h5>'+(ZX.lang==='bn'?'প্যানেল বদলান':'Switch panel')+'</h5>'+vr.map(function(r){return '<button class="lsrow'+(r===role?' on':'')+'" type="button" data-role="'+r+'"><span class="lsi">'+ic('swap')+'</span><b>'+T(ROLES[r].n)+'</b></button>';}).join('');
-  h+='<h5>&nbsp;</h5><a class="lsrow" href="index.html#account" data-stay="1"><span class="lsi">'+ic('back')+'</span><b>'+(ZX.lang==='bn'?'অ্যাপে ফিরুন':'Back to app')+'</b></a>';
+  h+='<h5>&nbsp;</h5>'+(po?'':'<a class="lsrow" href="index.html#account" data-stay="1"><span class="lsi">'+ic('back')+'</span><b>'+(ZX.lang==='bn'?'অ্যাপে ফিরুন':'Back to app')+'</b></a>');
   if(u)h+='<button class="lsrow out" type="button" data-plout="1"><span class="lsi">'+ic('out')+'</span><b>'+(ZX.lang==='bn'?'লগআউট':'Log out')+'</b></button>';
   $('mPan').innerHTML=h;$('mSheet').classList.add('show');if(!moreOpen){history.pushState({more:1},'',location.href);moreOpen=true;}
 }
@@ -245,9 +260,9 @@ function render(){
   $('lEn').classList.toggle('on',ZX.lang==='en');$('lBn').classList.toggle('on',ZX.lang==='bn');
   var vr=visibleRoles(); $('roleSwitch').style.display=vr.length>1?'':'none';
   $('roleSwitch').innerHTML=vr.map(function(r){return '<a href="#'+r+'" class="'+(r===role?'on':'')+'">'+T(ROLES[r].n)+'</a>'}).join('');
-  var S=ROLES[role].s, tabs=S.length>5?S.slice(0,4):S;
+  var po=isPO(), more=S0().length>5||po, S=ROLES[role].s, tabs=more?S.slice(0,4):S; $('backL').style.display=po?'none':'';
   $('side').innerHTML='<div style="font-weight:700;color:var(--forest);margin:4px 8px 10px">'+T(ROLES[role].n)+'</div>'+S.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><span>'+ic(x[1])+'</span>'+T(x[2])+stageTag(x)+'</button>'}).join('')+(vr.length>1?'<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">'+vr.map(function(r){return '<button data-role="'+r+'" class="'+(r===role?'on':'')+'"><span>'+ic('swap')+'</span>'+T(ROLES[r].n)+'</button>'}).join('')+'</div>':'');
-  $('mtabs').innerHTML=tabs.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><b>'+ic(x[1])+'</b><span>'+shortOf(x)+'</span></button>'}).join('')+(S.length>5?'<button data-more="1" class="'+(S.slice(4).some(function(x){return x[0]===sec})?'on':'')+'"><b>'+ic('more')+'</b><span>'+(ZX.lang==='bn'?'আরও':'More')+'</span></button>':'');
+  $('mtabs').innerHTML=tabs.map(function(x){return '<button data-sec="'+x[0]+'" class="'+(x[0]===sec?'on':'')+'"><b>'+ic(x[1])+'</b><span>'+shortOf(x)+'</span></button>'}).join('')+(more?'<button data-more="1" class="'+(S.slice(4).some(function(x){return x[0]===sec})?'on':'')+'"><b>'+ic('more')+'</b><span>'+(ZX.lang==='bn'?'আরও':'More')+'</span></button>':'');
   var mount=window.ZXLive?ZXLive.intercept(role,sec):null; if(mount){$('main').innerHTML='';mount($('main'));}else{$('main').innerHTML=content(); calcOut();}
 }
 ZX.onLang=render;

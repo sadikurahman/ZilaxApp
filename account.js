@@ -95,7 +95,7 @@
     h += sec(t('sOff'), [row('a_pct', t('promo')), row('a_ticket', t('refer'))]);
     h += sec(t('sSet'), [row('a_globe', t('lang'), { lang: 1, val: t('curLang') }), row('a_bell', t('notif'), { info: 'perms' })]);
     h += sec(t('sHelp'), [row('a_life', t('help'), { info: 'help' }), row('a_phone', t('supp'), { info: 'support' }), row('a_shield', t('pol'), { info: 'policies' })]);
-    h += sec(t('sMore'), [row('a_hand', t('join'), { link: '#join' }), row('a_info', t('about'), { info: 'about' }), row('a_star', t('rate'), { rate: 1 })]);
+    h += sec(t('sMore'), (o.hasPartner ? [] : [row('a_hand', t('join'), { link: '#join' })]).concat([row('a_info', t('about'), { info: 'about' }), row('a_star', t('rate'), { rate: 1 })]));
     h += '<button class="acout" type="button" data-go="logout">' + ZX.ico.a_out + t('out') + '</button>';
     return h;
   };

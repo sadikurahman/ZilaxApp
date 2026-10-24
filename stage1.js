@@ -54,7 +54,7 @@
       docs: [DOC('equipment_photo', 'Equipment photos', 'সরঞ্জামের ছবি', true, true)] }
   };
   var ROLE2TYPE = {}; Object.keys(A.PARTNER_ROLE).forEach(function (k) { ROLE2TYPE[A.PARTNER_ROLE[k]] = k; });
-  var PANEL_OF = { merchant_food: 'merchant', merchant_shop: 'merchant', rider: 'rider', sales_admin: 'sales', admin: 'admin', super_admin: 'super' };
+  var PANEL_OF = { merchant_food: 'merchant', merchant_shop: 'shop', technician: 'tech', car_partner: 'car', decoration: 'decor', sound_light: 'sound', rider: 'rider', sales_admin: 'sales', admin: 'admin', super_admin: 'super' };
 
   var areas = [], mode = 'login', applyType = null, gps = null, files = {}, next = null;
   function ptype(id) { return D.partnerTypes.filter(function (p) { return p.id === id; })[0]; }
@@ -78,7 +78,11 @@
     await ensureAreas();
     ZX.authView(v, { mode: mode, areas: areas, afterAuth: afterAuth, fresh: !v.firstChild || !v.querySelector('#authBox') });
   }
-  var ROLE_ORDER = ['super_admin', 'admin', 'sales_admin', 'merchant_food', 'merchant_shop', 'rider'];
+  var ROLE_ORDER = ['super_admin', 'admin', 'sales_admin', 'merchant_food', 'merchant_shop', 'technician', 'car_partner', 'decoration', 'sound_light', 'rider'];
+  var STAFF_ROLES = ['sales_admin', 'admin', 'super_admin'];
+  function activeRoles() { return (A.me().roles || []).filter(function (r) { return r.status === 'active'; }).map(function (r) { return r.role; }); }
+  function isPartnerOnly() { var rs = activeRoles(); return rs.length > 0 && !rs.some(function (r) { return STAFF_ROLES.indexOf(r) > -1; }); }
+  function hasPartnerRole() { return activeRoles().some(function (r) { return ROLE_ORDER.indexOf(r) > 2 && STAFF_ROLES.indexOf(r) < 0; }); }
   function landing() {
     var me = A.me(); if (!me.user) return null;
     var act = (me.roles || []).filter(function (r) { return r.status === 'active'; }).map(function (r) { return r.role; });
@@ -86,10 +90,12 @@
     return null;
   }
   function stayInApp() { try { return sessionStorage.getItem('zx_stay') === '1'; } catch (e) { return false; } }
-  function goPanel(p) { location.href = 'panels.html#' + p; }
+  function goPanel(p) { if (isPartnerOnly()) location.replace('panels.html#' + p); else location.href = 'panels.html#' + p; }
   var routed = false;
   function autoRoute() {
-    if (routed) return; var me = A.me(); if (!me.user) return; routed = true;
+    var me = A.me(); if (!me.user) return;
+    if (isPartnerOnly()) { var pp = landing(); if (pp) { routed = true; goPanel(pp); } return; }
+    if (routed) return; routed = true;
     var h = location.hash; if (h && h !== '#' && h !== '#home') return; if (stayInApp()) return;
     var p = landing(); if (p) goPanel(p);
   }
@@ -117,7 +123,7 @@
     var where = [un && ZX.t({ en: un.name_en, bn: un.name_bn }), up && ZX.t({ en: up.name_en, bn: up.name_bn })].filter(Boolean).join(', ');
     var panels = (me.roles || []).filter(function (r) { return r.status === 'active' && PANEL_OF[r.role]; }).map(function (r) { return { href: 'panels.html#' + PANEL_OF[r.role], label: A.roleLabel(r.role) }; });
     var partner = (me.roles || []).some(function (r) { return r.status === 'active' && ROLE2TYPE[r.role]; });
-    box.innerHTML = ZX.accountHtml({ user: !!me.user, name: p.full_name, phone: p.phone, where: where, avatar: p.avatar_url, partner: partner, panels: panels });
+    box.innerHTML = ZX.accountHtml({ user: !!me.user, name: p.full_name, phone: p.phone, where: where, avatar: p.avatar_url, partner: partner, panels: panels, hasPartner: hasPartnerRole() });
     arrows();
   }
   function arrows() { document.querySelectorAll('.ar').forEach(function (e) { e.innerHTML = ZX.ico.arrowR; }); }
