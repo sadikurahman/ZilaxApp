@@ -1,4 +1,4 @@
-/* Zilax — Stage 1 live panels: access gate, application review, staff roles, areas, audit log. */
+/* Zilax — live panels: access gate, application review, staff roles, areas, audit log, Stage 2.1 services on/off. */
 (function () {
   var A = ZX.auth, D = ZX.data, esc = A.esc;
   var NEED = { merchant: ['merchant_food', 'super_admin'], shop: ['merchant_shop', 'super_admin'], tech: ['technician', 'super_admin'], car: ['car_partner', 'super_admin'], decor: ['decoration', 'super_admin'], sound: ['sound_light', 'super_admin'], rider: ['rider', 'super_admin'], sales: ['sales_admin', 'admin', 'super_admin'], admin: ['admin', 'super_admin'], super: ['super_admin'] };
@@ -12,7 +12,12 @@
     recommend: { en: 'Recommend', bn: 'সুপারিশ করুন' }, notRec: { en: 'Do not recommend', bn: 'সুপারিশ করবেন না' }, approve: { en: 'Approve', bn: 'অনুমোদন' }, reject: { en: 'Reject', bn: 'প্রত্যাখ্যান' }, done: { en: 'Saved', bn: 'সংরক্ষিত' },
     staff: { en: 'Staff roles', bn: 'স্টাফের ভূমিকা' }, grant: { en: 'Give role', bn: 'ভূমিকা দিন' }, revoke: { en: 'Remove', bn: 'সরান' }, roleSel: { en: 'Role', bn: 'ভূমিকা' }, grantHint: { en: 'The person must sign up in the app first. Enter their mobile number.', bn: 'ব্যক্তিকে আগে অ্যাপে সাইন আপ করতে হবে। তাঁর মোবাইল নম্বর দিন।' },
     sure: { en: 'Are you sure?', bn: 'আপনি কি নিশ্চিত?' }, areas: { en: 'Areas', bn: 'এলাকা' }, addArea: { en: 'Add union / paurashava', bn: 'ইউনিয়ন / পৌরসভা যোগ করুন' }, upazila: { en: 'Upazila', bn: 'উপজেলা' }, nameEn: { en: 'Name (English)', bn: 'নাম (ইংরেজি)' }, nameBn: { en: 'Name (Bangla)', bn: 'নাম (বাংলা)' }, add: { en: 'Add', bn: 'যোগ করুন' },
-    hide: { en: 'Hide', bn: 'লুকান' }, show: { en: 'Show', bn: 'দেখান' }, audit: { en: 'Recent changes', bn: 'সাম্প্রতিক পরিবর্তন' }, when: { en: 'When', bn: 'কখন' }, who: { en: 'Who', bn: 'কে' }, what: { en: 'What', bn: 'কী' }
+    hide: { en: 'Hide', bn: 'লুকান' }, show: { en: 'Show', bn: 'দেখান' }, audit: { en: 'Recent changes', bn: 'সাম্প্রতিক পরিবর্তন' }, when: { en: 'When', bn: 'কখন' }, who: { en: 'Who', bn: 'কে' }, what: { en: 'What', bn: 'কী' },
+    svcT: { en: 'Services', bn: 'সার্ভিস' }, svcS: { en: 'Switch a whole service on or off. An off service shows "Coming soon" on the customer home page.', bn: 'পুরো সার্ভিস চালু বা বন্ধ করুন। বন্ধ সার্ভিস ক্রেতার হোম পেজে "শীঘ্রই আসছে" দেখায়।' },
+    svcOn: { en: 'On', bn: 'চালু' }, svcOffL: { en: 'Off', bn: 'বন্ধ' }, svcTurnOn: { en: 'Turn on', bn: 'চালু করুন' }, svcTurnOff: { en: 'Turn off', bn: 'বন্ধ করুন' },
+    svcApprYes: { en: 'New listings need approval', bn: 'নতুন লিস্টিংয়ে অনুমোদন লাগবে' }, svcApprNo: { en: 'New listings go live without approval', bn: 'নতুন লিস্টিং অনুমোদন ছাড়াই চালু হবে' }, svcApprBtn: { en: 'Change approval rule', bn: 'অনুমোদনের নিয়ম বদলান' },
+    svcConfirmOff: { en: 'Turn this service off? Customers will see "Coming soon".', bn: 'এই সার্ভিস বন্ধ করবেন? ক্রেতারা "শীঘ্রই আসছে" দেখবে।' },
+    svcSetup: { en: 'Setup needed: run stage2_1.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_1.sql চালান, তারপর এই পেজ আবার খুলুন।' }
   };
   var l = function (k) { return ZX.t(L[k]); };
   var STAFF_ROLES = ['sales_admin', 'admin', 'super_admin'];
@@ -152,6 +157,35 @@
         '<div class="cardx"><h3>' + l('addArea') + '</h3><label class="fld"><span>' + l('upazila') + '</span><select class="inp" id="aPar">' + ups.map(function (u) { return '<option value="' + esc(u.id) + '">' + esc(ZX.t({ en: u.name_en, bn: u.name_bn })) + '</option>'; }).join('') + '</select></label><div class="grid2"><input class="inp" id="aEn" placeholder="' + l('nameEn') + '"><input class="inp" id="aBn" placeholder="' + l('nameBn') + '"></div><div id="aMs" class="fmsg"></div><button class="btn" id="aGo" type="button">' + l('add') + '</button></div>' + tree;
       el.querySelector('#aGo').onclick = async function () { var m = el.querySelector('#aMs'); m.className = 'fmsg ok'; m.textContent = '…'; try { await A.upsertArea({ parent_id: el.querySelector('#aPar').value, level: 'union', kind: 'union', name_en: el.querySelector('#aEn').value, name_bn: el.querySelector('#aBn').value }); ZX.toast(l('done')); paint(); } catch (e) { m.className = 'fmsg err'; m.textContent = A.errMsg(e); } };
       el.querySelectorAll('[data-tg]').forEach(function (b) { b.onclick = async function () { var a = all.filter(function (x) { return x.id === b.getAttribute('data-tg'); })[0]; try { await A.upsertArea({ id: a.id, parent_id: a.parent_id, level: a.level, kind: a.kind, name_en: a.name_en, name_bn: a.name_bn, active: !a.active }); paint(); } catch (e) { ZX.toast(A.errMsg(e)); } }; });
+    }
+    paint();
+  }
+
+  /* ---------- services on/off (Stage 2.1) ---------- */
+  async function servicesPanel(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    async function paint() {
+      var rows; try { rows = await A.services(); } catch (e) { el.innerHTML = head(l('svcT'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '<br>' + l('svcSetup') + '</div>'; return; }
+      el.innerHTML = head(l('svcT'), l('svcS')) + (rows.map(function (r) {
+        return '<div class="cardx"><div class="rowx"><div class="g"><b>' + esc(ZX.t({ en: r.name_en, bn: r.name_bn })) + '</b><small>' + esc(r.code) + '</small></div>' + chip(r.enabled ? l('svcOn') : l('svcOffL'), r.enabled ? 'ok' : 'r') + '</div>' +
+          '<p class="ps" style="margin:8px 0">' + (r.listing_approval ? l('svcApprYes') : l('svcApprNo')) + '</p>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn o" type="button" data-on="' + esc(r.code) + '">' + (r.enabled ? l('svcTurnOff') : l('svcTurnOn')) + '</button>' +
+          '<button class="btn o" type="button" data-ap="' + esc(r.code) + '">' + l('svcApprBtn') + '</button></div></div>';
+      }).join('') || '<p class="ps">' + l('none') + '</p>');
+      function row(code) { return rows.filter(function (x) { return x.code === code; })[0]; }
+      el.querySelectorAll('[data-on]').forEach(function (b) {
+        b.onclick = async function () {
+          var r = row(b.getAttribute('data-on')); if (!r) return;
+          if (r.enabled && !window.confirm(l('svcConfirmOff'))) return;
+          try { await A.setService(r.code, !r.enabled, null); ZX.toast(l('done')); paint(); } catch (e) { ZX.toast(A.errMsg(e)); }
+        };
+      });
+      el.querySelectorAll('[data-ap]').forEach(function (b) {
+        b.onclick = async function () {
+          var r = row(b.getAttribute('data-ap')); if (!r) return;
+          try { await A.setService(r.code, null, !r.listing_approval); ZX.toast(l('done')); paint(); } catch (e) { ZX.toast(A.errMsg(e)); }
+        };
+      });
     }
     paint();
   }
@@ -451,7 +485,7 @@
 
   var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
-    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.audit': auditPanel };
+    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {

@@ -131,6 +131,15 @@
       if (r.error) throw r.error; return r.data || [];
     },
 
+    services: async function () {
+      if (!ZX.live) return [];
+      var r = await ZX.sb.from('services').select('*').order('sort', { ascending: true });
+      if (r.error) throw r.error; return r.data || [];
+    },
+    setService: async function (code, enabled, approval) {
+      need(); var r = await ZX.sb.rpc('set_service', { p_code: code, p_enabled: enabled, p_listing_approval: approval }); if (r.error) throw r.error;
+    },
+
     submitApplication: async function (category, f) {
       need();
       var r = await ZX.sb.rpc('submit_partner_application', { p_category: category, p_business_name: f.business_name, p_owner_name: f.owner_name, p_phone: f.phone, p_upazila: f.upazila_id || null, p_union: f.union_id || null, p_address: f.address || '', p_lat: f.lat == null ? null : f.lat, p_lng: f.lng == null ? null : f.lng, p_details: f.details || {} });

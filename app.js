@@ -69,10 +69,16 @@
     D.banners.forEach(function (b) { photo(document.querySelector('[data-bg="' + b.id + '"]'), b.img, b.grad); });
     $('heroDots').innerHTML = D.banners.map(function (_, i) { return '<i class="' + (i ? '' : 'on') + '"></i>'; }).join('');
   }
+  /* Stage 2.1: Super Admin can switch a service off; its home card then shows "Coming soon" (layout stays the same). */
+  var SVC = { m1: 'food', m2: 'technical', m3: 'shop', m4: 'rent_car', m5: 'decoration', m6: 'sound_light' };
+  var svcOff = ZX.store.get('zx_svc_off', {}) || {};
+  var SOON = { en: 'COMING SOON', bn: 'শীঘ্রই আসছে' };
   function mc(m) {
+    var off = !!svcOff[SVC[m.id]];
+    if (off) m = Object.assign({}, m, { tag: SOON, tone: 'gold' });
     var tg = m.tag ? '<span class="tg ' + (m.tone === 'gold' ? 'gold' : '') + '">' + (m.tone === 'gold' ? '' : ZX.ico.check) + ZX.t(m.tag) + '</span>' : '';
     var ph = m.img ? '<div class="ph" style="background-image:url(' + "'" + m.img + "'" + ')"></div>' : '<div class="ph art" style="background:' + m.grad + '"><span>' + m.emoji + '</span></div>';
-    return '<button class="mc ' + m.size + '" type="button" data-link="' + m.link + '"><div class="tx"><b>' + ZX.t(m.title) + '</b>' + (m.sub ? '<span class="s">' + ZX.t(m.sub) + '</span>' : '') + '</div>' + ph + tg + '</button>';
+    return '<button class="mc ' + m.size + '" type="button" ' + (off ? 'data-soon="1" style="opacity:.6;filter:grayscale(1)"' : 'data-link="' + m.link + '"') + '><div class="tx"><b>' + ZX.t(m.title) + '</b>' + (m.sub ? '<span class="s">' + ZX.t(m.sub) + '</span>' : '') + '</div>' + ph + tg + '</button>';
   }
   function renderMosaic() {
     var M = {}; D.main.forEach(function (m) { M[m.id] = m; });
@@ -167,7 +173,8 @@
   ZX.onLang = renderAll;
 
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-add],[data-tab],[data-link],[data-stage],[data-see],[data-q]'); if (!t) return;
+    var t = e.target.closest('[data-add],[data-tab],[data-link],[data-stage],[data-see],[data-q],[data-soon]'); if (!t) return;
+    if (t.hasAttribute('data-soon')) { ZX.toast(ZX.lang === 'bn' ? 'এই সার্ভিস শীঘ্রই আসছে' : 'This service is coming soon'); return; }
     if (t.hasAttribute('data-add')) { addToCart(t.getAttribute('data-add')); return; }
     if (t.hasAttribute('data-tab')) { var tb = t.getAttribute('data-tab'); location.hash = tb === 'home' ? '' : tb; go(tb); return; }
     if (t.hasAttribute('data-see')) { go({ food: 'food', shop: 'shop' }[t.getAttribute('data-see')] || 'home'); return; }
@@ -180,5 +187,13 @@
   $('q').addEventListener('input', function (e) { doSearch(e.target.value); });
   $('filterBtn').onclick = function () { ZX.toast(ZX.stageMsg(4)); }; $('loginDemo').onclick = function () { ZX.go('login'); };
   window.addEventListener('hashchange', function () { go(location.hash.replace('#', '')); });
+  function loadServices() {
+    if (!ZX.live || !ZX.auth || !ZX.auth.services) return;
+    ZX.auth.services().then(function (rows) {
+      var o = {}; (rows || []).forEach(function (r) { if (r.enabled === false) o[r.code] = 1; });
+      if (JSON.stringify(o) !== JSON.stringify(svcOff)) { svcOff = o; ZX.store.set('zx_svc_off', o); renderMosaic(); arrows(); }
+    }).catch(function () { /* table not created yet or offline: keep what we have */ });
+  }
+  loadServices();
   renderAll(); wireDots($('heroes'), $('heroDots')); wireDots($('offers'), $('offerDots')); go(location.hash.replace('#', '') || 'home');
 })();
