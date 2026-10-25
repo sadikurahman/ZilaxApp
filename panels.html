@@ -213,8 +213,8 @@ function demoLive(){
   return '<div class="bk">'+cols.map(function(c){return '<div class="col"><h4>'+(ZX.lang==='bn'?c[1]:c[0])+'</h4>'+c[2].map(function(t){return '<div class="tk">'+t+'</div>'}).join('')+'</div>'}).join('')+'</div>';
 }
 function demoPrice(){
-  var s=D.settings, h='<div class="cardx"><h3>'+(ZX.lang==='bn'?'ডেলিভারি স্ল্যাব ও কমিশন (এখন শুধু দেখা)':'Delivery slabs & commission (view only for now)')+'</h3><table class="t"><tr><th>'+(ZX.lang==='bn'?'দূরত্ব':'Distance')+'</th><th>'+(ZX.lang==='bn'?'চার্জ':'Charge')+'</th></tr>';
-  var prev=0;s.slabs.forEach(function(x){h+='<tr><td>'+(x.upToKm>=9999?'> '+prev+' km':(prev?prev+' – ':'≤ ')+x.upToKm+' km')+'</td><td>'+ZX.money(x.charge)+'</td></tr>';prev=x.upToKm;});
+  var s=D.settings, h='<div class="cardx"><h3>'+(ZX.lang==='bn'?'ডেলিভারি চার্জ ও কমিশন (এখন শুধু দেখা)':'Delivery charge & commission (view only for now)')+'</h3><table class="t">';
+  h+='<tr><td>'+(ZX.lang==='bn'?'সর্বনিম্ন চার্জ':'Minimum charge')+'</td><td>'+ZX.money(s.deliveryMin)+'</td></tr><tr><td>'+(ZX.lang==='bn'?'প্রতি ১০০ মিটার':'Per 100 metres')+'</td><td>'+ZX.money(s.deliveryPer100m)+'</td></tr>';
   h+='</table><p class="ps" style="margin:10px 0 0">'+(ZX.lang==='bn'?'ফুড কমিশন':'Food commission')+': <b>'+ZX.digits(s.foodCommissionPct)+'%</b></p></div>';
   h+='<div class="cardx"><h3>'+(ZX.lang==='bn'?'হিসাব পরীক্ষা করুন':'Try the calculator')+'</h3><div class="grid2"><input class="inp" id="cSub" type="number" inputmode="numeric" value="1000" placeholder="Food subtotal"><input class="inp" id="cKm" type="number" step="0.1" inputmode="decimal" value="1.5" placeholder="km"></div><div id="cOut" style="margin-top:12px"></div></div>';
   return h;

@@ -4,7 +4,9 @@ ZX.data = {
   area: { en: 'Islampur', bn: 'ইসলামপুর' },
   settings: {
     foodCommissionPct: 15,
-    slabs: [{ upToKm: 1, charge: 20 }, { upToKm: 2, charge: 30 }, { upToKm: 5, charge: 50 }, { upToKm: 9999, charge: 60 }]
+    serviceCharge: 0,
+    deliveryMin: 15,
+    deliveryPer100m: 2.5
   },
   banners: [
     { id: 'b1', tag: { en: 'FOOD DELIVERY', bn: 'ফুড ডেলিভারি' }, title: { en: 'Crave. Tap.<br>Feast in 30 min.', bn: 'ক্ষুধা পেলে ট্যাপ।<br>৩০ মিনিটে ভুরিভোজ।' },

@@ -17,7 +17,14 @@
     svcOn: { en: 'On', bn: 'চালু' }, svcOffL: { en: 'Off', bn: 'বন্ধ' }, svcTurnOn: { en: 'Turn on', bn: 'চালু করুন' }, svcTurnOff: { en: 'Turn off', bn: 'বন্ধ করুন' },
     svcApprYes: { en: 'New listings need approval', bn: 'নতুন লিস্টিংয়ে অনুমোদন লাগবে' }, svcApprNo: { en: 'New listings go live without approval', bn: 'নতুন লিস্টিং অনুমোদন ছাড়াই চালু হবে' }, svcApprBtn: { en: 'Change approval rule', bn: 'অনুমোদনের নিয়ম বদলান' },
     svcConfirmOff: { en: 'Turn this service off? Customers will see "Coming soon".', bn: 'এই সার্ভিস বন্ধ করবেন? ক্রেতারা "শীঘ্রই আসছে" দেখবে।' },
-    svcSetup: { en: 'Setup needed: run stage2_1.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_1.sql চালান, তারপর এই পেজ আবার খুলুন।' }
+    svcSetup: { en: 'Setup needed: run stage2_1.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_1.sql চালান, তারপর এই পেজ আবার খুলুন।' },
+    prT: { en: 'Pricing & commission', bn: 'মূল্য ও কমিশন' }, prS: { en: 'Delivery charge, service charge and commission. Every change is written to the audit log.', bn: 'ডেলিভারি চার্জ, সার্ভিস চার্জ ও কমিশন। প্রতিটি পরিবর্তন অডিট লগে লেখা হয়।' },
+    prSetup: { en: 'Setup needed: run stage2_2.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_2.sql চালান, তারপর এই পেজ আবার খুলুন।' }, prSave: { en: 'Save', bn: 'সংরক্ষণ' }, 
+    delT: { en: 'Delivery charge', bn: 'ডেলিভারি চার্জ' }, delHint: { en: 'The customer pays whichever is higher: the minimum charge, or the rate for every started 100 metres.', bn: 'ক্রেতা যেটা বেশি সেটাই দেন: সর্বনিম্ন চার্জ, অথবা প্রতি শুরু হওয়া ১০০ মিটারের হার।' }, delMin: { en: 'Minimum delivery charge', bn: 'সর্বনিম্ন ডেলিভারি চার্জ' }, delPer: { en: 'Charge per 100 metres', bn: 'প্রতি ১০০ মিটারের চার্জ' },
+    scT: { en: 'Service charge (flat, per order)', bn: 'সার্ভিস চার্জ (প্রতি অর্ডারে নির্দিষ্ট টাকা)' }, scHint: { en: 'Paid by the customer and kept by Zilax. 0 means no service charge.', bn: 'ক্রেতা দেন, Zilax রাখে। ০ মানে সার্ভিস চার্জ নেই।' },
+    comT: { en: 'Commission by service', bn: 'সার্ভিস অনুযায়ী কমিশন' }, comHint: { en: 'Percent Zilax keeps from the partner. Empty means not decided yet. For now only Food commission is used in calculations.', bn: 'পার্টনারের কাছ থেকে Zilax যত শতাংশ রাখে। ফাঁকা মানে এখনো ঠিক হয়নি। এখন হিসাবে শুধু ফুডের কমিশন ব্যবহার হয়।' }, comNotSet: { en: 'not set', bn: 'ঠিক হয়নি' },
+    calcT: { en: 'Try a calculation', bn: 'হিসাব পরীক্ষা করুন' }, cSubPh: { en: 'Food subtotal', bn: 'খাবারের দাম' }, cKmPh: { en: 'Distance (km)', bn: 'দূরত্ব (কিমি)' },
+    cFood: { en: 'Food', bn: 'খাবার' }, cDel: { en: 'Delivery', bn: 'ডেলিভারি' }, cSc: { en: 'Service charge', bn: 'সার্ভিস চার্জ' }, cPay: { en: 'Customer pays', bn: 'ক্রেতা দেবেন' }, cCom: { en: 'Commission', bn: 'কমিশন' }, cMer: { en: 'Merchant gets', bn: 'মার্চেন্ট পাবেন' }, cRid: { en: 'Rider gets', bn: 'রাইডার পাবেন' }, cZil: { en: 'Zilax income', bn: 'Zilax-এর আয়' }
   };
   var l = function (k) { return ZX.t(L[k]); };
   var STAFF_ROLES = ['sales_admin', 'admin', 'super_admin'];
@@ -159,6 +166,49 @@
       el.querySelectorAll('[data-tg]').forEach(function (b) { b.onclick = async function () { var a = all.filter(function (x) { return x.id === b.getAttribute('data-tg'); })[0]; try { await A.upsertArea({ id: a.id, parent_id: a.parent_id, level: a.level, kind: a.kind, name_en: a.name_en, name_bn: a.name_bn, active: !a.active }); paint(); } catch (e) { ZX.toast(A.errMsg(e)); } }; });
     }
     paint();
+  }
+
+  /* ---------- pricing & commission (Stage 2.2) ---------- */
+  function pnum(v) { v = String(v == null ? '' : v).replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }).trim(); return v === '' ? NaN : Number(v); }
+  async function pricingPanel(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    var svcs;
+    try { await A.settings(); svcs = await A.services(); await A.loadPricing(); } catch (e) { el.innerHTML = head(l('prT'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '<br>' + l('prSetup') + '</div>'; return; }
+    var st = ZX.data.settings;
+    function numRow(label, id, val, goId) {
+      return '<p class="ps" style="margin:12px 0 4px">' + l(label) + '</p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="' + id + '" inputmode="decimal" style="max-width:120px" value="' + esc(val) + '"><span class="ps">৳</span><button class="btn" type="button" id="' + goId + '">' + l('prSave') + '</button></div>';
+    }
+    el.innerHTML = head(l('prT'), l('prS')) +
+      '<div class="cardx"><h3>' + l('delT') + '</h3><p class="ps">' + l('delHint') + '</p>' + numRow('delMin', 'dmV', st.deliveryMin, 'dmGo') + numRow('delPer', 'dpV', st.deliveryPer100m, 'dpGo') + '</div>' +
+      '<div class="cardx"><h3>' + l('scT') + '</h3><p class="ps">' + l('scHint') + '</p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="scV" inputmode="decimal" style="max-width:120px" value="' + esc(st.serviceCharge || 0) + '"><span class="ps">৳</span><button class="btn" type="button" id="scGo">' + l('prSave') + '</button></div></div>' +
+      '<div class="cardx"><h3>' + l('comT') + '</h3><p class="ps">' + l('comHint') + '</p>' + svcs.map(function (r) {
+        return '<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><div style="flex:1"><b>' + esc(ZX.t({ en: r.name_en, bn: r.name_bn })) + '</b></div><input class="inp" style="max-width:84px" inputmode="decimal" data-cm="' + esc(r.code) + '" placeholder="' + esc(l('comNotSet')) + '" value="' + (r.commission_pct == null ? '' : esc(r.commission_pct)) + '"><span class="ps">%</span><button class="btn o" type="button" data-cs="' + esc(r.code) + '">' + l('prSave') + '</button></div>';
+      }).join('') + '</div>' +
+      '<div class="cardx"><h3>' + l('calcT') + '</h3><div class="grid2"><input class="inp" id="pSub" inputmode="decimal" value="1000" placeholder="' + esc(l('cSubPh')) + '"><input class="inp" id="pKm" inputmode="decimal" value="1.5" placeholder="' + esc(l('cKmPh')) + '"></div><div id="pOut" style="margin-top:12px"></div></div>';
+    function calcRender() {
+      var sub = pnum(el.querySelector('#pSub').value) || 0, km = pnum(el.querySelector('#pKm').value) || 0, o = ZX.calc.foodOrder(sub, km);
+      var rows = [[l('cFood'), o.subtotal], [l('cDel'), o.delivery], [l('cSc'), o.serviceCharge], [l('cPay'), o.total], [l('cCom') + ' (' + ZX.digits(ZX.data.settings.foodCommissionPct) + '%)', o.commission], [l('cMer'), o.merchantPayout], [l('cRid'), o.riderEarning], [l('cZil'), o.zilaxIncome]];
+      el.querySelector('#pOut').innerHTML = '<table class="t">' + rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td style="text-align:right"><b>' + ZX.money(r[1]) + '</b></td></tr>'; }).join('') + '</table>';
+    }
+    function saveNum(goId, inpId, key, max) {
+      el.querySelector('#' + goId).onclick = async function () {
+        var n = pnum(el.querySelector('#' + inpId).value);
+        if (!(n >= 0 && n <= max)) { ZX.toast(A.errMsg(new Error('bad_value'))); return; }
+        try { await A.setSetting(key, n); await A.loadPricing(); calcRender(); ZX.toast(l('done')); } catch (e) { ZX.toast(A.errMsg(e)); }
+      };
+    }
+    saveNum('dmGo', 'dmV', 'delivery_min', 1000);
+    saveNum('dpGo', 'dpV', 'delivery_per_100m', 1000);
+    saveNum('scGo', 'scV', 'service_charge', 1000);
+    el.querySelectorAll('[data-cs]').forEach(function (b) {
+      b.onclick = async function () {
+        var code = b.getAttribute('data-cs'), inp = el.querySelector('[data-cm="' + code + '"]'), n = pnum(inp.value);
+        if (!(n >= 0 && n <= 100)) { ZX.toast(A.errMsg(new Error('bad_percent'))); return; }
+        try { await A.setCommission(code, n); await A.loadPricing(); calcRender(); ZX.toast(l('done')); } catch (e) { ZX.toast(A.errMsg(e)); }
+      };
+    });
+    el.querySelector('#pSub').oninput = calcRender; el.querySelector('#pKm').oninput = calcRender;
+    calcRender();
   }
 
   /* ---------- services on/off (Stage 2.1) ---------- */
@@ -485,7 +535,7 @@
 
   var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
-    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.audit': auditPanel };
+    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.price': pricingPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {
