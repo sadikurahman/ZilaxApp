@@ -36,6 +36,7 @@
     network: { en: 'Network problem. Check your internet and try again.', bn: 'নেটওয়ার্কে সমস্যা। ইন্টারনেট দেখে আবার চেষ্টা করুন।' },
     bad_value: { en: 'This amount is not valid.', bn: 'এই অঙ্কটি সঠিক নয়।' },
     bad_percent: { en: 'Commission must be between 0 and 100.', bn: 'কমিশন ০ থেকে ১০০-এর মধ্যে হতে হবে।' },
+    not_partner: { en: 'This person is not an active partner for that service.', bn: 'এই ব্যক্তি ওই সার্ভিসের সক্রিয় পার্টনার নন।' },
     unknown_setting: { en: 'Unknown setting.', bn: 'অজানা সেটিং।' },
     not_found: { en: 'Not found.', bn: 'পাওয়া যায়নি।' },
     unknown: { en: 'Something went wrong. Please try again.', bn: 'কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।' }
@@ -51,7 +52,7 @@
   function emailOf(phone) { return phone + '@users.zilax.app'; }
   function errMsg(e) {
     var m = (e && (e.message || e.error_description || e.msg || e)) + '';
-    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'unknown_setting', 'not_found'];
+    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'not_partner', 'unknown_setting', 'not_found'];
     for (var i = 0; i < keys.length; i++) if (m.indexOf(keys[i]) > -1) return ZX.t(ERR[keys[i]]);
     if (/already registered|already been registered|user_already_exists/i.test(m)) return ZX.t(ERR.exists);
     if (/invalid login|invalid_credentials/i.test(m)) return ZX.t(ERR.bad_login);
@@ -157,17 +158,23 @@
         (a.data || []).forEach(function (r) {
           if (r.key === 'delivery_min' && typeof r.value === 'number') st.deliveryMin = r.value;
           if (r.key === 'delivery_per_100m' && typeof r.value === 'number') st.deliveryPer100m = r.value;
-          if (r.key === 'service_charge' && typeof r.value === 'number') st.serviceCharge = r.value;
         });
       } catch (e) { }
       try {
         var b = await ZX.sb.from('services').select('*');
-        (b.data || []).forEach(function (r) { if (r.code === 'food' && r.commission_pct != null) st.foodCommissionPct = Number(r.commission_pct); });
+        (b.data || []).forEach(function (r) {
+          if (r.platform_fee != null) st.platformFee[r.code] = Number(r.platform_fee);
+          if ('commission_pct' in r) { if (r.commission_pct == null) delete st.commission[r.code]; else st.commission[r.code] = Number(r.commission_pct); }
+        });
+        if (st.commission.food != null) st.foodCommissionPct = st.commission.food;
       } catch (e) { }
       return st;
     },
     setSetting: async function (key, value) { need(); var r = await ZX.sb.rpc('set_setting', { p_key: key, p_value: value }); if (r.error) throw r.error; },
     setCommission: async function (code, pct) { need(); var r = await ZX.sb.rpc('set_service_commission', { p_code: code, p_pct: pct }); if (r.error) throw r.error; },
+    setServiceFee: async function (code, fee) { need(); var r = await ZX.sb.rpc('set_service_fee', { p_code: code, p_fee: fee }); if (r.error) throw r.error; },
+    partnerTerms: async function (userId) { need(); var r = await ZX.sb.from('partner_terms').select('*').eq('user_id', userId); if (r.error) throw r.error; return r.data || []; },
+    setPartnerCommission: async function (userId, service, pct) { need(); var r = await ZX.sb.rpc('set_partner_commission', { p_user: userId, p_service: service, p_pct: pct }); if (r.error) throw r.error; },
 
     submitApplication: async function (category, f) {
       need();
@@ -220,7 +227,7 @@
     grantRole: async function (phone, role) { need(); var p = normPhone(phone); if (!p) throw new Error(ZX.t(ERR.invalid_phone)); var r = await ZX.sb.rpc('super_grant_role', { p_phone: p, p_role: role }); if (r.error) throw r.error; },
     revokeRole: async function (userId, role) { need(); var r = await ZX.sb.rpc('super_revoke_role', { p_user: userId, p_role: role }); if (r.error) throw r.error; },
     upsertArea: async function (a) { need(); var r = await ZX.sb.rpc('upsert_area', { p_id: a.id || null, p_parent: a.parent_id || null, p_level: a.level, p_kind: a.kind || null, p_name_en: a.name_en, p_name_bn: a.name_bn, p_active: a.active !== false }); if (r.error) throw r.error; return r.data; },
-    auditLog: async function () { need(); var r = await ZX.sb.from('audit_logs').select('*, who:profiles!audit_logs_actor_fkey(full_name,phone)').order('created_at', { ascending: false }).limit(60); if (r.error) throw r.error; return r.data || []; }
+    auditLog: async function (from, to) { need(); var r = await ZX.sb.from('audit_logs').select('*, who:profiles!audit_logs_actor_fkey(full_name,phone)').order('created_at', { ascending: false }).range(from || 0, to == null ? 59 : to); if (r.error) throw r.error; return r.data || []; },
   };
   ZX.auth = auth;
   ZX.authReady = Promise.resolve();

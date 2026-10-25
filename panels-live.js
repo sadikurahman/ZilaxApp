@@ -18,13 +18,28 @@
     svcApprYes: { en: 'New listings need approval', bn: 'নতুন লিস্টিংয়ে অনুমোদন লাগবে' }, svcApprNo: { en: 'New listings go live without approval', bn: 'নতুন লিস্টিং অনুমোদন ছাড়াই চালু হবে' }, svcApprBtn: { en: 'Change approval rule', bn: 'অনুমোদনের নিয়ম বদলান' },
     svcConfirmOff: { en: 'Turn this service off? Customers will see "Coming soon".', bn: 'এই সার্ভিস বন্ধ করবেন? ক্রেতারা "শীঘ্রই আসছে" দেখবে।' },
     svcSetup: { en: 'Setup needed: run stage2_1.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_1.sql চালান, তারপর এই পেজ আবার খুলুন।' },
-    prT: { en: 'Pricing & commission', bn: 'মূল্য ও কমিশন' }, prS: { en: 'Delivery charge, service charge and commission. Every change is written to the audit log.', bn: 'ডেলিভারি চার্জ, সার্ভিস চার্জ ও কমিশন। প্রতিটি পরিবর্তন অডিট লগে লেখা হয়।' },
+    prT: { en: 'Pricing & commission', bn: 'মূল্য ও কমিশন' }, 
     prSetup: { en: 'Setup needed: run stage2_2.sql in Supabase (SQL Editor), then open this page again.', bn: 'সেটআপ বাকি: Supabase-এর SQL Editor-এ stage2_2.sql চালান, তারপর এই পেজ আবার খুলুন।' }, prSave: { en: 'Save', bn: 'সংরক্ষণ' }, 
     delT: { en: 'Delivery charge', bn: 'ডেলিভারি চার্জ' }, delHint: { en: 'The customer pays whichever is higher: the minimum charge, or the rate for every started 100 metres.', bn: 'ক্রেতা যেটা বেশি সেটাই দেন: সর্বনিম্ন চার্জ, অথবা প্রতি শুরু হওয়া ১০০ মিটারের হার।' }, delMin: { en: 'Minimum delivery charge', bn: 'সর্বনিম্ন ডেলিভারি চার্জ' }, delPer: { en: 'Charge per 100 metres', bn: 'প্রতি ১০০ মিটারের চার্জ' },
-    scT: { en: 'Service charge (flat, per order)', bn: 'সার্ভিস চার্জ (প্রতি অর্ডারে নির্দিষ্ট টাকা)' }, scHint: { en: 'Paid by the customer and kept by Zilax. 0 means no service charge.', bn: 'ক্রেতা দেন, Zilax রাখে। ০ মানে সার্ভিস চার্জ নেই।' },
+    prS: { en: 'Delivery charge, a fixed platform fee and a commission rate for every service. Every change is written to the audit log.', bn: 'ডেলিভারি চার্জ, প্রতি সার্ভিসের নির্দিষ্ট প্ল্যাটফর্ম ফি ও কমিশনের হার। প্রতিটি পরিবর্তন অডিট লগে লেখা হয়।' },
+    delNote: { en: 'Applies to Food and Shop only.', bn: 'শুধু ফুড ও শপে প্রযোজ্য।' },
+    acomT: { en: 'Commission agreed with this partner (%)', bn: 'এই পার্টনারের সঙ্গে ঠিক করা কমিশন (%)' }, acomH: { en: 'Leave empty to use the service default (shown in the box). You can change it later from Users.', bn: 'ফাঁকা রাখলে সার্ভিসের ডিফল্ট চলবে (ঘরে দেখানো আছে)। পরে Users থেকে বদলাতে পারবেন।' },
+    acomFail: { en: 'Approved, but the commission could not be saved. Set it from Users.', bn: 'অনুমোদন হয়েছে, কিন্তু কমিশন সংরক্ষণ হয়নি। Users থেকে বসান।' },
+    svcRatesT: { en: 'Fee and commission per service', bn: 'সার্ভিস অনুযায়ী ফি ও কমিশন' },
+    svcRatesS: { en: 'The platform fee is a fixed amount the customer pays on every order or booking, shown on the bill. Commission is taken on the item price only. A partner can have their own rate: open the partner in Users.', bn: 'প্ল্যাটফর্ম ফি প্রতি অর্ডার বা বুকিংয়ে ক্রেতার দেওয়া নির্দিষ্ট টাকা, বিলে আলাদা দেখা যায়। কমিশন শুধু পণ্যের দামের ওপর। কোনো পার্টনারের নিজস্ব হার থাকলে Users থেকে পার্টনার খুলে বসান।' },
+    feeL: { en: 'Platform fee (৳)', bn: 'প্ল্যাটফর্ম ফি (৳)' }, pctL: { en: 'Default commission (%)', bn: 'ডিফল্ট কমিশন (%)' }, hasDel: { en: 'With delivery', bn: 'ডেলিভারি আছে' },
+    feeSetup: { en: 'Run stage2_2b.sql in Supabase to turn on per-service platform fees.', bn: 'প্রতি সার্ভিসের প্ল্যাটফর্ম ফি চালু করতে Supabase-এ stage2_2b.sql চালান।' },
+    pPartnerPh: { en: 'Partner own rate % (optional)', bn: 'পার্টনারের নিজস্ব হার % (ঐচ্ছিক)' }, billT: { en: 'Customer bill', bn: 'ক্রেতার বিল' }, splitT: { en: 'Who gets what', bn: 'কে কত পাবে' },
+    srcPartner: { en: 'partner deal', bn: 'পার্টনারের চুক্তি' }, srcService: { en: 'service default', bn: 'সার্ভিসের ডিফল্ট' }, srcNone: { en: 'not set', bn: 'ঠিক হয়নি' },
+    missCom: { en: 'Commission for this service is not set yet, so 0% is used here.', bn: 'এই সার্ভিসের কমিশন এখনো ঠিক হয়নি, তাই এখানে ০% ধরা হয়েছে।' },
+    dealT: { en: 'Commission deal', bn: 'কমিশন চুক্তি' }, dealHint: { en: 'A special rate for this partner. Without one, the service default is used. The platform fee does not change.', bn: 'এই পার্টনারের জন্য বিশেষ হার। না থাকলে সার্ভিসের ডিফল্ট চলবে। প্ল্যাটফর্ম ফি বদলায় না।' },
+    dealOwn: { en: 'own deal', bn: 'নিজস্ব চুক্তি' }, dealDef: { en: 'service default', bn: 'সার্ভিসের ডিফল্ট' }, dealNotSet: { en: 'Service default not set yet', bn: 'সার্ভিসের ডিফল্ট ঠিক হয়নি' },
+    dealSave: { en: 'Save deal', bn: 'চুক্তি সংরক্ষণ' }, dealReset: { en: 'Use default', bn: 'ডিফল্টে ফেরান' }, dealSetup: { en: 'Run stage2_2b.sql in Supabase to turn on commission deals.', bn: 'কমিশন চুক্তি চালু করতে Supabase-এ stage2_2b.sql চালান।' },
+    auS: { en: 'Every sensitive change: what changed, who did it and when.', bn: 'প্রতিটি গুরুত্বপূর্ণ পরিবর্তন: কী বদলাল, কে করল, কখন।' }, auMore: { en: 'Show more', bn: 'আরও দেখান' }, auNone: { en: 'No changes here yet.', bn: 'এখানে এখনো কোনো পরিবর্তন নেই।' },
+    auAll: { en: 'All', bn: 'সব' }, auToday: { en: 'Today', bn: 'আজ' }, auYest: { en: 'Yesterday', bn: 'গতকাল' }, auSys: { en: 'System', bn: 'সিস্টেম' }, auShown: { en: 'changes shown', bn: 'টি পরিবর্তন দেখানো হচ্ছে' }, auBefore: { en: 'Before', bn: 'আগে' }, auAfter: { en: 'After', bn: 'পরে' }, 
     comT: { en: 'Commission by service', bn: 'সার্ভিস অনুযায়ী কমিশন' }, comHint: { en: 'Percent Zilax keeps from the partner. Empty means not decided yet. For now only Food commission is used in calculations.', bn: 'পার্টনারের কাছ থেকে Zilax যত শতাংশ রাখে। ফাঁকা মানে এখনো ঠিক হয়নি। এখন হিসাবে শুধু ফুডের কমিশন ব্যবহার হয়।' }, comNotSet: { en: 'not set', bn: 'ঠিক হয়নি' },
     calcT: { en: 'Try a calculation', bn: 'হিসাব পরীক্ষা করুন' }, cSubPh: { en: 'Food subtotal', bn: 'খাবারের দাম' }, cKmPh: { en: 'Distance (km)', bn: 'দূরত্ব (কিমি)' },
-    cFood: { en: 'Food', bn: 'খাবার' }, cDel: { en: 'Delivery', bn: 'ডেলিভারি' }, cSc: { en: 'Service charge', bn: 'সার্ভিস চার্জ' }, cPay: { en: 'Customer pays', bn: 'ক্রেতা দেবেন' }, cCom: { en: 'Commission', bn: 'কমিশন' }, cMer: { en: 'Merchant gets', bn: 'মার্চেন্ট পাবেন' }, cRid: { en: 'Rider gets', bn: 'রাইডার পাবেন' }, cZil: { en: 'Zilax income', bn: 'Zilax-এর আয়' }
+    cFood: { en: 'Food', bn: 'খাবার' }, cDel: { en: 'Delivery', bn: 'ডেলিভারি' },  cPay: { en: 'Customer pays', bn: 'ক্রেতা দেবেন' }, cCom: { en: 'Commission', bn: 'কমিশন' }, cMer: { en: 'Merchant gets', bn: 'মার্চেন্ট পাবেন' }, cRid: { en: 'Rider gets', bn: 'রাইডার পাবেন' }, cZil: { en: 'Zilax income', bn: 'Zilax-এর আয়' }
   };
   var l = function (k) { return ZX.t(L[k]); };
   var STAFF_ROLES = ['sales_admin', 'admin', 'super_admin'];
@@ -117,16 +132,23 @@
           (rows ? '<div class="asec"><h4>' + q('det') + '</h4>' + rows + '</div>' : '') +
           '<div class="asec"><h4>' + l('docs') + '</h4><div class="adocs" id="adocs">' + l('loading') + '</div></div>' +
           ((a.sales_note || a.admin_note) ? '<div class="asec">' + (a.sales_note ? '<p class="anote"><b>' + l('salesNote') + ':</b> ' + esc(a.sales_note) + '</p>' : '') + (a.admin_note ? '<p class="anote"><b>' + l('adminNote') + ':</b> ' + esc(a.admin_note) + '</p>' : '') + '</div>' : '') +
-          (open ? '<div class="asec"><h4>' + q('dec') + '</h4><textarea class="inp" id="anote" rows="2" placeholder="' + esc(l('note')) + '"></textarea><div id="amsg" class="fmsg"></div><div class="aacts">' + acts + '</div></div>' : '') +
+          (open ? '<div class="asec"><h4>' + q('dec') + '</h4>' + (mode === 'super' && ROLE_SVC[a.category] ? '<p class="ps" style="margin:0 0 4px"><b>' + l('acomT') + '</b></p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="acom" inputmode="decimal" style="max-width:110px" placeholder="' + esc((ZX.data.settings.commission || {})[ROLE_SVC[a.category]] == null ? '' : ZX.digits((ZX.data.settings.commission || {})[ROLE_SVC[a.category]])) + '"><span class="ps" style="margin:0">%</span></div><p class="ps" style="margin:6px 0 12px">' + esc(l('acomH')) + '</p>' : '') + '<textarea class="inp" id="anote" rows="2" placeholder="' + esc(l('note')) + '"></textarea><div id="amsg" class="fmsg"></div><div class="aacts">' + acts + '</div></div>' : '') +
           '<button type="button" class="aclose" data-aclose="1">' + q('close') + '</button>';
         sh.classList.add('show');
         try { var ds = await A.docsOf(a.id), box = document.getElementById('adocs'); if (box && cur && cur.id === a.id) box.innerHTML = ds.length ? ds.map(function (x) { return x.url ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener"><img src="' + esc(x.url) + '" alt="' + esc(x.kind) + '"><small>' + esc(x.kind) + '</small></a>' : ''; }).join('') : '<span class="mut">' + l('noDocs') + '</span>'; } catch (e) { var b2 = document.getElementById('adocs'); if (b2) b2.textContent = A.errMsg(e); }
       }
       async function onAct(e) {
         var b = e.target.closest('[data-act]'); if (!b || !cur) return; var act = b.getAttribute('data-act'), msg = document.getElementById('amsg'), note = (document.getElementById('anote') || {}).value || '';
+        var deal = null, comEl = document.getElementById('acom');
+        if (act === 'ok' && comEl && comEl.value.trim() !== '') { deal = pnum(comEl.value); if (!(deal >= 0 && deal <= 100)) { if (msg) { msg.className = 'fmsg err'; msg.textContent = A.errMsg(new Error('bad_percent')); } return; } }
         if (!window.confirm(act === 'ok' ? q('confirmOk') : act === 'no' ? q('confirmNo') : q('confirmRec'))) return;
         b.disabled = true;
-        try { if (act === 'rec' || act === 'norec') await A.salesReview(cur.id, act === 'rec', note); else await A.adminDecide(cur.id, act === 'ok', note); ZX.toast(l('done')); document.getElementById('aSheet').classList.remove('show'); cur = null; if (await load()) { shell(); } }
+        var app = cur, dealFailed = false;
+        try {
+          if (act === 'rec' || act === 'norec') await A.salesReview(app.id, act === 'rec', note); else await A.adminDecide(app.id, act === 'ok', note);
+          if (deal !== null) { try { await A.setPartnerCommission(app.user_id, ROLE_SVC[app.category], deal); } catch (e2) { dealFailed = true; } }
+          ZX.toast(dealFailed ? l('acomFail') : l('done')); document.getElementById('aSheet').classList.remove('show'); cur = null; if (await load()) { shell(); }
+        }
         catch (er) { b.disabled = false; if (msg) { msg.className = 'fmsg err'; msg.textContent = A.errMsg(er); } }
       }
       el.onclick = function (e) {
@@ -170,44 +192,66 @@
 
   /* ---------- pricing & commission (Stage 2.2) ---------- */
   function pnum(v) { v = String(v == null ? '' : v).replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }).trim(); return v === '' ? NaN : Number(v); }
+  var ROLE_SVC = { merchant_food: 'food', merchant_shop: 'shop', technician: 'technical', car_partner: 'rent_car', decoration: 'decoration', sound_light: 'sound_light' };
   async function pricingPanel(el) {
     el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
     var svcs;
     try { await A.settings(); svcs = await A.services(); await A.loadPricing(); } catch (e) { el.innerHTML = head(l('prT'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '<br>' + l('prSetup') + '</div>'; return; }
-    var st = ZX.data.settings;
+    var st = ZX.data.settings, DEL = { food: 1, shop: 1 };
+    var noFee = svcs.length && !('platform_fee' in svcs[0]);
+    function sname(r) { return ZX.t({ en: r.name_en, bn: r.name_bn }); }
     function numRow(label, id, val, goId) {
-      return '<p class="ps" style="margin:12px 0 4px">' + l(label) + '</p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="' + id + '" inputmode="decimal" style="max-width:120px" value="' + esc(val) + '"><span class="ps">৳</span><button class="btn" type="button" id="' + goId + '">' + l('prSave') + '</button></div>';
+      return '<p class="ps" style="margin:12px 0 4px">' + l(label) + '</p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="' + id + '" inputmode="decimal" style="max-width:120px" value="' + esc(val) + '"><span class="ps" style="margin:0">৳</span><button class="btn" type="button" id="' + goId + '">' + l('prSave') + '</button></div>';
     }
+    function field(label, attr, val, ph) { return '<label class="ps" style="margin:0;display:block">' + esc(label) + '<input class="inp" inputmode="decimal" style="margin-top:4px" ' + attr + ' value="' + esc(val) + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '></label>'; }
     el.innerHTML = head(l('prT'), l('prS')) +
-      '<div class="cardx"><h3>' + l('delT') + '</h3><p class="ps">' + l('delHint') + '</p>' + numRow('delMin', 'dmV', st.deliveryMin, 'dmGo') + numRow('delPer', 'dpV', st.deliveryPer100m, 'dpGo') + '</div>' +
-      '<div class="cardx"><h3>' + l('scT') + '</h3><p class="ps">' + l('scHint') + '</p><div style="display:flex;gap:8px;align-items:center"><input class="inp" id="scV" inputmode="decimal" style="max-width:120px" value="' + esc(st.serviceCharge || 0) + '"><span class="ps">৳</span><button class="btn" type="button" id="scGo">' + l('prSave') + '</button></div></div>' +
-      '<div class="cardx"><h3>' + l('comT') + '</h3><p class="ps">' + l('comHint') + '</p>' + svcs.map(function (r) {
-        return '<div style="display:flex;gap:8px;align-items:center;margin-top:8px"><div style="flex:1"><b>' + esc(ZX.t({ en: r.name_en, bn: r.name_bn })) + '</b></div><input class="inp" style="max-width:84px" inputmode="decimal" data-cm="' + esc(r.code) + '" placeholder="' + esc(l('comNotSet')) + '" value="' + (r.commission_pct == null ? '' : esc(r.commission_pct)) + '"><span class="ps">%</span><button class="btn o" type="button" data-cs="' + esc(r.code) + '">' + l('prSave') + '</button></div>';
-      }).join('') + '</div>' +
-      '<div class="cardx"><h3>' + l('calcT') + '</h3><div class="grid2"><input class="inp" id="pSub" inputmode="decimal" value="1000" placeholder="' + esc(l('cSubPh')) + '"><input class="inp" id="pKm" inputmode="decimal" value="1.5" placeholder="' + esc(l('cKmPh')) + '"></div><div id="pOut" style="margin-top:12px"></div></div>';
+      '<div class="cardx"><h3>' + l('delT') + '</h3><p class="ps">' + l('delHint') + ' ' + l('delNote') + '</p>' + numRow('delMin', 'dmV', st.deliveryMin, 'dmGo') + numRow('delPer', 'dpV', st.deliveryPer100m, 'dpGo') + '</div>' +
+      '<h3 class="pt" style="font-size:19px;margin:18px 0 4px">' + l('svcRatesT') + '</h3><p class="ps">' + l('svcRatesS') + '</p>' + (noFee ? '<div class="soon" style="margin:0 0 12px">' + l('feeSetup') + '</div>' : '') +
+      svcs.map(function (r) {
+        var fee = r.platform_fee != null ? r.platform_fee : (st.platformFee[r.code] == null ? 0 : st.platformFee[r.code]);
+        return '<div class="cardx"><div class="rowx" style="padding-top:0"><div class="g"><b>' + esc(sname(r)) + '</b><small>' + esc(r.code) + '</small></div>' + (DEL[r.code] ? chip(l('hasDel')) : '') + '</div>' +
+          '<div class="grid2">' + field(l('feeL'), 'data-fee="' + esc(r.code) + '"', fee) + field(l('pctL'), 'data-pct="' + esc(r.code) + '"', r.commission_pct == null ? '' : r.commission_pct, l('comNotSet')) + '</div>' +
+          '<button class="btn" type="button" style="margin-top:12px" data-ssave="' + esc(r.code) + '">' + l('prSave') + '</button></div>';
+      }).join('') +
+      '<div class="cardx"><h3>' + l('calcT') + '</h3><div class="grid2"><select class="inp" id="pSvc">' + svcs.map(function (r) { return '<option value="' + esc(r.code) + '">' + esc(sname(r)) + '</option>'; }).join('') + '</select><input class="inp" id="pSub" inputmode="decimal" value="1000" placeholder="' + esc(l('cSubPh')) + '"></div>' +
+      '<div class="grid2" style="margin-top:10px"><input class="inp" id="pKm" inputmode="decimal" value="1.5" placeholder="' + esc(l('cKmPh')) + '"><input class="inp" id="pPartner" inputmode="decimal" placeholder="' + esc(l('pPartnerPh')) + '"></div><div id="pOut" style="margin-top:12px"></div></div>';
+    function table(rows) { return '<table class="t">' + rows.map(function (r) { return '<tr><td' + (r[2] ? ' style="font-weight:700"' : '') + '>' + esc(r[0]) + '</td><td style="text-align:right"><b>' + ZX.money(r[1]) + '</b></td></tr>'; }).join('') + '</table>'; }
     function calcRender() {
-      var sub = pnum(el.querySelector('#pSub').value) || 0, km = pnum(el.querySelector('#pKm').value) || 0, o = ZX.calc.foodOrder(sub, km);
-      var rows = [[l('cFood'), o.subtotal], [l('cDel'), o.delivery], [l('cSc'), o.serviceCharge], [l('cPay'), o.total], [l('cCom') + ' (' + ZX.digits(ZX.data.settings.foodCommissionPct) + '%)', o.commission], [l('cMer'), o.merchantPayout], [l('cRid'), o.riderEarning], [l('cZil'), o.zilaxIncome]];
-      el.querySelector('#pOut').innerHTML = '<table class="t">' + rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td style="text-align:right"><b>' + ZX.money(r[1]) + '</b></td></tr>'; }).join('') + '</table>';
+      var code = el.querySelector('#pSvc').value, isDel = !!DEL[code];
+      var sub = pnum(el.querySelector('#pSub').value) || 0, km = pnum(el.querySelector('#pKm').value) || 0, pp = pnum(el.querySelector('#pPartner').value);
+      el.querySelector('#pKm').style.display = isDel ? '' : 'none';
+      var o = ZX.calc.order(code, sub, isDel ? km : null, { partnerPct: isNaN(pp) ? null : pp });
+      var src = o.commissionSource === 'partner' ? l('srcPartner') : o.commissionSource === 'service' ? l('srcService') : l('srcNone');
+      var split = [[l('cCom') + ' (' + ZX.digits(o.commissionPct) + '% · ' + src + ')', o.commission], [l('cMer'), o.merchantPayout]];
+      if (isDel) split.push([l('cRid'), o.riderEarning]);
+      split.push([l('cZil') + ' (' + l('cCom') + ' + ' + ZX.t({ en: 'fee', bn: 'ফি' }) + ')', o.zilaxIncome]);
+      el.querySelector('#pOut').innerHTML = '<p class="ps" style="margin:0 0 4px"><b>' + l('billT') + '</b></p>' + table(ZX.calc.bill(o).map(function (x) { return [ZX.t(x.label), x.amount, x.strong]; })) +
+        '<p class="ps" style="margin:14px 0 4px"><b>' + l('splitT') + '</b></p>' + table(split) + (o.commissionMissing ? '<p class="ps" style="margin:8px 0 0">' + l('missCom') + '</p>' : '');
     }
     function saveNum(goId, inpId, key, max) {
       el.querySelector('#' + goId).onclick = async function () {
-        var n = pnum(el.querySelector('#' + inpId).value);
-        if (!(n >= 0 && n <= max)) { ZX.toast(A.errMsg(new Error('bad_value'))); return; }
-        try { await A.setSetting(key, n); await A.loadPricing(); calcRender(); ZX.toast(l('done')); } catch (e) { ZX.toast(A.errMsg(e)); }
+        var v = pnum(el.querySelector('#' + inpId).value);
+        if (!(v >= 0 && v <= max)) { ZX.toast(A.errMsg(new Error('bad_value'))); return; }
+        try { await A.setSetting(key, v); await A.loadPricing(); calcRender(); ZX.toast(l('done')); } catch (e) { ZX.toast(A.errMsg(e)); }
       };
     }
     saveNum('dmGo', 'dmV', 'delivery_min', 1000);
     saveNum('dpGo', 'dpV', 'delivery_per_100m', 1000);
-    saveNum('scGo', 'scV', 'service_charge', 1000);
-    el.querySelectorAll('[data-cs]').forEach(function (b) {
+    el.querySelectorAll('[data-ssave]').forEach(function (b) {
       b.onclick = async function () {
-        var code = b.getAttribute('data-cs'), inp = el.querySelector('[data-cm="' + code + '"]'), n = pnum(inp.value);
-        if (!(n >= 0 && n <= 100)) { ZX.toast(A.errMsg(new Error('bad_percent'))); return; }
-        try { await A.setCommission(code, n); await A.loadPricing(); calcRender(); ZX.toast(l('done')); } catch (e) { ZX.toast(A.errMsg(e)); }
+        var code = b.getAttribute('data-ssave'), r = svcs.filter(function (x) { return x.code === code; })[0]; if (!r) return;
+        var fee = pnum(el.querySelector('[data-fee="' + code + '"]').value), raw = el.querySelector('[data-pct="' + code + '"]').value.trim(), pct = raw === '' ? null : pnum(raw);
+        if (!(fee >= 0 && fee <= 10000)) { ZX.toast(A.errMsg(new Error('bad_value'))); return; }
+        if ((pct !== null && !(pct >= 0 && pct <= 100)) || (pct === null && r.commission_pct != null)) { ZX.toast(A.errMsg(new Error('bad_percent'))); return; }
+        try {
+          var oldFee = Number(r.platform_fee != null ? r.platform_fee : st.platformFee[code]);
+          if (fee !== oldFee) { await A.setServiceFee(code, fee); r.platform_fee = fee; }
+          if (pct !== null && pct !== (r.commission_pct == null ? null : Number(r.commission_pct))) { await A.setCommission(code, pct); r.commission_pct = pct; }
+          await A.loadPricing(); calcRender(); ZX.toast(l('done'));
+        } catch (e) { ZX.toast(A.errMsg(e)); }
       };
     });
-    el.querySelector('#pSub').oninput = calcRender; el.querySelector('#pKm').oninput = calcRender;
+    ['#pSvc', '#pSub', '#pKm', '#pPartner'].forEach(function (q) { var x = el.querySelector(q); x.oninput = calcRender; x.onchange = calcRender; });
     calcRender();
   }
 
@@ -240,14 +284,110 @@
     paint();
   }
 
-  async function auditPanel(el) {
-    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
-    try {
-      var rows = await A.auditLog();
-      el.innerHTML = head(l('audit'), ZX.t({ en: 'Every sensitive change is recorded here.', bn: 'প্রতিটি গুরুত্বপূর্ণ পরিবর্তন এখানে লেখা থাকে।' })) + '<div class="cardx" style="overflow:auto"><table class="t"><tr><th>' + l('when') + '</th><th>' + l('who') + '</th><th>' + l('what') + '</th></tr>' + (rows.map(function (r) { return '<tr><td>' + esc(fdate(r.created_at)) + '</td><td>' + esc((r.who || {}).full_name || '') + '</td><td>' + esc(r.action) + (r.after ? ' <small>' + esc(JSON.stringify(r.after).slice(0, 90)) + '</small>' : '') + '</td></tr>'; }).join('') || '<tr><td colspan="3">' + l('none') + '</td></tr>') + '</table></div>';
-    } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; }
+  /* ---------- audit log: grouped by day, filter chips, plain-language lines, tap for details ---------- */
+  var SVC_NAME = { food: { en: 'Food', bn: 'ফুড' }, technical: { en: 'Technical', bn: 'টেকনিক্যাল' }, shop: { en: 'Shop', bn: 'শপ' }, rent_car: { en: 'Rent a Car', bn: 'গাড়ি ভাড়া' }, decoration: { en: 'Decoration', bn: 'ডেকোরেশন' }, sound_light: { en: 'Sound & Light', bn: 'সাউন্ড ও লাইট' } };
+  var AU_CAT = { pricing: { en: 'Pricing', bn: 'মূল্য', c: '#0f766e' }, service: { en: 'Services', bn: 'সার্ভিস', c: '#ea580c' }, area: { en: 'Areas', bn: 'এলাকা', c: '#2563eb' }, role: { en: 'Roles', bn: 'রোল', c: '#7c3aed' }, app: { en: 'Applications', bn: 'আবেদন', c: '#db2777' } };
+  var AU_SVG = {
+    tag: '<path d="M3 12V4h8l9 9-8 8-9-9z"/><circle cx="7.500" cy="8.500" r="1.300"/>', power: '<path d="M12 3v8M6.500 6.500a8 8 0 1 0 11 0"/>', pin: '<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.500"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>', doc: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>', deal: '<path d="M3 12l4-4 4 3 4-3 6 5-5 5-3-2-3 2-5-3z"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/>'
+  };
+  function auSvg(k) { return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (AU_SVG[k] || AU_SVG.info) + '</svg>'; }
+  function auCss() {
+    if (document.getElementById('auCss')) return;
+    var c = document.createElement('style'); c.id = 'auCss';
+    c.textContent = '.au-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;margin:0 -2px;scrollbar-width:none}.au-chips::-webkit-scrollbar{display:none}' +
+      '.au-chip{flex:none;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px}.au-chip i{width:8px;height:8px;border-radius:50%;background:var(--c,#94a3b8)}.au-chip.on{background:var(--forest);border-color:var(--forest);color:#fff}.au-chip.on i{background:#fff}' +
+      '.au-day{margin:18px 4px 8px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}' +
+      '.au-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(15,25,18,.04)}' +
+      '.au-it{display:flex;align-items:flex-start;gap:12px;width:100%;padding:14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:var(--ink)}.au-card .au-row:last-child .au-it{border-bottom:0}' +
+      '.au-ic{flex:none;width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff)}' +
+      '.au-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.au-tx b{font-size:14.5px;line-height:1.3}.au-tx small{color:var(--muted);font-size:12px}' +
+      '.au-ch{font-size:13px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.au-ch s{color:var(--muted)}.au-ch em{font-style:normal;font-weight:800;color:var(--forest);background:var(--mint);border-radius:8px;padding:1px 8px}' +
+      '.au-chev{flex:none;color:var(--muted);transition:transform .2s;margin-top:8px}.au-chev svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.au-row.open .au-chev{transform:rotate(180deg)}' +
+      '.au-d{display:none;padding:2px 14px 14px 66px;border-bottom:1px solid var(--line);background:#fafcfa}.au-row.open .au-d{display:block}.au-card .au-row:last-child .au-d{border-bottom:0}' +
+      '.au-d table{width:100%;border-collapse:collapse;font-size:12.5px}.au-d th{color:var(--muted);font-weight:700;text-align:left;padding:4px 6px 4px 0}.au-d td{padding:4px 6px 4px 0;vertical-align:top;word-break:break-word}' +
+      '.au-empty{margin-top:14px;background:#fff;border:1px dashed #bcd0c0;border-radius:20px;padding:26px;text-align:center;color:var(--muted)}';
+    document.head.appendChild(c);
   }
-
+  function auInfo(r) {
+    var b = r.before, a = r.after, id = r.entity_id, bn = ZX.lang === 'bn';
+    function T(en, bnT) { return bn ? bnT : en; }
+    function obj(x) { return x && typeof x === 'object' && !Array.isArray(x) ? x : {}; }
+    function sv(code) { return ZX.t(SVC_NAME[code] || { en: code, bn: code }); }
+    function taka(x) { return x == null ? T('not set', 'ঠিক হয়নি') : ZX.digits(x) + ' ৳'; }
+    function pct(x) { return x == null ? T('not set', 'ঠিক হয়নি') : ZX.digits(x) + '%'; }
+    function yn(x) { return x ? T('Yes', 'হ্যাঁ') : T('No', 'না'); }
+    var bo = obj(b), ao = obj(a), o = { cat: 'service', ico: 'info', title: r.action };
+    switch (r.action) {
+      case 'set_setting': o = { cat: 'pricing', ico: 'tag', title: { delivery_min: T('Minimum delivery charge', 'সর্বনিম্ন ডেলিভারি চার্জ'), delivery_per_100m: T('Delivery charge per 100 m', 'প্রতি ১০০ মিটারের ডেলিভারি চার্জ'), service_charge: T('Service charge (old)', 'সার্ভিস চার্জ (পুরোনো)') }[id] || id, from: typeof b === 'number' ? taka(b) : null, to: typeof a === 'number' ? taka(a) : null }; break;
+      case 'set_service_fee': o = { cat: 'pricing', ico: 'tag', title: sv(id) + ' · ' + T('platform fee', 'প্ল্যাটফর্ম ফি'), from: taka(bo.platform_fee), to: taka(ao.platform_fee) }; break;
+      case 'set_service_commission': o = { cat: 'pricing', ico: 'tag', title: sv(id) + ' · ' + T('default commission', 'ডিফল্ট কমিশন'), from: pct(bo.commission_pct), to: pct(ao.commission_pct) }; break;
+      case 'set_partner_commission': o = { cat: 'pricing', ico: 'deal', title: (ao.partner || bo.partner || T('Partner', 'পার্টনার')) + ' · ' + sv(ao.service || bo.service) + ' · ' + T('commission deal', 'কমিশন চুক্তি'), from: bo.pct == null ? T('service default', 'সার্ভিসের ডিফল্ট') : pct(bo.pct), to: ao.pct == null ? T('service default', 'সার্ভিসের ডিফল্ট') : pct(ao.pct) }; break;
+      case 'set_service':
+        if (bo.enabled !== ao.enabled) o = { cat: 'service', ico: 'power', title: sv(id) + ' ' + (ao.enabled ? T('turned on', 'চালু করা হয়েছে') : T('turned off', 'বন্ধ করা হয়েছে')), from: yn(bo.enabled), to: yn(ao.enabled) };
+        else o = { cat: 'service', ico: 'power', title: sv(id) + ' · ' + T('new listings need approval', 'নতুন লিস্টিংয়ে অনুমোদন'), from: yn(bo.listing_approval), to: yn(ao.listing_approval) };
+        break;
+      case 'upsert_area': o = { cat: 'area', ico: 'pin', title: (b == null ? T('New area added', 'নতুন এলাকা যোগ') : T('Area updated', 'এলাকা বদলানো হয়েছে')) + ': ' + ZX.t({ en: ao.name_en || '', bn: ao.name_bn || '' }) }; break;
+      case 'grant_role': o = { cat: 'role', ico: 'key', title: T('Role given', 'রোল দেওয়া হয়েছে') + ': ' + A.roleLabel(ao.role) }; break;
+      case 'revoke_role': o = { cat: 'role', ico: 'key', title: T('Role removed', 'রোল সরানো হয়েছে') + ': ' + A.roleLabel(bo.role) }; break;
+      case 'application_submitted': o = { cat: 'app', ico: 'doc', title: T('New partner application', 'নতুন পার্টনার আবেদন') }; break;
+      case 'sales_review': o = { cat: 'app', ico: 'doc', title: ao.recommend ? T('Application recommended by Sales', 'সেলস আবেদনটি সুপারিশ করেছে') : T('Application not recommended by Sales', 'সেলস আবেদনটি সুপারিশ করেনি') }; break;
+      case 'admin_decide': o = { cat: 'app', ico: 'doc', title: ao.approved ? T('Application approved', 'আবেদন অনুমোদিত') : T('Application rejected', 'আবেদন প্রত্যাখ্যাত') }; break;
+    }
+    return o;
+  }
+  var AU_KEY = { commission_pct: { en: 'Commission %', bn: 'কমিশন %' }, platform_fee: { en: 'Platform fee', bn: 'প্ল্যাটফর্ম ফি' }, enabled: { en: 'On', bn: 'চালু' }, listing_approval: { en: 'Approval needed', bn: 'অনুমোদন লাগবে' }, name_en: { en: 'Name (English)', bn: 'নাম (ইংরেজি)' }, name_bn: { en: 'Name (Bangla)', bn: 'নাম (বাংলা)' }, level: { en: 'Level', bn: 'স্তর' }, role: { en: 'Role', bn: 'রোল' }, pct: { en: 'Commission %', bn: 'কমিশন %' }, service: { en: 'Service', bn: 'সার্ভিস' }, partner: { en: 'Partner', bn: 'পার্টনার' }, note: { en: 'Note', bn: 'নোট' }, approved: { en: 'Approved', bn: 'অনুমোদিত' }, recommend: { en: 'Recommended', bn: 'সুপারিশ' }, status: { en: 'Status', bn: 'অবস্থা' }, category: { en: 'Category', bn: 'ধরন' } };
+  function auVal(k, v) { if (v === null || v === undefined || v === '') return '—'; if (typeof v === 'boolean') return ZX.lang === 'bn' ? (v ? 'হ্যাঁ' : 'না') : (v ? 'Yes' : 'No'); if (k === 'service') return ZX.t(SVC_NAME[v] || { en: v, bn: v }); if (k === 'role') return A.roleLabel(v); return typeof v === 'object' ? JSON.stringify(v) : String(v); }
+  function auDetails(r) {
+    var b = r.before, a = r.after, rows = [];
+    if (typeof b === 'number' || typeof a === 'number') rows.push([ZX.t({ en: 'Value', bn: 'মান' }), auVal('', b), auVal('', a)]);
+    else { var bo = b && typeof b === 'object' ? b : {}, ao = a && typeof a === 'object' ? a : {}; Object.keys(Object.assign({}, bo, ao)).forEach(function (k) { rows.push([ZX.t(AU_KEY[k] || { en: k, bn: k }), auVal(k, bo[k]), auVal(k, ao[k])]); }); }
+    if (!rows.length) return '<small style="color:var(--muted)">—</small>';
+    var one = !b;
+    return '<table><tr><th></th>' + (one ? '' : '<th>' + l('auBefore') + '</th>') + '<th>' + l('auAfter') + '</th></tr>' + rows.map(function (x) { return '<tr><td>' + esc(x[0]) + '</td>' + (one ? '' : '<td>' + esc(x[1]) + '</td>') + '<td><b>' + esc(x[2]) + '</b></td></tr>'; }).join('') + '</table>';
+  }
+  async function auditPanel(el) {
+    auCss();
+    var PAGE = 40, st = { rows: [], more: false, cat: 'all', busy: false };
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    function dayKey(d) { var x = new Date(d); return x.getFullYear() + '-' + x.getMonth() + '-' + x.getDate(); }
+    function dayLabel(d) {
+      var x = new Date(d), now = new Date(), y = new Date(now.getTime() - 86400000);
+      if (dayKey(x) === dayKey(now)) return l('auToday'); if (dayKey(x) === dayKey(y)) return l('auYest');
+      try { return x.toLocaleDateString(ZX.lang === 'bn' ? 'bn-BD' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return String(d); }
+    }
+    function ftime(d) { try { return new Date(d).toLocaleTimeString(ZX.lang === 'bn' ? 'bn-BD' : 'en-GB', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
+    function paint() {
+      var box = el.querySelector('#auList'); if (!box) return;
+      var infos = st.rows.map(function (r, i) { var o = auInfo(r); o.i = i; o.r = r; return o; }).filter(function (o) { return st.cat === 'all' || o.cat === st.cat; });
+      var html = '', last = '';
+      infos.forEach(function (o, k) {
+        var day = dayKey(o.r.created_at);
+        if (day !== last) { if (last) html += '</div>'; html += '<div class="au-day">' + esc(dayLabel(o.r.created_at)) + '</div><div class="au-card">'; last = day; }
+        var c = AU_CAT[o.cat].c, who = (o.r.who || {}).full_name || l('auSys');
+        html += '<div class="au-row" data-au="' + o.i + '"><button type="button" class="au-it"><span class="au-ic" style="--c:' + c + '">' + auSvg(o.ico) + '</span><span class="au-tx"><b>' + esc(o.title) + '</b>' +
+          (o.from != null || o.to != null ? '<span class="au-ch"><s>' + esc(o.from == null ? '—' : o.from) + '</s><span>→</span><em>' + esc(o.to == null ? '—' : o.to) + '</em></span>' : '') +
+          '<small>' + esc(who) + ' · ' + esc(ftime(o.r.created_at)) + '</small></span><span class="au-chev">' + ic('arrow').replace('<svg', '<svg style="transform:rotate(90deg)"') + '</span></button><div class="au-d">' + auDetails(o.r) + '</div></div>';
+      });
+      if (last) html += '</div>';
+      box.innerHTML = html || '<div class="au-empty">' + l('auNone') + '</div>';
+      el.querySelector('#auMore').innerHTML = (st.more ? '<button type="button" class="btn o" id="auMoreBtn" style="width:100%;margin-top:14px">' + l('auMore') + '</button>' : '') + (st.rows.length ? '<p class="ucount" style="text-align:center;color:var(--muted);font-size:12px;margin:12px 0 0">' + ZX.digits(st.rows.length) + ' ' + l('auShown') + '</p>' : '');
+    }
+    async function load(more) {
+      if (st.busy) return; st.busy = true;
+      try { var from = more ? st.rows.length : 0, rows = await A.auditLog(from, from + PAGE - 1); st.rows = more ? st.rows.concat(rows) : rows; st.more = rows.length === PAGE; }
+      catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; st.busy = false; return; }
+      st.busy = false; paint();
+    }
+    var chips = '<button type="button" class="au-chip on" data-c="all"><i></i>' + l('auAll') + '</button>' + Object.keys(AU_CAT).map(function (k) { return '<button type="button" class="au-chip" data-c="' + k + '" style="--c:' + AU_CAT[k].c + '"><i></i>' + esc(ZX.t(AU_CAT[k])) + '</button>'; }).join('');
+    el.innerHTML = head(l('audit'), l('auS')) + '<div class="au-chips">' + chips + '</div><div id="auList"></div><div id="auMore"></div>';
+    el.addEventListener('click', function (e) {
+      var ch = e.target.closest('.au-chip'); if (ch) { st.cat = ch.getAttribute('data-c'); el.querySelectorAll('.au-chip').forEach(function (x) { x.classList.toggle('on', x === ch); }); paint(); return; }
+      if (e.target.closest('#auMoreBtn')) { load(true); return; }
+      var it = e.target.closest('.au-it'); if (it) it.parentNode.classList.toggle('open');
+    });
+    load(false);
+  }
 
   /* ---------- Super Admin: real dashboard + users ---------- */
   var IC = {
@@ -336,13 +476,28 @@
         return '<button type="button" class="urow" data-u="' + u.id + '"><span class="uav" style="background:' + col + '">' + (u.avatar_url ? '<img src="' + esc(u.avatar_url) + '" alt="">' : esc(String(u.full_name || '?').trim().charAt(0).toUpperCase())) + '</span><div class="g"><b>' + esc(u.full_name || '—') + '</b><small>' + esc(u.phone) + (a ? ' · ' + esc(a) : '') + '</small><span class="rcs">' + rchips(u.id) + '</span></div><span class="uar">' + ic('arrow') + '</span></button>';
       }).join('') + '</div>' + (st.more ? '<button type="button" class="btn o umore" id="umore">' + n('more') + '</button>' : '') + '<p class="ucount">' + ZX.digits(st.rows.length) + ' ' + n('shown') + '</p>' : '<div class="soon">' + n('noUsers') + '</div>';
     }
+    async function loadDeals(u) {
+      var box = document.getElementById('dealBox'); if (!box) return;
+      var rs = (st.roles[u.id] || []).filter(function (r) { return r.status === 'active' && ROLE_SVC[r.role]; });
+      if (!rs.length) { box.innerHTML = ''; return; }
+      var terms, svcs;
+      try { terms = await A.partnerTerms(u.id); svcs = await A.services(); } catch (e) { box.innerHTML = '<div class="cardx" style="margin:10px 0 0"><h3>' + l('dealT') + '</h3><p class="ps" style="margin:0">' + l('dealSetup') + '</p></div>'; return; }
+      box.innerHTML = '<div class="cardx" style="margin:10px 0 0"><h3>' + l('dealT') + '</h3><p class="ps">' + l('dealHint') + '</p>' + rs.map(function (r) {
+        var code = ROLE_SVC[r.role], sv = svcs.filter(function (x) { return x.code === code; })[0] || {}, tm = terms.filter(function (x) { return x.service_code === code; })[0];
+        var cur = tm ? ZX.digits(tm.commission_pct) + '% · ' + l('dealOwn') : (sv.commission_pct == null ? l('dealNotSet') : ZX.digits(sv.commission_pct) + '% · ' + l('dealDef'));
+        return '<div class="rowx" style="display:block"><b>' + esc(A.roleLabel(r.role)) + '</b><small>' + esc(cur) + '</small><div style="display:flex;gap:8px;align-items:center;margin-top:8px"><input class="inp" style="max-width:96px" inputmode="decimal" data-dp="' + code + '" value="' + (tm ? esc(tm.commission_pct) : '') + '" placeholder="%"><span class="ps" style="margin:0">%</span><button type="button" class="btn" data-ds="' + code + '">' + l('dealSave') + '</button>' + (tm ? '<button type="button" class="btn o" data-dr="' + code + '">' + l('dealReset') + '</button>' : '') + '</div></div>';
+      }).join('') + '</div>';
+      async function act(code, v) { try { await A.setPartnerCommission(u.id, code, v); ZX.toast(l('done')); loadDeals(u); } catch (e) { ZX.toast(A.errMsg(e)); } }
+      box.querySelectorAll('[data-ds]').forEach(function (b) { b.onclick = function () { var code = b.getAttribute('data-ds'), v = pnum(box.querySelector('[data-dp="' + code + '"]').value); if (!(v >= 0 && v <= 100)) { ZX.toast(A.errMsg(new Error('bad_percent'))); return; } act(code, v); }; });
+      box.querySelectorAll('[data-dr]').forEach(function (b) { b.onclick = function () { act(b.getAttribute('data-dr'), null); }; });
+    }
     function sheet(u) {
       var sh = document.getElementById('uSheet'); if (!sh) { sh = document.createElement('div'); sh.className = 'sheet'; sh.id = 'uSheet'; sh.innerHTML = '<div class="pan" id="uPan"></div>'; document.body.appendChild(sh); sh.addEventListener('click', function (e) { if (e.target === sh) sh.classList.remove('show'); }); }
       var col = hue(u.id), a = area(u), ph = String(u.phone || '');
       document.getElementById('uPan').innerHTML = '<div class="lsgrip"></div><div class="udet"><span class="uav big" style="background:' + col + '">' + (u.avatar_url ? '<img src="' + esc(u.avatar_url) + '" alt="">' : esc(String(u.full_name || '?').trim().charAt(0).toUpperCase())) + '</span><h3>' + esc(u.full_name || '—') + '</h3><p>' + esc(ph) + ' ' + chip(u.status === 'suspended' ? n('suspended') : n('activeU'), u.status === 'suspended' ? 'r' : 'ok') + '</p></div>' +
-        '<div class="cardx" style="margin:10px 0 0;padding:6px 14px"><div class="rowx"><small>' + n('joined') + '</small><div class="g" style="text-align:right"><b>' + esc(fdate(u.created_at)) + '</b></div></div>' + (a ? '<div class="rowx"><small>' + n('area') + '</small><div class="g" style="text-align:right"><b>' + esc(a) + '</b></div></div>' : '') + (u.address ? '<div class="rowx"><small>' + n('addr') + '</small><div class="g" style="text-align:right"><b>' + esc(u.address) + '</b></div></div>' : '') + '<div class="rowx"><small>' + n('roles') + '</small><div class="g" style="text-align:right">' + rchips(u.id) + '</div></div></div>' +
+        '<div class="cardx" style="margin:10px 0 0;padding:6px 14px"><div class="rowx"><small>' + n('joined') + '</small><div class="g" style="text-align:right"><b>' + esc(fdate(u.created_at)) + '</b></div></div>' + (a ? '<div class="rowx"><small>' + n('area') + '</small><div class="g" style="text-align:right"><b>' + esc(a) + '</b></div></div>' : '') + (u.address ? '<div class="rowx"><small>' + n('addr') + '</small><div class="g" style="text-align:right"><b>' + esc(u.address) + '</b></div></div>' : '') + '<div class="rowx"><small>' + n('roles') + '</small><div class="g" style="text-align:right">' + rchips(u.id) + '</div></div></div><div id="dealBox"></div>' +
         '<div class="grid2" style="margin-top:12px"><a class="btn" href="tel:' + esc(ph) + '" style="text-align:center">' + ic('phone') + n('call') + '</a><a class="btn wab" href="https://wa.me/' + wa(ph) + '" target="_blank" rel="noopener" style="text-align:center">' + ic('wa') + n('wa') + '</a></div>';
-      sh.classList.add('show');
+      sh.classList.add('show'); loadDeals(u);
     }
     el.innerHTML = '<h2 class="pt serif">' + n('users') + '</h2><p class="ps">' + n('usersS') + '</p><div class="srch"><span>' + ic('search') + '</span><input id="uq" type="search" placeholder="' + esc(n('searchP')) + '" autocomplete="off"></div><div id="ulist"><div class="soon">' + l('loading') + '</div></div>';
     el.querySelector('#uq').addEventListener('input', function (e) { st.q = e.target.value; clearTimeout(timer); timer = setTimeout(function () { load(true); }, 350); });
@@ -535,7 +690,7 @@
 
   var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
-    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('admin'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.price': pricingPanel, 'super.audit': auditPanel };
+    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('super'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.price': pricingPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {

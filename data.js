@@ -3,11 +3,14 @@ window.ZX = window.ZX || {};
 ZX.data = {
   area: { en: 'Islampur', bn: 'ইসলামপুর' },
   settings: {
-    foodCommissionPct: 15,
-    serviceCharge: 0,
+    /* Fallback numbers. The real ones are loaded from the database (Super Admin > Pricing & commission). */
     deliveryMin: 15,
-    deliveryPer100m: 2.5
+    deliveryPer100m: 2.5,
+    platformFee: { food: 4, shop: 10, technical: 200, rent_car: 200, decoration: 200, sound_light: 200 },
+    commission: { food: 15 },
+    foodCommissionPct: 15
   },
+
   banners: [
     { id: 'b1', tag: { en: 'FOOD DELIVERY', bn: 'ফুড ডেলিভারি' }, title: { en: 'Crave. Tap.<br>Feast in 30 min.', bn: 'ক্ষুধা পেলে ট্যাপ।<br>৩০ মিনিটে ভুরিভোজ।' },
       sub: { en: '120+ kitchens • 4.9 rated riders', bn: '১২০+ কিচেন • ৪.৯ রেটিং রাইডার' }, badge: '40% OFF', cta: { en: 'Order Now', bn: 'অর্ডার করুন' }, ctaStyle: 'light',
