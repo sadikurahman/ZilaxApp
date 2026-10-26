@@ -114,10 +114,25 @@
       r[1].forEach(function (it) { var c = root.querySelector('[data-id="' + it.id + '"] .im'); if (c) photo(c, it.img, it.grad); });
     });
   }
+  /* Stage 2.4: fixed technician rates set by the Super Admin (shown above the demo list; cached for next visit). */
+  var rates = ZX.store.get('zx_rates', []) || [];
+  function loadRates() {
+    if (!ZX.live || !ZX.auth || !ZX.auth.techRates) return;
+    ZX.auth.techRates(false).then(function (rows) {
+      var o = (rows || []).map(function (r) { return { en: r.name_en, bn: r.name_bn, price: Number(r.price) }; });
+      if (JSON.stringify(o) !== JSON.stringify(rates)) { rates = o; ZX.store.set('zx_rates', o); renderTech(); }
+    }).catch(function () { /* table not created yet or offline: keep what we have */ });
+  }
+  function ratesHtml() {
+    if (!rates.length) return '';
+    var fee = ((ZX.data.settings.platformFee || {}).technical);
+    return '<div class="lrow" style="cursor:default"><span class="le">🔧</span><div><b>' + ZX.t({ en: 'Fixed rates', bn: 'নির্দিষ্ট রেট' }) + '</b>' + (fee ? '<span>' + ZX.t({ en: 'Platform fee ' + ZX.money(fee) + ' is added per booking.', bn: 'প্রতি বুকিংয়ে প্ল্যাটফর্ম ফি ' + ZX.money(fee) + ' যোগ হয়।' }) + '</span>' : '') + '</div></div>' +
+      rates.map(function (r) { return '<div class="lrow" style="cursor:default"><span class="le">•</span><div><b>' + ZX.t(r) + '</b></div><b>' + ZX.money(r.price) + '</b></div>'; }).join('');
+  }
   function renderTech() {
     var T = [['❄️', { en: 'AC Service', bn: 'এসি সার্ভিস' }], ['⚡', { en: 'Electrician', bn: 'ইলেকট্রিশিয়ান' }], ['🚰', { en: 'Plumber', bn: 'প্লাম্বার' }], ['🧺', { en: 'Appliance Repair', bn: 'অ্যাপ্লায়েন্স মেরামত' }], ['📱', { en: 'Mobile & Laptop', bn: 'মোবাইল ও ল্যাপটপ' }], ['📹', { en: 'CCTV & WiFi', bn: 'সিসিটিভি ও ওয়াইফাই' }], ['🎨', { en: 'Painter', bn: 'পেইন্টার' }], ['🪚', { en: 'Carpenter', bn: 'কার্পেন্টার' }],
       ['🚘', { en: 'Rent a Car', bn: 'গাড়ি ভাড়া' }], ['🌸', { en: 'Decoration', bn: 'ডেকোরেশন' }], ['🎤', { en: 'Sound & Light', bn: 'সাউন্ড ও লাইট' }]];
-    $('techList').innerHTML = T.map(function (t, i) { return '<button class="lrow" type="button" data-stage="' + (i < 8 ? 10 : 12) + '"><span class="le">' + t[0] + '</span><div><b>' + ZX.t(t[1]) + '</b></div><span class="ch ar"></span></button>'; }).join('');
+    $('techList').innerHTML = ratesHtml() + T.map(function (t, i) { return '<button class="lrow" type="button" data-stage="' + (i < 8 ? 10 : 12) + '"><span class="le">' + t[0] + '</span><div><b>' + ZX.t(t[1]) + '</b></div><span class="ch ar"></span></button>'; }).join('');
   }
   function renderNav() {
     var items = [['home', 'home', 'nHome'], ['offers', 'tag', 'nOffers'], ['activity', 'list', 'nActivity'], ['inbox', 'mail', 'nInbox']];
@@ -187,13 +202,18 @@
   $('q').addEventListener('input', function (e) { doSearch(e.target.value); });
   $('filterBtn').onclick = function () { ZX.toast(ZX.stageMsg(4)); }; $('loginDemo').onclick = function () { ZX.go('login'); };
   window.addEventListener('hashchange', function () { go(location.hash.replace('#', '')); });
+  /* Off list = services switched off everywhere + services switched off in the customer's upazila (when we know it). */
   function loadServices() {
     if (!ZX.live || !ZX.auth || !ZX.auth.services) return;
-    ZX.auth.services().then(function (rows) {
-      var o = {}; (rows || []).forEach(function (r) { if (r.enabled === false) o[r.code] = 1; });
+    var up = ZX.getUpazila ? ZX.getUpazila() : null;
+    Promise.all([ZX.auth.services(), up ? ZX.auth.areaServicesOff().catch(function () { return []; }) : Promise.resolve([])]).then(function (res) {
+      var o = {};
+      (res[0] || []).forEach(function (r) { if (r.enabled === false) o[r.code] = 1; });
+      (res[1] || []).forEach(function (r) { if (r.area_id === up) o[r.service_code] = 1; });
       if (JSON.stringify(o) !== JSON.stringify(svcOff)) { svcOff = o; ZX.store.set('zx_svc_off', o); renderMosaic(); arrows(); }
     }).catch(function () { /* table not created yet or offline: keep what we have */ });
   }
-  loadServices();
+  ZX.onLoc = loadServices;
+  loadServices(); loadRates();
   renderAll(); wireDots($('heroes'), $('heroDots')); wireDots($('offers'), $('offerDots')); go(location.hash.replace('#', '') || 'home');
 })();

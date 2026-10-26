@@ -6,7 +6,7 @@
     loading: { en: 'Loading…', bn: 'লোড হচ্ছে…' }, loginT: { en: 'Staff & partner login', bn: 'স্টাফ ও পার্টনার লগইন' }, phone: { en: 'Mobile number', bn: 'মোবাইল নম্বর' }, pass: { en: 'Password', bn: 'পাসওয়ার্ড' }, login: { en: 'Log in', bn: 'লগইন' }, logout: { en: 'Log out', bn: 'লগআউট' },
     noAccess: { en: 'No access to this panel', bn: 'এই প্যানেলে আপনার প্রবেশাধিকার নেই' }, noAccessS: { en: 'Your account does not have this role. Ask a Super Admin or apply as a partner.', bn: 'আপনার অ্যাকাউন্টে এই ভূমিকা নেই। সুপার অ্যাডমিনকে বলুন অথবা পার্টনার হিসেবে আবেদন করুন।' },
     pendingT: { en: 'Your application is waiting for approval', bn: 'আপনার আবেদন অনুমোদনের অপেক্ষায়' }, pendingS: { en: 'You will get access as soon as an Admin approves it.', bn: 'অ্যাডমিন অনুমোদন দিলেই আপনি প্রবেশ করতে পারবেন।' },
-    open: { en: 'Open', bn: 'চলমান' }, approved: { en: 'Approved', bn: 'অনুমোদিত' }, rejected: { en: 'Rejected', bn: 'প্রত্যাখ্যাত' }, none: { en: 'Nothing here yet.', bn: 'এখানে এখনো কিছু নেই।' },
+    open: { en: 'Open', bn: 'চলমান' }, approved: { en: 'Approved', bn: 'অনুমোদিত' }, price: { en: 'Price', bn: 'দাম' }, active: { en: 'Active', bn: 'চালু' }, rejected: { en: 'Rejected', bn: 'প্রত্যাখ্যাত' }, none: { en: 'Nothing here yet.', bn: 'এখানে এখনো কিছু নেই।' },
     applicant: { en: 'Applicant', bn: 'আবেদনকারী' }, address: { en: 'Address', bn: 'ঠিকানা' }, map: { en: 'Open map', bn: 'মানচিত্র দেখুন' }, docs: { en: 'Documents', bn: 'কাগজ ও ছবি' }, noDocs: { en: 'No documents uploaded', bn: 'কোনো ছবি আপলোড হয়নি' },
     note: { en: 'Your note (optional)', bn: 'আপনার নোট (ঐচ্ছিক)' }, salesNote: { en: 'Sales note', bn: 'সেলস নোট' }, adminNote: { en: 'Admin note', bn: 'অ্যাডমিন নোট' },
     recommend: { en: 'Recommend', bn: 'সুপারিশ করুন' }, notRec: { en: 'Do not recommend', bn: 'সুপারিশ করবেন না' }, approve: { en: 'Approve', bn: 'অনুমোদন' }, reject: { en: 'Reject', bn: 'প্রত্যাখ্যান' }, done: { en: 'Saved', bn: 'সংরক্ষিত' },
@@ -23,6 +23,14 @@
     delT: { en: 'Delivery charge', bn: 'ডেলিভারি চার্জ' }, delHint: { en: 'The customer pays whichever is higher: the minimum charge, or the rate for every started 100 metres.', bn: 'ক্রেতা যেটা বেশি সেটাই দেন: সর্বনিম্ন চার্জ, অথবা প্রতি শুরু হওয়া ১০০ মিটারের হার।' }, delMin: { en: 'Minimum delivery charge', bn: 'সর্বনিম্ন ডেলিভারি চার্জ' }, delPer: { en: 'Charge per 100 metres', bn: 'প্রতি ১০০ মিটারের চার্জ' },
     prS: { en: 'Delivery charge, a fixed platform fee and a commission rate for every service. Every change is written to the audit log.', bn: 'ডেলিভারি চার্জ, প্রতি সার্ভিসের নির্দিষ্ট প্ল্যাটফর্ম ফি ও কমিশনের হার। প্রতিটি পরিবর্তন অডিট লগে লেখা হয়।' },
     delNote: { en: 'Applies to Food and Shop only.', bn: 'শুধু ফুড ও শপে প্রযোজ্য।' },
+    rtT: { en: 'Technician rates', bn: 'টেকনিশিয়ান রেট' }, rtS: { en: 'Fixed prices for technician jobs. Technicians cannot change them. The customer also pays the platform fee on top.', bn: 'টেকনিশিয়ানের কাজের নির্দিষ্ট দাম। টেকনিশিয়ান এগুলো বদলাতে পারেন না। ক্রেতা এর ওপর প্ল্যাটফর্ম ফিও দেন।' },
+    rtAdd: { en: 'Add a rate', bn: 'নতুন রেট যোগ' }, rtNameEn: { en: 'Service name (English)', bn: 'সার্ভিসের নাম (ইংরেজি)' }, rtNameBn: { en: 'Service name (Bangla)', bn: 'সার্ভিসের নাম (বাংলা)' }, rtPrice: { en: 'Price (৳)', bn: 'দাম (৳)' },
+    rtEdit: { en: 'Edit', bn: 'বদলান' }, rtCancel: { en: 'Cancel', bn: 'বাতিল' }, rtPays: { en: 'customer pays', bn: 'ক্রেতা দেবে' }, rtFeeIn: { en: 'with platform fee', bn: 'প্ল্যাটফর্ম ফিসহ' }, rtHiddenL: { en: 'Hidden', bn: 'লুকানো' },
+    rtNone: { en: 'No rates yet. Add the first one above.', bn: 'এখনো কোনো রেট নেই। ওপরে প্রথমটা যোগ করুন।' }, rtSetup: { en: 'Run stage2_4.sql in Supabase to turn on technician rates.', bn: 'টেকনিশিয়ান রেট চালু করতে Supabase-এ stage2_4.sql চালান।' },
+    rtViewS: { en: 'These are the fixed prices for your jobs. Zilax sets them and you cannot change them.', bn: 'এগুলো আপনার কাজের নির্দিষ্ট দাম। Zilax ঠিক করে, আপনি বদলাতে পারবেন না।' }, rtViewNone: { en: 'No rates have been set yet.', bn: 'এখনো কোনো রেট ঠিক করা হয়নি।' },
+    arSvcT: { en: 'Services in this upazila', bn: 'এই উপজেলায় সার্ভিস' }, arSvcGlobal: { en: 'Off everywhere (Services page)', bn: 'সবখানে বন্ধ (Services পেজ)' },
+    arSvcConfirm: { en: 'Turn {s} off in {u}? Customers there will see "Coming soon".', bn: '{u}-তে {s} বন্ধ করবেন? সেখানকার ক্রেতারা "শীঘ্রই আসছে" দেখবে।' },
+    arSvcSetup: { en: 'Run stage2_3.sql in Supabase to switch services per upazila.', bn: 'উপজেলা ধরে সার্ভিস চালু/বন্ধ করতে Supabase-এ stage2_3.sql চালান।' },
     acomT: { en: 'Commission agreed with this partner (%)', bn: 'এই পার্টনারের সঙ্গে ঠিক করা কমিশন (%)' }, acomH: { en: 'Leave empty to use the service default (shown in the box). You can change it later from Users.', bn: 'ফাঁকা রাখলে সার্ভিসের ডিফল্ট চলবে (ঘরে দেখানো আছে)। পরে Users থেকে বদলাতে পারবেন।' },
     acomFail: { en: 'Approved, but the commission could not be saved. Set it from Users.', bn: 'অনুমোদন হয়েছে, কিন্তু কমিশন সংরক্ষণ হয়নি। Users থেকে বসান।' },
     svcRatesT: { en: 'Fee and commission per service', bn: 'সার্ভিস অনুযায়ী ফি ও কমিশন' },
@@ -176,15 +184,42 @@
   }
 
   /* ---------- areas ---------- */
+  function svCss() {
+    if (document.getElementById('svCss')) return;
+    var c = document.createElement('style'); c.id = 'svCss';
+    c.textContent = '.sv-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}.sv-p{border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:700;background:#fff;color:var(--ink)}' +
+      '.sv-p.on{background:var(--mint);border-color:#bfe3c9;color:var(--forest)}.sv-p.off{background:#fef2f2;border-color:#fecaca;color:#b91c1c}.sv-p.gl{opacity:.55}';
+    document.head.appendChild(c);
+  }
   async function areasPanel(el) {
     el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
     async function paint() {
       var all; try { all = await A.areas(); } catch (e) { el.innerHTML = '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; return; }
       var ups = all.filter(function (a) { return a.level === 'upazila'; });
-      var tree = ups.map(function (u) { var uns = all.filter(function (a) { return a.parent_id === u.id; }); return '<div class="cardx"><h3>' + esc(ZX.t({ en: u.name_en, bn: u.name_bn })) + ' <small style="color:var(--muted)">(' + ZX.digits(uns.length) + ')</small></h3>' + (uns.map(function (n) { return '<div class="rowx"><div class="g"><b>' + esc(ZX.t({ en: n.name_en, bn: n.name_bn })) + '</b><small>' + esc(n.name_en) + ' · ' + esc(n.name_bn) + '</small></div>' + chip(n.active ? A.statusLabel('active') : l('hide'), n.active ? 'ok' : 'r') + '<button class="btn o" data-tg="' + esc(n.id) + '">' + (n.active ? l('hide') : l('show')) + '</button></div>'; }).join('') || '<p class="ps">' + l('none') + '</p>') + '</div>'; }).join('');
+      var svcs = [], off = {}, offErr = false;
+      try { svcs = await A.services(); } catch (e) { }
+      try { (await A.areaServicesOff()).forEach(function (r) { off[r.area_id + '|' + r.service_code] = 1; }); } catch (e) { offErr = true; }
+      svCss();
+      function pills(u) {
+        if (!svcs.length) return '';
+        if (offErr) return '<p class="ps" style="margin:6px 0">' + l('arSvcSetup') + '</p>';
+        return '<p class="ps" style="margin:6px 0 0"><b>' + l('arSvcT') + '</b></p><div class="sv-row">' + svcs.map(function (r) {
+          var gl = r.enabled === false, o = !!off[u.id + '|' + r.code];
+          return '<button type="button" class="sv-p ' + (gl ? 'gl off' : o ? 'off' : 'on') + '" data-asv="' + esc(u.id) + '|' + esc(r.code) + '"' + (gl ? ' disabled title="' + esc(l('arSvcGlobal')) + '"' : '') + '>' + (o || gl ? '✕ ' : '✓ ') + esc(ZX.t({ en: r.name_en, bn: r.name_bn })) + '</button>';
+        }).join('') + '</div>';
+      }
+      var tree = ups.map(function (u) { var uns = all.filter(function (a) { return a.parent_id === u.id; }); return '<div class="cardx"><h3>' + esc(ZX.t({ en: u.name_en, bn: u.name_bn })) + ' <small style="color:var(--muted)">(' + ZX.digits(uns.length) + ')</small></h3>' + pills(u) + (uns.map(function (n) { return '<div class="rowx"><div class="g"><b>' + esc(ZX.t({ en: n.name_en, bn: n.name_bn })) + '</b><small>' + esc(n.name_en) + ' · ' + esc(n.name_bn) + '</small></div>' + chip(n.active ? A.statusLabel('active') : l('hide'), n.active ? 'ok' : 'r') + '<button class="btn o" data-tg="' + esc(n.id) + '">' + (n.active ? l('hide') : l('show')) + '</button></div>'; }).join('') || '<p class="ps">' + l('none') + '</p>') + '</div>'; }).join('');
       el.innerHTML = head(l('areas'), ZX.t({ en: 'Unions and paurashavas shown in sign-up forms.', bn: 'সাইন আপ ফর্মে যে ইউনিয়ন ও পৌরসভা দেখায়।' })) +
         '<div class="cardx"><h3>' + l('addArea') + '</h3><label class="fld"><span>' + l('upazila') + '</span><select class="inp" id="aPar">' + ups.map(function (u) { return '<option value="' + esc(u.id) + '">' + esc(ZX.t({ en: u.name_en, bn: u.name_bn })) + '</option>'; }).join('') + '</select></label><div class="grid2"><input class="inp" id="aEn" placeholder="' + l('nameEn') + '"><input class="inp" id="aBn" placeholder="' + l('nameBn') + '"></div><div id="aMs" class="fmsg"></div><button class="btn" id="aGo" type="button">' + l('add') + '</button></div>' + tree;
       el.querySelector('#aGo').onclick = async function () { var m = el.querySelector('#aMs'); m.className = 'fmsg ok'; m.textContent = '…'; try { await A.upsertArea({ parent_id: el.querySelector('#aPar').value, level: 'union', kind: 'union', name_en: el.querySelector('#aEn').value, name_bn: el.querySelector('#aBn').value }); ZX.toast(l('done')); paint(); } catch (e) { m.className = 'fmsg err'; m.textContent = A.errMsg(e); } };
+      el.querySelectorAll('[data-asv]').forEach(function (b) {
+        b.onclick = async function () {
+          var k = b.getAttribute('data-asv').split('|'), isOff = !!off[k[0] + '|' + k[1]];
+          var u = all.filter(function (x) { return x.id === k[0]; })[0] || {}, sv = svcs.filter(function (x) { return x.code === k[1]; })[0] || {};
+          if (!isOff && !window.confirm(l('arSvcConfirm').replace('{s}', ZX.t({ en: sv.name_en, bn: sv.name_bn })).replace('{u}', ZX.t({ en: u.name_en, bn: u.name_bn })))) return;
+          try { await A.setAreaService(k[0], k[1], isOff); ZX.toast(l('done')); paint(); } catch (e) { ZX.toast(A.errMsg(e)); }
+        };
+      });
       el.querySelectorAll('[data-tg]').forEach(function (b) { b.onclick = async function () { var a = all.filter(function (x) { return x.id === b.getAttribute('data-tg'); })[0]; try { await A.upsertArea({ id: a.id, parent_id: a.parent_id, level: a.level, kind: a.kind, name_en: a.name_en, name_bn: a.name_bn, active: !a.active }); paint(); } catch (e) { ZX.toast(A.errMsg(e)); } }; });
     }
     paint();
@@ -284,6 +319,57 @@
     paint();
   }
 
+  /* ---------- technician rates (Stage 2.4) ---------- */
+  async function ratesPanel(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    var editId = null;
+    try { await A.loadPricing(); } catch (e) { }
+    function fee() { var f = (ZX.data.settings.platformFee || {}).technical; return f == null ? 0 : f; }
+    function nm(r) { return ZX.t({ en: r.name_en, bn: r.name_bn }); }
+    function valid(en, bn, price) { return en.trim().length >= 1 && en.trim().length <= 80 && bn.trim().length >= 1 && bn.trim().length <= 80 && price >= 0 && price <= 1000000; }
+    async function paint() {
+      var rows; try { rows = await A.techRates(true); } catch (e) { el.innerHTML = head(l('rtT'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '<br>' + l('rtSetup') + '</div>'; return; }
+      function field(label, id, val, extra) { return '<label class="ps" style="margin:0;display:block">' + esc(label) + '<input class="inp" id="' + id + '" style="margin-top:4px" ' + (extra || '') + ' value="' + esc(val) + '"></label>'; }
+      el.innerHTML = head(l('rtT'), l('rtS')) +
+        '<div class="cardx"><h3>' + l('rtAdd') + '</h3><div class="grid2">' + field(l('rtNameEn'), 'rtEn', '') + field(l('rtNameBn'), 'rtBn', '') + '</div><div style="margin-top:10px">' + field(l('rtPrice'), 'rtPr', '', 'inputmode="decimal"') + '</div><div id="rtMs" class="fmsg"></div><button class="btn" type="button" id="rtGo" style="margin-top:8px">' + l('add') + '</button></div>' +
+        (rows.length ? rows.map(function (r) {
+          if (editId === r.id) return '<div class="cardx"><div class="grid2">' + field(l('rtNameEn'), 'eEn', r.name_en) + field(l('rtNameBn'), 'eBn', r.name_bn) + '</div><div style="margin-top:10px">' + field(l('rtPrice'), 'ePr', r.price, 'inputmode="decimal"') + '</div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn" type="button" data-rsave="' + esc(r.id) + '">' + l('prSave') + '</button><button class="btn o" type="button" data-rcancel="1">' + l('rtCancel') + '</button></div></div>';
+          return '<div class="cardx"><div class="rowx" style="padding-top:0"><div class="g"><b>' + esc(nm(r)) + '</b><small>' + esc(r.name_en) + ' · ' + esc(r.name_bn) + '</small></div>' + chip(r.active ? l('svcOn') : l('rtHiddenL'), r.active ? 'ok' : 'r') + '</div>' +
+            '<p class="ps" style="margin:8px 0"><b>' + ZX.money(r.price) + '</b> · ' + l('rtPays') + ' ' + ZX.money(Number(r.price) + fee()) + ' (' + l('rtFeeIn') + ')</p>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn o" type="button" data-redit="' + esc(r.id) + '">' + l('rtEdit') + '</button><button class="btn o" type="button" data-rhide="' + esc(r.id) + '">' + (r.active ? l('hide') : l('show')) + '</button></div></div>';
+        }).join('') : '<p class="ps">' + l('rtNone') + '</p>');
+      function row(id) { return rows.filter(function (x) { return x.id === id; })[0]; }
+      el.querySelector('#rtGo').onclick = async function () {
+        var en = el.querySelector('#rtEn').value, bn = el.querySelector('#rtBn').value, pr = pnum(el.querySelector('#rtPr').value), m = el.querySelector('#rtMs');
+        if (!valid(en, bn, pr)) { m.className = 'fmsg err'; m.textContent = A.errMsg(new Error('bad_value')); return; }
+        try { await A.saveTechRate({ name_en: en.trim(), name_bn: bn.trim(), price: pr, active: true }); ZX.toast(l('done')); paint(); } catch (e) { m.className = 'fmsg err'; m.textContent = A.errMsg(e); }
+      };
+      el.querySelectorAll('[data-redit]').forEach(function (b) { b.onclick = function () { editId = b.getAttribute('data-redit'); paint(); }; });
+      el.querySelectorAll('[data-rcancel]').forEach(function (b) { b.onclick = function () { editId = null; paint(); }; });
+      el.querySelectorAll('[data-rsave]').forEach(function (b) {
+        b.onclick = async function () {
+          var r = row(b.getAttribute('data-rsave')); if (!r) return;
+          var en = el.querySelector('#eEn').value, bn = el.querySelector('#eBn').value, pr = pnum(el.querySelector('#ePr').value);
+          if (!valid(en, bn, pr)) { ZX.toast(A.errMsg(new Error('bad_value'))); return; }
+          try { await A.saveTechRate({ id: r.id, name_en: en.trim(), name_bn: bn.trim(), price: pr, active: r.active }); editId = null; ZX.toast(l('done')); paint(); } catch (e) { ZX.toast(A.errMsg(e)); }
+        };
+      });
+      el.querySelectorAll('[data-rhide]').forEach(function (b) {
+        b.onclick = async function () {
+          var r = row(b.getAttribute('data-rhide')); if (!r) return;
+          try { await A.saveTechRate({ id: r.id, name_en: r.name_en, name_bn: r.name_bn, price: r.price, active: !r.active }); ZX.toast(l('done')); paint(); } catch (e) { ZX.toast(A.errMsg(e)); }
+        };
+      });
+    }
+    paint();
+  }
+  /* what the technician sees: the same list, read-only */
+  async function techRatesView(el) {
+    el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
+    var rows; try { rows = await A.techRates(false); } catch (e) { el.innerHTML = head(l('rtT'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '</div>'; return; }
+    el.innerHTML = head(l('rtT'), l('rtViewS')) + (rows.length ? rows.map(function (r) { return '<div class="cardx"><div class="rowx" style="padding:0"><div class="g"><b>' + esc(ZX.t({ en: r.name_en, bn: r.name_bn })) + '</b></div><b>' + ZX.money(r.price) + '</b></div></div>'; }).join('') : '<div class="soon">' + l('rtViewNone') + '</div>');
+  }
+
   /* ---------- audit log: grouped by day, filter chips, plain-language lines, tap for details ---------- */
   var SVC_NAME = { food: { en: 'Food', bn: 'ফুড' }, technical: { en: 'Technical', bn: 'টেকনিক্যাল' }, shop: { en: 'Shop', bn: 'শপ' }, rent_car: { en: 'Rent a Car', bn: 'গাড়ি ভাড়া' }, decoration: { en: 'Decoration', bn: 'ডেকোরেশন' }, sound_light: { en: 'Sound & Light', bn: 'সাউন্ড ও লাইট' } };
   var AU_CAT = { pricing: { en: 'Pricing', bn: 'মূল্য', c: '#0f766e' }, service: { en: 'Services', bn: 'সার্ভিস', c: '#ea580c' }, area: { en: 'Areas', bn: 'এলাকা', c: '#2563eb' }, role: { en: 'Roles', bn: 'রোল', c: '#7c3aed' }, app: { en: 'Applications', bn: 'আবেদন', c: '#db2777' } };
@@ -323,10 +409,19 @@
       case 'set_service_fee': o = { cat: 'pricing', ico: 'tag', title: sv(id) + ' · ' + T('platform fee', 'প্ল্যাটফর্ম ফি'), from: taka(bo.platform_fee), to: taka(ao.platform_fee) }; break;
       case 'set_service_commission': o = { cat: 'pricing', ico: 'tag', title: sv(id) + ' · ' + T('default commission', 'ডিফল্ট কমিশন'), from: pct(bo.commission_pct), to: pct(ao.commission_pct) }; break;
       case 'set_partner_commission': o = { cat: 'pricing', ico: 'deal', title: (ao.partner || bo.partner || T('Partner', 'পার্টনার')) + ' · ' + sv(ao.service || bo.service) + ' · ' + T('commission deal', 'কমিশন চুক্তি'), from: bo.pct == null ? T('service default', 'সার্ভিসের ডিফল্ট') : pct(bo.pct), to: ao.pct == null ? T('service default', 'সার্ভিসের ডিফল্ট') : pct(ao.pct) }; break;
+      case 'upsert_tech_service': {
+        var nmR = ZX.t({ en: ao.name_en || bo.name_en || '', bn: ao.name_bn || bo.name_bn || '' });
+        if (b == null) o = { cat: 'pricing', ico: 'tag', title: T('New technician rate', 'নতুন টেকনিশিয়ান রেট') + ': ' + nmR, from: null, to: taka(ao.price) };
+        else if (bo.price !== ao.price) o = { cat: 'pricing', ico: 'tag', title: T('Technician rate', 'টেকনিশিয়ান রেট') + ': ' + nmR, from: taka(bo.price), to: taka(ao.price) };
+        else if (bo.active !== ao.active) o = { cat: 'pricing', ico: 'power', title: nmR + ' · ' + T('technician rate', 'টেকনিশিয়ান রেট') + ' ' + (ao.active ? T('shown', 'দেখানো হচ্ছে') : T('hidden', 'লুকানো হয়েছে')), from: yn(bo.active), to: yn(ao.active) };
+        else o = { cat: 'pricing', ico: 'tag', title: T('Technician rate updated', 'টেকনিশিয়ান রেট আপডেট') + ': ' + nmR };
+        break;
+      }
       case 'set_service':
         if (bo.enabled !== ao.enabled) o = { cat: 'service', ico: 'power', title: sv(id) + ' ' + (ao.enabled ? T('turned on', 'চালু করা হয়েছে') : T('turned off', 'বন্ধ করা হয়েছে')), from: yn(bo.enabled), to: yn(ao.enabled) };
         else o = { cat: 'service', ico: 'power', title: sv(id) + ' · ' + T('new listings need approval', 'নতুন লিস্টিংয়ে অনুমোদন'), from: yn(bo.listing_approval), to: yn(ao.listing_approval) };
         break;
+      case 'set_area_service': o = { cat: 'service', ico: 'pin', title: sv(ao.service || bo.service) + ' · ' + (ao.area || bo.area || '') + ' ' + (ao.enabled ? T('turned on', 'চালু করা হয়েছে') : T('turned off', 'বন্ধ করা হয়েছে')), from: yn(bo.enabled), to: yn(ao.enabled) }; break;
       case 'upsert_area': o = { cat: 'area', ico: 'pin', title: (b == null ? T('New area added', 'নতুন এলাকা যোগ') : T('Area updated', 'এলাকা বদলানো হয়েছে')) + ': ' + ZX.t({ en: ao.name_en || '', bn: ao.name_bn || '' }) }; break;
       case 'grant_role': o = { cat: 'role', ico: 'key', title: T('Role given', 'রোল দেওয়া হয়েছে') + ': ' + A.roleLabel(ao.role) }; break;
       case 'revoke_role': o = { cat: 'role', ico: 'key', title: T('Role removed', 'রোল সরানো হয়েছে') + ': ' + A.roleLabel(bo.role) }; break;
@@ -336,7 +431,7 @@
     }
     return o;
   }
-  var AU_KEY = { commission_pct: { en: 'Commission %', bn: 'কমিশন %' }, platform_fee: { en: 'Platform fee', bn: 'প্ল্যাটফর্ম ফি' }, enabled: { en: 'On', bn: 'চালু' }, listing_approval: { en: 'Approval needed', bn: 'অনুমোদন লাগবে' }, name_en: { en: 'Name (English)', bn: 'নাম (ইংরেজি)' }, name_bn: { en: 'Name (Bangla)', bn: 'নাম (বাংলা)' }, level: { en: 'Level', bn: 'স্তর' }, role: { en: 'Role', bn: 'রোল' }, pct: { en: 'Commission %', bn: 'কমিশন %' }, service: { en: 'Service', bn: 'সার্ভিস' }, partner: { en: 'Partner', bn: 'পার্টনার' }, note: { en: 'Note', bn: 'নোট' }, approved: { en: 'Approved', bn: 'অনুমোদিত' }, recommend: { en: 'Recommended', bn: 'সুপারিশ' }, status: { en: 'Status', bn: 'অবস্থা' }, category: { en: 'Category', bn: 'ধরন' } };
+  var AU_KEY = { commission_pct: { en: 'Commission %', bn: 'কমিশন %' }, platform_fee: { en: 'Platform fee', bn: 'প্ল্যাটফর্ম ফি' }, enabled: { en: 'On', bn: 'চালু' }, listing_approval: { en: 'Approval needed', bn: 'অনুমোদন লাগবে' }, name_en: { en: 'Name (English)', bn: 'নাম (ইংরেজি)' }, name_bn: { en: 'Name (Bangla)', bn: 'নাম (বাংলা)' }, level: { en: 'Level', bn: 'স্তর' }, role: { en: 'Role', bn: 'রোল' }, pct: { en: 'Commission %', bn: 'কমিশন %' }, service: { en: 'Service', bn: 'সার্ভিস' }, partner: { en: 'Partner', bn: 'পার্টনার' }, area: { en: 'Upazila', bn: 'উপজেলা' }, note: { en: 'Note', bn: 'নোট' }, approved: { en: 'Approved', bn: 'অনুমোদিত' }, recommend: { en: 'Recommended', bn: 'সুপারিশ' }, status: { en: 'Status', bn: 'অবস্থা' }, category: { en: 'Category', bn: 'ধরন' } };
   function auVal(k, v) { if (v === null || v === undefined || v === '') return '—'; if (typeof v === 'boolean') return ZX.lang === 'bn' ? (v ? 'হ্যাঁ' : 'না') : (v ? 'Yes' : 'No'); if (k === 'service') return ZX.t(SVC_NAME[v] || { en: v, bn: v }); if (k === 'role') return A.roleLabel(v); return typeof v === 'object' ? JSON.stringify(v) : String(v); }
   function auDetails(r) {
     var b = r.before, a = r.after, rows = [];
@@ -690,7 +785,7 @@
 
   var LIVE = { 'rider.home': riderHome, 'rider.earn': riderEarn, 'rider.hist': riderHist, 'sales.home': salesHome, 'sales.reports': salesReports, 'sales.targets': simple('tgT', 'target', '#2563eb', 'tgH', 'tgP'), 'sales.visits': simple('vsT', 'pin', '#0d9488', 'vsH', 'vsP'),
     'merchant.dash': merchantHome, 'merchant.orders': merchantOrders, 'merchant.menu': simple('mnT', 'menu', '#2563eb', 'mnH', 'mnP', 'mnB'), 'merchant.stock': simple('skT', 'alert', '#dc2626', 'skH', 'skP'), 'merchant.offers': simple('ofT', 'tag', '#7c3aed', 'ofH', 'ofP'), 'merchant.earn': merchantEarn,
-    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('super'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.price': pricingPanel, 'super.audit': auditPanel };
+    'sales.leads': appsBoard('sales'), 'admin.appr': appsBoard('admin'), 'super.appr': appsBoard('super'), 'super.cmd': dashPanel, 'super.users': usersPanel, 'super.roles': staffPanel, 'super.areas': areasPanel, 'super.svc': servicesPanel, 'super.price': pricingPanel, 'super.rates': ratesPanel, 'super.audit': auditPanel };
   window.ZXLive = {
     ready: false,
     intercept: function (role, sec) {
@@ -708,5 +803,6 @@
     logout: function () { return A.signOut(); }
   };
   ['shop', 'tech', 'car', 'decor', 'sound'].forEach(function (k) { LIVE[k + '.home'] = partnerHome(k); Object.keys(PP[k]).concat(['earn']).forEach(function (s) { LIVE[k + '.' + s] = partnerPage(k, s); }); });
+  LIVE['tech.services'] = techRatesView; /* Stage 2.4: the technician sees the Super Admin's fixed rate list (read-only) */
 
 })();

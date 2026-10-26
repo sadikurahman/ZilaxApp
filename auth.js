@@ -37,6 +37,7 @@
     bad_value: { en: 'This amount is not valid.', bn: 'এই অঙ্কটি সঠিক নয়।' },
     bad_percent: { en: 'Commission must be between 0 and 100.', bn: 'কমিশন ০ থেকে ১০০-এর মধ্যে হতে হবে।' },
     not_partner: { en: 'This person is not an active partner for that service.', bn: 'এই ব্যক্তি ওই সার্ভিসের সক্রিয় পার্টনার নন।' },
+    bad_level: { en: 'Services can only be switched per upazila.', bn: 'সার্ভিস শুধু উপজেলা ধরে চালু বা বন্ধ করা যায়।' },
     unknown_setting: { en: 'Unknown setting.', bn: 'অজানা সেটিং।' },
     not_found: { en: 'Not found.', bn: 'পাওয়া যায়নি।' },
     unknown: { en: 'Something went wrong. Please try again.', bn: 'কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।' }
@@ -52,7 +53,7 @@
   function emailOf(phone) { return phone + '@users.zilax.app'; }
   function errMsg(e) {
     var m = (e && (e.message || e.error_description || e.msg || e)) + '';
-    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'not_partner', 'unknown_setting', 'not_found'];
+    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'not_partner', 'bad_level', 'unknown_setting', 'not_found'];
     for (var i = 0; i < keys.length; i++) if (m.indexOf(keys[i]) > -1) return ZX.t(ERR[keys[i]]);
     if (/already registered|already been registered|user_already_exists/i.test(m)) return ZX.t(ERR.exists);
     if (/invalid login|invalid_credentials/i.test(m)) return ZX.t(ERR.bad_login);
@@ -172,6 +173,15 @@
     },
     setSetting: async function (key, value) { need(); var r = await ZX.sb.rpc('set_setting', { p_key: key, p_value: value }); if (r.error) throw r.error; },
     setCommission: async function (code, pct) { need(); var r = await ZX.sb.rpc('set_service_commission', { p_code: code, p_pct: pct }); if (r.error) throw r.error; },
+    areaServicesOff: async function () { if (!ZX.live) return []; var r = await ZX.sb.from('area_service_off').select('*'); if (r.error) throw r.error; return r.data || []; },
+    setAreaService: async function (areaId, code, enabled) { need(); var r = await ZX.sb.rpc('set_area_service', { p_area: areaId, p_service: code, p_enabled: enabled }); if (r.error) throw r.error; },
+    techRates: async function (all) {
+      if (!ZX.live) return [];
+      var q = ZX.sb.from('tech_services').select('*').order('sort', { ascending: true });
+      if (!all) q = q.eq('active', true);
+      var r = await q; if (r.error) throw r.error; return r.data || [];
+    },
+    saveTechRate: async function (row) { need(); var r = await ZX.sb.rpc('upsert_tech_service', { p_id: row.id || null, p_name_en: row.name_en, p_name_bn: row.name_bn, p_price: row.price, p_active: row.active == null ? null : row.active }); if (r.error) throw r.error; return r.data; },
     setServiceFee: async function (code, fee) { need(); var r = await ZX.sb.rpc('set_service_fee', { p_code: code, p_fee: fee }); if (r.error) throw r.error; },
     partnerTerms: async function (userId) { need(); var r = await ZX.sb.from('partner_terms').select('*').eq('user_id', userId); if (r.error) throw r.error; return r.data || []; },
     setPartnerCommission: async function (userId, service, pct) { need(); var r = await ZX.sb.rpc('set_partner_commission', { p_user: userId, p_service: service, p_pct: pct }); if (r.error) throw r.error; },
