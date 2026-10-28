@@ -37,6 +37,7 @@
     bad_value: { en: 'This amount is not valid.', bn: 'এই অঙ্কটি সঠিক নয়।' },
     bad_percent: { en: 'Commission must be between 0 and 100.', bn: 'কমিশন ০ থেকে ১০০-এর মধ্যে হতে হবে।' },
     not_partner: { en: 'This person is not an active partner for that service.', bn: 'এই ব্যক্তি ওই সার্ভিসের সক্রিয় পার্টনার নন।' },
+    bad_image: { en: 'This photo could not be used. Try another photo.', bn: 'এই ছবি ব্যবহার করা গেল না। অন্য ছবি দিন।' },
     bad_level: { en: 'Services can only be switched per upazila.', bn: 'সার্ভিস শুধু উপজেলা ধরে চালু বা বন্ধ করা যায়।' },
     unknown_setting: { en: 'Unknown setting.', bn: 'অজানা সেটিং।' },
     not_found: { en: 'Not found.', bn: 'পাওয়া যায়নি।' },
@@ -53,7 +54,7 @@
   function emailOf(phone) { return phone + '@users.zilax.app'; }
   function errMsg(e) {
     var m = (e && (e.message || e.error_description || e.msg || e)) + '';
-    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'not_partner', 'bad_level', 'unknown_setting', 'not_found'];
+    var keys = ['already_applied', 'not_reviewable', 'user_not_found', 'last_super_admin', 'already_exists', 'account_suspended', 'forbidden', 'invalid_phone', 'missing_name', 'bad_value', 'bad_percent', 'not_partner', 'bad_image', 'bad_level', 'unknown_setting', 'not_found'];
     for (var i = 0; i < keys.length; i++) if (m.indexOf(keys[i]) > -1) return ZX.t(ERR[keys[i]]);
     if (/already registered|already been registered|user_already_exists/i.test(m)) return ZX.t(ERR.exists);
     if (/invalid login|invalid_credentials/i.test(m)) return ZX.t(ERR.bad_login);
@@ -61,6 +62,23 @@
     return ZX.t(ERR.unknown) + (m ? ' (' + m.slice(0, 80) + ')' : '');
   }
   function need() { if (!ZX.live) throw new Error(ZX.t(ERR.not_configured)); }
+  /* Home Builder photos: shrink to at most 1280 px and re-save as JPEG (phone photos are huge), so uploads are small and fast. */
+  function resizeImage(file) {
+    return new Promise(function (ok, no) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        try {
+          var w = im.naturalWidth, h = im.naturalHeight, k = Math.min(1, 1280 / Math.max(w, h)), c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          c.toBlob(function (b) { URL.revokeObjectURL(url); b ? ok(b) : no(new Error('bad_image')); }, 'image/jpeg', 0.82);
+        } catch (e) { no(new Error('bad_image')); }
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); no(new Error('bad_image')); };
+      im.src = url;
+    });
+  }
+  function uid() { try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) { } return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
 
   var me = { user: null, profile: null, roles: [] };
   var listeners = [];
@@ -175,6 +193,19 @@
     setCommission: async function (code, pct) { need(); var r = await ZX.sb.rpc('set_service_commission', { p_code: code, p_pct: pct }); if (r.error) throw r.error; },
     areaServicesOff: async function () { if (!ZX.live) return []; var r = await ZX.sb.from('area_service_off').select('*'); if (r.error) throw r.error; return r.data || []; },
     setAreaService: async function (areaId, code, enabled) { need(); var r = await ZX.sb.rpc('set_area_service', { p_area: areaId, p_service: code, p_enabled: enabled }); if (r.error) throw r.error; },
+    homeBlocks: async function () { if (!ZX.live) return []; var r = await ZX.sb.from('home_blocks').select('*').order('sort', { ascending: true }); if (r.error) throw r.error; return r.data || []; },
+    homeBanners: async function () { if (!ZX.live) return []; var r = await ZX.sb.from('home_banners').select('*').order('sort', { ascending: true }); if (r.error) throw r.error; return r.data || []; },
+    saveHomeBanner: async function (id, f) { need(); var r = await ZX.sb.rpc('upsert_home_banner', { p_id: id || null, p: f }); if (r.error) throw r.error; return r.data; },
+    deleteHomeBanner: async function (id) { need(); var r = await ZX.sb.rpc('delete_home_banner', { p_id: id }); if (r.error) throw r.error; },
+    moveHomeBanner: async function (id, dir) { need(); var r = await ZX.sb.rpc('move_home_banner', { p_id: id, p_dir: dir }); if (r.error) throw r.error; },
+    saveHomeBlocks: async function (list) { need(); var r = await ZX.sb.rpc('set_home_blocks', { p: list }); if (r.error) throw r.error; },
+    imageUrl: function (path) { if (!path || !ZX.live) return ''; try { return ZX.sb.storage.from('home-media').getPublicUrl(path).data.publicUrl || ''; } catch (e) { return ''; } },
+    uploadHomeImage: async function (file) {
+      need(); var blob = await resizeImage(file), path = 'banners/' + uid() + '.jpg';
+      var r = await ZX.sb.storage.from('home-media').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+      if (r.error) throw r.error; return path;
+    },
+    removeHomeImage: async function (path) { try { if (ZX.live && path) await ZX.sb.storage.from('home-media').remove([path]); } catch (e) { } },
     techRates: async function (all) {
       if (!ZX.live) return [];
       var q = ZX.sb.from('tech_services').select('*').order('sort', { ascending: true });

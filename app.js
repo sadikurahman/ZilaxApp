@@ -60,14 +60,83 @@
     $('note').innerHTML = '<i>' + ZX.ico.gift + '</i><span>' + ZX.d('noteTxt') + '</span><b data-link="#food">' + ZX.d('noteCta') + '<span class="ar"></span></b>';
     updateBadge();
   }
+  /* ---------- Stage 2.5: Home Builder. Block order, banners, schedules and campaign pages come from the database (Super Admin > Home Builder).
+     Nothing saved yet, table missing or offline = the built-in home below, exactly as before. ---------- */
+  var HB = {}, home = ZX.store.get('zx_home', null) || { blocks: [], banners: [] }, homeSig = '', curCamp = null;
+  var HERO_GRAD = 'linear-gradient(120deg,#17331f 0%,#2e4a22 55%,#7a6a2a 100%)';
+  function hesc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function homeUp() { return ZX.getUpazila ? ZX.getUpazila() : null; }
+  function dbCard(b) {
+    return { id: 'db-' + b.id, tag: { en: b.tag_en, bn: b.tag_bn }, title: { en: hesc(b.title_en).replace(/\n/g, '<br>'), bn: hesc(b.title_bn).replace(/\n/g, '<br>') }, sub: { en: hesc(b.sub_en), bn: hesc(b.sub_bn) },
+      badge: hesc(b.badge), cta: { en: b.cta_en, bn: b.cta_bn }, ctaStyle: 'light', emoji: '', grad: HERO_GRAD, img: ZX.auth && ZX.auth.imageUrl ? ZX.auth.imageUrl(b.image_path) : '',
+      link: b.landing ? '#campaign/' + b.id : (b.link || ''), end: b.countdown ? b.ends_at : '' };
+  }
+  function heroHtml(b) {
+    var cd = b.end ? ZX.home.countdown(b.end) : '';
+    return '<div class="hero ' + (b.id === 'b2' ? 'tech' : '') + '"' + (b.link ? ' data-link="' + b.link + '"' : '') + '><div class="bg" data-bg="' + b.id + '"></div><div class="em">' + b.emoji + '</div>' +
+      '<div class="tag">' + ZX.t(b.tag) + '</div><h2>' + ZX.t(b.title) + '</h2>' + (ZX.t(b.sub) ? '<div class="sub">' + ZX.t(b.sub) + '</div>' : '') +
+      (b.badge || cd ? '<div class="badge"' + (b.end ? ' data-end="' + b.end + '" data-base="' + hesc(b.badge) + '"' : '') + '>' + b.badge + (b.badge && cd ? ' · ' : '') + (cd ? '⏱ ' + cd : '') + '</div>' : '') +
+      (ZX.t(b.cta) ? '<button class="cta ' + b.ctaStyle + '" type="button">' + ZX.t(b.cta) + '</button>' : '') + '</div>';
+  }
+  function heroList() { var db = ZX.home.pick(home.banners, 'hero', new Date(), homeUp()); return db.length ? db.map(dbCard) : D.banners; }
   function renderHeroes() {
-    $('heroes').innerHTML = D.banners.map(function (b) {
-      return '<div class="hero ' + (b.id === 'b2' ? 'tech' : '') + '" data-link="' + b.link + '"><div class="bg" data-bg="' + b.id + '"></div><div class="em">' + b.emoji + '</div>' +
-        '<div class="tag">' + ZX.t(b.tag) + '</div><h2>' + ZX.t(b.title) + '</h2>' + (ZX.t(b.sub) ? '<div class="sub">' + ZX.t(b.sub) + '</div>' : '') +
-        (b.badge ? '<div class="badge">' + b.badge + '</div>' : '') + '<button class="cta ' + b.ctaStyle + '" type="button">' + ZX.t(b.cta) + '</button></div>';
-    }).join('');
-    D.banners.forEach(function (b) { photo(document.querySelector('[data-bg="' + b.id + '"]'), b.img, b.grad); });
-    $('heroDots').innerHTML = D.banners.map(function (_, i) { return '<i class="' + (i ? '' : 'on') + '"></i>'; }).join('');
+    var L = heroList();
+    $('heroes').innerHTML = L.map(heroHtml).join('');
+    L.forEach(function (b) { photo(document.querySelector('[data-bg="' + b.id + '"]'), b.img, b.grad); });
+    $('heroDots').innerHTML = L.map(function (_, i) { return '<i class="' + (i ? '' : 'on') + '"></i>'; }).join('');
+  }
+  function wrapBlocks() {
+    try {
+      var trust = document.querySelector('#v-home .trust'); if (!trust || Object.keys(HB).length) return;
+      var qa = $('quick').previousElementSibling, sep1 = $('quick').nextElementSibling, dl = sep1 && sep1.nextElementSibling, sep2 = dl && dl.nextElementSibling;
+      var oh = $('offers').previousElementSibling, ph = $('plates').previousElementSibling, fh = $('fashion').previousElementSibling;
+      function grab(key, els) { els = els.filter(Boolean); if (!els.length) return; var w = document.createElement('div'); w.className = 'hb'; w.setAttribute('data-hb', key); els[0].parentNode.insertBefore(w, els[0]); els.forEach(function (e) { w.appendChild(e); }); HB[key] = w; }
+      grab('hero', [$('heroes'), $('heroDots')]); grab('mosaic', [$('mosaic')]); grab('quick', [qa, $('quick')]); grab('deliv', [sep1, dl, sep2]);
+      grab('offers', [oh, $('offers'), $('offerDots')]); grab('plates', [ph, $('plates')]); grab('fashion', [fh, $('fashion')]);
+    } catch (e) { HB = {}; }
+  }
+  /* force = true re-draws everything (language change); false only when what is visible has changed (timer, area, new data). */
+  function applyHome(force) {
+    var now = new Date(), up = homeUp(), inl = ZX.home.pick(home.banners, 'inline', now, up), hero = ZX.home.pick(home.banners, 'hero', now, up), blocks = ZX.home.blocks(home.blocks);
+    var sig = JSON.stringify([blocks, hero.map(function (b) { return b.id + b.updated_at; }), inl.map(function (b) { return b.id + b.updated_at; })]);
+    if (!force && sig === homeSig) return; homeSig = sig;
+    document.querySelectorAll('#v-home .hbi').forEach(function (n) { n.parentNode.removeChild(n); });
+    var trust = document.querySelector('#v-home .trust');
+    if (trust && Object.keys(HB).length) {
+      blocks.forEach(function (b) {
+        var w = HB[b.key]; if (!w) return;
+        trust.parentNode.insertBefore(w, trust); w.style.display = b.enabled ? '' : 'none';
+        var mine = inl.filter(function (x) { return x.after_block === b.key; });
+        if (mine.length && b.enabled) {
+          var h = document.createElement('div'); h.className = 'hs promo hbi'; var cards = mine.map(dbCard); h.innerHTML = cards.map(heroHtml).join(''); trust.parentNode.insertBefore(h, trust);
+          cards.forEach(function (c) { photo(h.querySelector('[data-bg="' + c.id + '"]'), c.img, c.grad); });
+        }
+      });
+    }
+    renderHeroes();
+  }
+  function loadHome() {
+    if (!ZX.live || !ZX.auth || !ZX.auth.homeBlocks) return;
+    Promise.all([ZX.auth.homeBlocks().catch(function () { return null; }), ZX.auth.homeBanners().catch(function () { return null; })]).then(function (res) {
+      if (!res[0] && !res[1]) return;
+      var n = { blocks: res[0] || home.blocks, banners: res[1] || home.banners };
+      if (JSON.stringify(n) !== JSON.stringify(home)) { home = n; ZX.store.set('zx_home', n); applyHome(false); if (tab === 'campaign') renderCampaign(curCamp); }
+    });
+  }
+  setInterval(function () {
+    document.querySelectorAll('#v-home [data-end]').forEach(function (e) { var c = ZX.home.countdown(e.getAttribute('data-end')); e.textContent = c ? (e.getAttribute('data-base') ? e.getAttribute('data-base') + ' · ' : '') + '⏱ ' + c : e.getAttribute('data-base') || ''; });
+    applyHome(false);
+  }, 1000);
+  function renderCampaign(id) {
+    curCamp = id; var v = $('v-campaign'), b = (home.banners || []).filter(function (x) { return x.id === id && x.landing && ZX.home.status(x, new Date(), homeUp()) === 'live'; })[0];
+    if (!b) { v.innerHTML = '<div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button></div><div class="soon"><b>' + hesc(ZX.t({ en: 'This offer has ended', bn: 'এই অফারটি শেষ হয়েছে' })) + '</b></div>'; arrows(); return; }
+    var c = dbCard(b), img = c.img;
+    v.innerHTML = '<div class="pbar"><button class="bk" data-tab="home" type="button" aria-label="Back"></button><h2>' + hesc(ZX.t({ en: b.title_en, bn: b.title_bn })) + '</h2></div>' +
+      '<div id="cpImg" style="height:190px;border-radius:18px;margin:6px 0 14px;background:' + HERO_GRAD + '"></div>' +
+      '<div class="blk"><h3>' + hesc(ZX.t({ en: b.title_en, bn: b.title_bn })) + '</h3><p class="subt" style="white-space:pre-wrap">' + hesc(ZX.t({ en: b.body_en, bn: b.body_bn }) || ZX.t({ en: b.body_bn, bn: b.body_en })) + '</p>' +
+      (b.link ? '<button class="cta green" type="button" data-link="' + b.link + '" style="margin-top:14px">' + hesc(ZX.t({ en: b.cta_en, bn: b.cta_bn }) || ZX.t({ en: 'Open', bn: 'খুলুন' })) + '</button>' : '') + '</div>';
+    if (img) photo($('cpImg'), img, HERO_GRAD);
+    arrows();
   }
   /* Stage 2.1: Super Admin can switch a service off; its home card then shows "Coming soon" (layout stays the same). */
   var SVC = { m1: 'food', m2: 'technical', m3: 'shop', m4: 'rent_car', m5: 'decoration', m6: 'sound_light' };
@@ -177,15 +246,17 @@
     box.classList.add('show');
   }
   function go(t) {
-    if (['home', 'offers', 'activity', 'inbox', 'shop', 'food', 'service', 'account', 'join', 'login', 'apply', 'myapps', 'profile', 'addresses', 'info'].indexOf(t) < 0) t = 'home';
+    var camp = null; if (typeof t === 'string' && t.indexOf('campaign/') === 0) { camp = t.slice(9); t = 'campaign'; }
+    if (['home', 'offers', 'activity', 'inbox', 'shop', 'food', 'service', 'account', 'join', 'login', 'apply', 'myapps', 'profile', 'addresses', 'info', 'campaign'].indexOf(t) < 0) t = 'home';
+    if (t === 'campaign') renderCampaign(camp);
     tab = t; document.querySelectorAll('.view').forEach(function (v) { v.classList.toggle('on', v.id === 'v-' + t); }); renderNav(); window.scrollTo(0, 0); if (ZX.onView) ZX.onView(t);
   }
   function wireDots(sc, dots, w) { sc.addEventListener('scroll', function () { var f = sc.firstElementChild; if (!f) return; var i = Math.round(sc.scrollLeft / (f.offsetWidth + 12)); i = Math.min(Math.max(i, 0), dots.children.length - 1); for (var j = 0; j < dots.children.length; j++) dots.children[j].classList.toggle('on', j === i); }, { passive: true }); }
   function renderAll() {
-    ZX.applyI18n(); renderHeader(); renderHeroes(); renderMosaic(); renderQuick(); renderOffers(); renderRows(); renderTech(); renderNav(); renderInbox(); renderAccount(); renderJoin(); stageNotes(); arrows();
+    ZX.applyI18n(); renderHeader(); applyHome(true); renderMosaic(); renderQuick(); renderOffers(); renderRows(); renderTech(); renderNav(); renderInbox(); renderAccount(); renderJoin(); stageNotes(); arrows();
   }
   ZX.go = go; ZX.renderAll = renderAll;
-  ZX.onLang = renderAll;
+  ZX.onLang = function () { renderAll(); if (tab === 'campaign') renderCampaign(curCamp); };
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-add],[data-tab],[data-link],[data-stage],[data-see],[data-q],[data-soon]'); if (!t) return;
@@ -213,7 +284,7 @@
       if (JSON.stringify(o) !== JSON.stringify(svcOff)) { svcOff = o; ZX.store.set('zx_svc_off', o); renderMosaic(); arrows(); }
     }).catch(function () { /* table not created yet or offline: keep what we have */ });
   }
-  ZX.onLoc = loadServices;
-  loadServices(); loadRates();
-  renderAll(); wireDots($('heroes'), $('heroDots')); wireDots($('offers'), $('offerDots')); go(location.hash.replace('#', '') || 'home');
+  ZX.onLoc = function () { loadServices(); applyHome(false); };
+  loadServices(); loadRates(); loadHome();
+  wrapBlocks(); renderAll(); wireDots($('heroes'), $('heroDots')); wireDots($('offers'), $('offerDots')); go(location.hash.replace('#', '') || 'home');
 })();

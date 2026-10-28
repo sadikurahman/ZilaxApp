@@ -26,7 +26,9 @@
     var an = cur.an ? ZX.t(cur.an) : ''; return ZX.t(T[cur.label] || T.Other) + (an ? ' · ' + an : '');
   }
   function setLocText() { var e = $('areaTxt'), s = locText(); if (e && s) e.textContent = s; }
-  function save(v) { cur = v; ZX.store.set('zx_loc', v); setLocText(); }
+  function save(v) { cur = v; ZX.store.set('zx_loc', v); setLocText(); if (ZX.onLoc) ZX.onLoc(); }
+  /* The customer's upazila, if we know it: the picked saved address first, then the profile. GPS alone cannot tell us. */
+  ZX.getUpazila = function () { var p = (A.me() || {}).profile || {}; return (cur && cur.kind === 'addr' && cur.up) || p.upazila_id || null; };
   var box = document.querySelector('.loc');
   if (box && !box.querySelector('.locdd')) { var dd = document.createElement('span'); dd.className = 'locdd'; dd.innerHTML = ZX.ico.l_down; box.appendChild(dd); box.setAttribute('role', 'button'); }
 
@@ -89,7 +91,7 @@
     if (p[0] === 'edit') { e.stopPropagation(); sh.classList.remove('show'); return ZX.addrOpen && ZX.addrOpen(id); }
     if (p[0] === 'pick') {
       var a = lstate.list.filter(function (r) { return r.id === id; })[0]; if (!a) return;
-      save({ kind: 'addr', id: a.id, label: a.label, line: a.line, lat: a.lat, lng: a.lng, an: an2(a) }); sh.classList.remove('show'); ZX.toast(t('set'));
+      save({ kind: 'addr', id: a.id, label: a.label, line: a.line, lat: a.lat, lng: a.lng, up: a.upazila_id || null, an: an2(a) }); sh.classList.remove('show'); ZX.toast(t('set'));
     }
   });
   document.addEventListener('click', function (e) { if (e.target.closest('[data-go="login"]') && sh.classList.contains('show')) sh.classList.remove('show'); }, true);
@@ -135,6 +137,6 @@
 
   /* ---- keep header in sync ---- */
   var pl = ZX.onLang; ZX.onLang = function () { if (pl) pl(); setLocText(); if (sh.classList.contains('show')) renderSheet(); };
-  A.onChange(function () { var me = A.me(); if (!me.user && cur && cur.kind === 'addr') { cur = null; ZX.store.set('zx_loc', null); } if (me.user === null || me.user) setLocText(); });
-  setLocText();
+  A.onChange(function () { var me = A.me(); if (!me.user && cur && cur.kind === 'addr') { cur = null; ZX.store.set('zx_loc', null); } if (me.user === null || me.user) setLocText(); if (ZX.onLoc) ZX.onLoc(); });
+  setLocText(); if (ZX.onLoc) ZX.onLoc();
 })();
