@@ -1,5 +1,13 @@
 /* Zilax — Stage 0 home app (mock data), Pathao-style layout. Stage 1 connects Supabase. */
 (function () {
+  /* Safety net: if homecfg.js was not uploaded (or an old index.html is cached), the home must still show the built-in page, never a blank one. */
+  if (!ZX.home) ZX.home = {
+    BLOCKS: ['hero', 'mosaic', 'quick', 'deliv', 'offers', 'plates', 'fashion'],
+    pick: function () { return []; },
+    blocks: function () { return ZX.home.BLOCKS.map(function (k) { return { key: k, enabled: true }; }); },
+    countdown: function () { return ''; },
+    status: function () { return 'hidden'; }
+  };
   var D = ZX.data;
   var S = function (p) { return '<svg viewBox="0 0 24 24">' + p + '</svg>'; };
   var extraIco = {
