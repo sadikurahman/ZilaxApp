@@ -70,7 +70,10 @@
   }
   /* ---------- Stage 2.5: Home Builder. Block order, banners, schedules and campaign pages come from the database (Super Admin > Home Builder).
      Nothing saved yet, table missing or offline = the built-in home below, exactly as before. ---------- */
-  var HB = {}, home = ZX.store.get('zx_home', null) || { blocks: [], banners: [] }, homeSig = '', curCamp = null;
+  var HB = {}, home = ZX.store.get('zx_home', null) || { banners: [], photos: [] }, homeSig = '', curCamp = null, PH = {};
+  /* Super Admin's replacement photos for the built-in home cards: card id (b1, m1, o1, p1, f1 ...) -> public photo address. */
+  function buildPH() { PH = {}; ((home && home.photos) || []).forEach(function (r) { var u = ZX.auth && ZX.auth.imageUrl ? ZX.auth.imageUrl(r.image_path) : ''; if (r && r.slot && u) PH[r.slot] = u; }); }
+  function imgOf(id, def) { return PH[id] || def; }
   var HERO_GRAD = 'linear-gradient(120deg,#17331f 0%,#2e4a22 55%,#7a6a2a 100%)';
   function hesc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function homeUp() { return ZX.getUpazila ? ZX.getUpazila() : null; }
@@ -82,7 +85,7 @@
   function heroHtml(b) {
     var cd = b.end ? ZX.home.countdown(b.end) : '';
     return '<div class="hero ' + (b.id === 'b2' ? 'tech' : '') + '"' + (b.link ? ' data-link="' + b.link + '"' : '') + '><div class="bg" data-bg="' + b.id + '"></div><div class="em">' + b.emoji + '</div>' +
-      '<div class="tag">' + ZX.t(b.tag) + '</div><h2>' + ZX.t(b.title) + '</h2>' + (ZX.t(b.sub) ? '<div class="sub">' + ZX.t(b.sub) + '</div>' : '') +
+      (ZX.t(b.tag) ? '<div class="tag">' + ZX.t(b.tag) + '</div>' : '') + (ZX.t(b.title) ? '<h2>' + ZX.t(b.title) + '</h2>' : '') + (ZX.t(b.sub) ? '<div class="sub">' + ZX.t(b.sub) + '</div>' : '') +
       (b.badge || cd ? '<div class="badge"' + (b.end ? ' data-end="' + b.end + '" data-base="' + hesc(b.badge) + '"' : '') + '>' + b.badge + (b.badge && cd ? ' · ' : '') + (cd ? '⏱ ' + cd : '') + '</div>' : '') +
       (ZX.t(b.cta) ? '<button class="cta ' + b.ctaStyle + '" type="button">' + ZX.t(b.cta) + '</button>' : '') + '</div>';
   }
@@ -90,7 +93,7 @@
   function renderHeroes() {
     var L = heroList();
     $('heroes').innerHTML = L.map(heroHtml).join('');
-    L.forEach(function (b) { photo(document.querySelector('[data-bg="' + b.id + '"]'), b.img, b.grad); });
+    L.forEach(function (b) { photo(document.querySelector('[data-bg="' + b.id + '"]'), imgOf(b.id, b.img), b.grad); });
     $('heroDots').innerHTML = L.map(function (_, i) { return '<i class="' + (i ? '' : 'on') + '"></i>'; }).join('');
   }
   function wrapBlocks() {
@@ -105,7 +108,7 @@
   }
   /* force = true re-draws everything (language change); false only when what is visible has changed (timer, area, new data). */
   function applyHome(force) {
-    var now = new Date(), up = homeUp(), inl = ZX.home.pick(home.banners, 'inline', now, up), hero = ZX.home.pick(home.banners, 'hero', now, up), blocks = ZX.home.blocks(home.blocks);
+    var now = new Date(), up = homeUp(), inl = ZX.home.pick(home.banners, 'inline', now, up), hero = ZX.home.pick(home.banners, 'hero', now, up), blocks = ZX.home.blocks([]); /* the home keeps its original order; the Super Admin adds banners and changes photos */
     var sig = JSON.stringify([blocks, hero.map(function (b) { return b.id + b.updated_at; }), inl.map(function (b) { return b.id + b.updated_at; })]);
     if (!force && sig === homeSig) return; homeSig = sig;
     document.querySelectorAll('#v-home .hbi').forEach(function (n) { n.parentNode.removeChild(n); });
@@ -124,11 +127,13 @@
     renderHeroes();
   }
   function loadHome() {
-    if (!ZX.live || !ZX.auth || !ZX.auth.homeBlocks) return;
-    Promise.all([ZX.auth.homeBlocks().catch(function () { return null; }), ZX.auth.homeBanners().catch(function () { return null; })]).then(function (res) {
+    if (!ZX.live || !ZX.auth || !ZX.auth.homeBanners) return;
+    Promise.all([ZX.auth.homeBanners().catch(function () { return null; }), ZX.auth.homePhotos ? ZX.auth.homePhotos().catch(function () { return null; }) : Promise.resolve(null)]).then(function (res) {
       if (!res[0] && !res[1]) return;
-      var n = { blocks: res[0] || home.blocks, banners: res[1] || home.banners };
-      if (JSON.stringify(n) !== JSON.stringify(home)) { home = n; ZX.store.set('zx_home', n); applyHome(false); if (tab === 'campaign') renderCampaign(curCamp); }
+      var n = { banners: res[0] || home.banners || [], photos: res[1] || home.photos || [] };
+      if (JSON.stringify(n) !== JSON.stringify({ banners: home.banners || [], photos: home.photos || [] })) {
+        home = n; ZX.store.set('zx_home', n); buildPH(); renderMosaic(); renderOffers(); renderRows(); arrows(); applyHome(true); if (tab === 'campaign') renderCampaign(curCamp);
+      }
     });
   }
   setInterval(function () {
@@ -154,7 +159,8 @@
     var off = !!svcOff[SVC[m.id]];
     if (off) m = Object.assign({}, m, { tag: SOON, tone: 'gold' });
     var tg = m.tag ? '<span class="tg ' + (m.tone === 'gold' ? 'gold' : '') + '">' + (m.tone === 'gold' ? '' : ZX.ico.check) + ZX.t(m.tag) + '</span>' : '';
-    var ph = m.img ? '<div class="ph" style="background-image:url(' + "'" + m.img + "'" + ')"></div>' : '<div class="ph art" style="background:' + m.grad + '"><span>' + m.emoji + '</span></div>';
+    var pic = imgOf(m.id, m.img);
+    var ph = pic ? '<div class="ph" style="background-image:url(' + "'" + pic + "'" + ')"></div>' : '<div class="ph art" style="background:' + m.grad + '"><span>' + m.emoji + '</span></div>';
     return '<button class="mc ' + m.size + '" type="button" ' + (off ? 'data-soon="1" style="opacity:.6;filter:grayscale(1)"' : 'data-link="' + m.link + '"') + '><div class="tx"><b>' + ZX.t(m.title) + '</b>' + (m.sub ? '<span class="s">' + ZX.t(m.sub) + '</span>' : '') + '</div>' + ph + tg + '</button>';
   }
   function renderMosaic() {
@@ -177,7 +183,7 @@
   function renderOffers() {
     var h = D.offers.map(function (o) { return '<div class="offer" style="background:' + o.grad + '"><div class="em">' + o.emoji + '</div><span class="ob">' + o.badge + '</span><h4>' + ZX.t(o.title) + '</h4><p>' + ZX.t(o.sub) + '</p></div>'; }).join('');
     $('offers').innerHTML = h; $('offersList').innerHTML = h;
-    [$('offers'), $('offersList')].forEach(function (root) { D.offers.forEach(function (o, i) { if (o.img) photo(root.children[i], o.img); }); });
+    [$('offers'), $('offersList')].forEach(function (root) { D.offers.forEach(function (o, i) { var pic = imgOf(o.id, o.img); if (pic) photo(root.children[i], pic); }); });
     $('offerDots').innerHTML = D.offers.map(function (_, i) { return '<i class="' + (i ? '' : 'on') + '"></i>'; }).join('');
   }
   function pcard(it, fashion) {
@@ -188,7 +194,7 @@
   function renderRows() {
     [['plates', D.plates, false], ['foodItems', D.plates, false], ['fashion', D.fashion, true], ['shopItems', D.fashion, true]].forEach(function (r) {
       var root = $(r[0]); root.innerHTML = r[1].map(function (it) { return pcard(it, r[2]); }).join('');
-      r[1].forEach(function (it) { var c = root.querySelector('[data-id="' + it.id + '"] .im'); if (c) photo(c, it.img, it.grad); });
+      r[1].forEach(function (it) { var c = root.querySelector('[data-id="' + it.id + '"] .im'); if (c) photo(c, imgOf(it.id, it.img), it.grad); });
     });
   }
   /* Stage 2.4: fixed technician rates set by the Super Admin (shown above the demo list; cached for next visit). */
@@ -293,6 +299,6 @@
     }).catch(function () { /* table not created yet or offline: keep what we have */ });
   }
   ZX.onLoc = function () { loadServices(); applyHome(false); };
-  loadServices(); loadRates(); loadHome();
+  buildPH(); loadServices(); loadRates(); loadHome();
   wrapBlocks(); renderAll(); wireDots($('heroes'), $('heroDots')); wireDots($('offers'), $('offerDots')); go(location.hash.replace('#', '') || 'home');
 })();

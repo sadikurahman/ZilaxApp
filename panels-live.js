@@ -373,6 +373,20 @@
   /* ---------- Home Builder (Stage 2.5): order of home blocks, banners with photo, schedule, area, countdown, landing page ---------- */
   var HB_NAMES = { hero: ['Top banners', 'ওপরের ব্যানার'], mosaic: ['Service cards', 'সার্ভিস কার্ড'], quick: ['Quick actions', 'কুইক অ্যাকশন'], deliv: ['Your deliveries', 'আপনার ডেলিভারি'], offers: ['Offers', 'অফার'], plates: ['Food row', 'ফুড সারি'], fashion: ['Shop row', 'শপ সারি'] };
   var HB_LINKS = [['', 'No button link', 'বোতামের লিংক নেই'], ['#food', 'Food', 'ফুড'], ['#shop', 'Shop', 'শপ'], ['#service', 'Technical', 'টেকনিক্যাল'], ['#offers', 'Offers', 'অফার'], ['#join', 'Join as partner', 'পার্টনার হোন'], ['#activity', 'My orders', 'আমার অর্ডার']];
+  /* The built-in home cards whose photo the Super Admin can replace (ids come from data.js: b1, m1, o1, p1, f1 ...). */
+  function plainTxt(x) { return String(x || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function HP_GROUPS() {
+    var D = ZX.data;
+    return [
+      { label: t2('Top banners', 'ওপরের ব্যানার'), items: D.banners, name: function (o) { return plainTxt(ZX.t(o.title)); } },
+      { label: t2('Service cards', 'সার্ভিস কার্ড'), items: D.main, name: function (o) { return plainTxt(ZX.t(o.title)); } },
+      { label: t2('Offers', 'অফার'), items: D.offers, name: function (o) { return plainTxt(ZX.t(o.title)); } },
+      { label: t2('Food row', 'ফুড সারি'), items: D.plates, name: function (o) { return plainTxt(ZX.t(o)); } },
+      { label: t2('Shop row', 'শপ সারি'), items: D.fashion, name: function (o) { return plainTxt(ZX.t(o)); } }
+    ];
+  }
+  function hpName(id) { var out = id; HP_GROUPS().forEach(function (g) { g.items.forEach(function (o) { if (o.id === id) out = g.label + ' · ' + g.name(o); }); }); return out; }
+  var WHERE = [['hero', 'Top slider (the sliding banners at the very top)', 'ওপরের স্লাইডার (একদম ওপরে ঘুরে ঘুরে আসা ব্যানার)'], ['inline:hero', 'Just below the top banners', 'ওপরের ব্যানারের ঠিক নিচে'], ['inline:mosaic', 'Below the service cards', 'সার্ভিস কার্ডের নিচে'], ['inline:quick', 'Below quick actions', 'কুইক অ্যাকশনের নিচে'], ['inline:deliv', 'Below your deliveries', 'আপনার ডেলিভারির নিচে'], ['inline:offers', 'Below offers', 'অফারের নিচে'], ['inline:plates', 'Below the food row', 'ফুড সারির নিচে'], ['inline:fashion', 'Below the shop row', 'শপ সারির নিচে']];
   var HB_GRAD = 'linear-gradient(120deg,#17331f 0%,#2e4a22 55%,#7a6a2a 100%)';
   function t2(en, bn) { return ZX.lang === 'bn' ? bn : en; }
   function hbName(k) { var n = HB_NAMES[k] || [k, k]; return t2(n[0], n[1]); }
@@ -400,13 +414,13 @@
   async function hbPanel(el) {
     hbCss();
     el.innerHTML = '<div class="soon">' + l('loading') + '</div>';
-    var blocks, banners, ups, st = { lay: null, ed: null };
+    var banners, ups, photos = [], photosErr = '', st = { ed: null };
     async function load() {
-      try { var r = await Promise.all([A.homeBlocks(), A.homeBanners(), A.areas()]); blocks = r[0]; banners = r[1]; ups = r[2].filter(function (a) { return a.level === 'upazila'; }); }
+      try { var r = await Promise.all([A.homeBanners(), A.areas()]); banners = r[0]; ups = r[1].filter(function (a) { return a.level === 'upazila'; }); }
       catch (e) { el.innerHTML = head(t2('Home Builder', 'হোম বিল্ডার'), '') + '<div class="soon">' + esc(A.errMsg(e)) + '<br>' + t2('Run stage2_5.sql in Supabase to turn on the Home Builder.', 'হোম বিল্ডার চালু করতে Supabase-এ stage2_5.sql চালান।') + '</div>'; return false; }
-      st.lay = ZX.home.blocks(blocks).map(function (b) { return { key: b.key, enabled: b.enabled }; }); return true;
+      try { photos = await A.homePhotos(); photosErr = ''; } catch (e2) { photos = []; photosErr = A.errMsg(e2); }
+      return true;
     }
-    function layDirty() { return JSON.stringify(st.lay) !== JSON.stringify(ZX.home.blocks(blocks).map(function (b) { return { key: b.key, enabled: b.enabled }; })); }
     function statusOf(b) { return ZX.home.status(b, new Date(), (b.areas && b.areas[0]) || null); }
     var ST = { live: ['Live now', 'চালু আছে', 'ok'], scheduled: ['Scheduled', 'সময় হয়নি', ''], expired: ['Ended', 'শেষ', 'r'], hours: ['Outside hours', 'সময়ের বাইরে', ''], off: ['Off', 'বন্ধ', 'r'], area: ['Live now', 'চালু আছে', 'ok'] };
     function when(b) {
@@ -425,40 +439,51 @@
           '<div class="hb-bt"><button type="button" class="btn o" data-edit="' + esc(b.id) + '">' + t2('Edit', 'বদলান') + '</button><button type="button" class="btn o" data-bup="' + esc(b.id) + '" aria-label="up">↑</button><button type="button" class="btn o" data-bdn="' + esc(b.id) + '" aria-label="down">↓</button><button type="button" class="btn o" data-bdel="' + esc(b.id) + '">' + t2('Delete', 'মুছুন') + '</button></div></div>';
       }).join('');
     }
-    function layHtml() {
-      return st.lay.map(function (b, i) {
-        return '<div class="rowx"><div class="g"><b>' + esc(hbName(b.key)) + '</b></div><button type="button" class="btn o" data-lu="' + i + '" aria-label="up"' + (i === 0 ? ' disabled' : '') + '>↑</button><button type="button" class="btn o" data-ld="' + i + '" aria-label="down"' + (i === st.lay.length - 1 ? ' disabled' : '') + '>↓</button><button type="button" class="btn ' + (b.enabled ? '' : 'o') + '" data-lt="' + i + '">' + (b.enabled ? t2('On', 'চালু') : t2('Off', 'বন্ধ')) + '</button></div>';
-      }).join('') + '<button type="button" class="btn" id="lySave" style="margin-top:10px"' + (layDirty() ? '' : ' disabled') + '>' + t2('Save layout', 'লেআউট সংরক্ষণ') + '</button>';
+    function photosHtml() {
+      var cur = {}; photos.forEach(function (r) { cur[r.slot] = r.image_path; });
+      var h = '<h3 class="pt" style="font-size:19px;margin:26px 0 4px">' + t2('Home photos', 'হোমের ছবি') + '</h3><p class="ps">' + t2('Change the photo of any built-in home card. "Original" brings the first photo back.', 'হোমের যেকোনো কার্ডের ছবি বদলান। "আগের ছবি" চাপলে প্রথম ছবি ফিরে আসে।') + '</p>';
+      if (photosErr) return h + '<div class="soon">' + esc(photosErr) + '<br>' + t2('Run stage2_5.sql in Supabase to turn on photo changes.', 'ছবি বদলানো চালু করতে Supabase-এ stage2_5.sql চালান।') + '</div>';
+      HP_GROUPS().forEach(function (g) {
+        h += '<div class="hb-sec">' + esc(g.label) + '</div>';
+        g.items.forEach(function (o) {
+          var own = cur[o.id], url = own ? A.imageUrl(own) : (o.img || '');
+          h += '<div class="cardx"><div class="hb-it"><span class="hb-th" style="' + (url ? "background-image:url('" + esc(url) + "')" : 'background:' + (o.grad || HB_GRAD)) + '"></span><div class="g"><b>' + esc(g.name(o)) + '</b><small>' + (own ? t2('Your photo', 'আপনার ছবি') : t2('Original photo', 'আগের ছবি')) + '</small><small class="fmsg" id="hpMs-' + esc(o.id) + '"></small></div></div>' +
+            '<div class="hb-bt"><label class="btn o" style="margin:0">' + t2('Change photo', 'ছবি বদলান') + '<input type="file" accept="image/*" data-hp="' + esc(o.id) + '" hidden></label>' + (own ? '<button type="button" class="btn o" data-hr="' + esc(o.id) + '">' + t2('Original', 'আগের ছবি') + '</button>' : '') + '</div></div>';
+        });
+      });
+      return h;
     }
     function field(label, name, val, extra) { return '<label class="hb-f">' + esc(label) + '<input class="inp" data-f="' + name + '" value="' + esc(val) + '" ' + (extra || '') + '></label>'; }
     function edHtml() {
-      var f = st.ed.f, bnL = function (en, bn) { return t2(en, bn); };
+      var f = st.ed.f, bnL = function (en, bn) { return t2(en, bn); }, whereVal = f.placement === 'hero' ? 'hero' : 'inline:' + (f.after_block || 'mosaic');
       var opts = function (arr, cur) { return arr.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? ' selected' : '') + '>' + esc(t2(o[1], o[2])) + '</option>'; }).join(''); };
       return '<div class="cardx"><h3>' + (st.ed.id ? t2('Edit banner', 'ব্যানার বদলান') : t2('New banner', 'নতুন ব্যানার')) + '</h3><div id="hbPv">' + hbPreview(f) + '</div>' +
         '<div class="hb-sec">' + t2('Photo', 'ছবি') + '</div><input type="file" id="hbFile" accept="image/*" class="inp"><div id="hbUp" class="fmsg"></div>' + (f.image_path ? '<button type="button" class="btn o" id="hbNoImg" style="margin-top:6px">' + t2('Remove photo', 'ছবি সরান') + '</button>' : '') +
-        '<div class="hb-sec">' + t2('Where it shows', 'কোথায় দেখাবে') + '</div>' +
-        '<label class="hb-f">' + t2('Placement', 'জায়গা') + '<select class="inp" data-f="placement"><option value="hero"' + (f.placement === 'hero' ? ' selected' : '') + '>' + t2('Top slider', 'ওপরের স্লাইডার') + '</option><option value="inline"' + (f.placement === 'inline' ? ' selected' : '') + '>' + t2('Between sections', 'সেকশনের মাঝে') + '</option></select></label>' +
-        '<label class="hb-f" id="hbAfterW" style="' + (f.placement === 'inline' ? '' : 'display:none') + '">' + t2('Show after', 'কোনটার পরে') + '<select class="inp" data-f="after_block">' + ZX.home.BLOCKS.map(function (k) { return '<option value="' + k + '"' + (f.after_block === k ? ' selected' : '') + '>' + esc(hbName(k)) + '</option>'; }).join('') + '</select></label>' +
+        '<div class="hb-sec">' + t2('Where to add it', 'কোথায় বসাবেন') + '</div>' +
+        '<label class="hb-f">' + t2('Place on the home page', 'হোম পেজের কোন জায়গায়') + '<select class="inp" data-f="where">' + WHERE.map(function (w) { return '<option value="' + w[0] + '"' + (w[0] === whereVal ? ' selected' : '') + '>' + esc(t2(w[1], w[2])) + '</option>'; }).join('') + '</select></label>' +
+        '<div class="hb-sec">' + t2('When tapped', 'ট্যাপ করলে') + '</div>' +
+        '<label class="hb-f">' + t2('Button goes to', 'বোতাম কোথায় নেবে') + '<select class="inp" data-f="link">' + opts(HB_LINKS, f.link || '') + '</select></label>' +
+        '<details class="hb-more" style="margin-top:14px"' + (st.ed.more ? ' open' : '') + '><summary style="font-weight:800;cursor:pointer;padding:6px 0">' + t2('More options (optional)', 'আরও অপশন (ঐচ্ছিক)') + '</summary>' +
         '<div class="hb-sec">' + t2('Text', 'লেখা') + '</div><div class="grid2">' + field(t2('Small tag (English)', 'ছোট ট্যাগ (ইংরেজি)'), 'tag_en', f.tag_en, 'maxlength="40"') + field(t2('Small tag (Bangla)', 'ছোট ট্যাগ (বাংলা)'), 'tag_bn', f.tag_bn, 'maxlength="40"') + '</div>' +
         '<div class="grid2">' + field(t2('Title (English)', 'শিরোনাম (ইংরেজি)'), 'title_en', f.title_en, 'maxlength="120"') + field(t2('Title (Bangla)', 'শিরোনাম (বাংলা)'), 'title_bn', f.title_bn, 'maxlength="120"') + '</div>' +
         '<div class="grid2">' + field(t2('Subtitle (English)', 'উপলেখা (ইংরেজি)'), 'sub_en', f.sub_en, 'maxlength="200"') + field(t2('Subtitle (Bangla)', 'উপলেখা (বাংলা)'), 'sub_bn', f.sub_bn, 'maxlength="200"') + '</div>' +
         field(t2('Badge (e.g. 40% OFF)', 'ব্যাজ (যেমন ৪০% ছাড়)'), 'badge', f.badge, 'maxlength="24"') +
         '<div class="hb-sec">' + t2('Button', 'বোতাম') + '</div><div class="grid2">' + field(t2('Button text (English)', 'বোতামের লেখা (ইংরেজি)'), 'cta_en', f.cta_en, 'maxlength="30"') + field(t2('Button text (Bangla)', 'বোতামের লেখা (বাংলা)'), 'cta_bn', f.cta_bn, 'maxlength="30"') + '</div>' +
-        '<label class="hb-f">' + t2('Button goes to', 'বোতাম কোথায় নেবে') + '<select class="inp" data-f="link">' + opts(HB_LINKS, f.link || '') + '</select></label>' +
         '<div class="hb-ar"><label><input type="checkbox" data-f="landing"' + (f.landing ? ' checked' : '') + '> ' + t2('Tapping the banner opens a campaign page', 'ব্যানারে ট্যাপ করলে ক্যাম্পেইন পেজ খুলবে') + '</label></div>' +
         '<div id="hbBodyW" style="' + (f.landing ? '' : 'display:none') + '"><label class="hb-f">' + t2('Campaign page text (English)', 'ক্যাম্পেইন পেজের লেখা (ইংরেজি)') + '<textarea class="inp" rows="4" data-f="body_en" maxlength="4000">' + esc(f.body_en) + '</textarea></label><label class="hb-f">' + t2('Campaign page text (Bangla)', 'ক্যাম্পেইন পেজের লেখা (বাংলা)') + '<textarea class="inp" rows="4" data-f="body_bn" maxlength="4000">' + esc(f.body_bn) + '</textarea></label></div>' +
         '<div class="hb-sec">' + t2('When it shows', 'কখন দেখাবে') + '</div><div class="grid2"><label class="hb-f">' + t2('Starts', 'শুরু') + '<input type="datetime-local" class="inp" data-f="starts_at" value="' + esc(toLocalInput(f.starts_at)) + '"></label><label class="hb-f">' + t2('Ends', 'শেষ') + '<input type="datetime-local" class="inp" data-f="ends_at" value="' + esc(toLocalInput(f.ends_at)) + '"></label></div>' +
         '<div class="grid2"><label class="hb-f">' + t2('Every day from (Bangladesh time)', 'প্রতিদিন থেকে (বাংলাদেশ সময়)') + '<input type="time" class="inp" data-f="daily_from" value="' + esc(String(f.daily_from || '').slice(0, 5)) + '"></label><label class="hb-f">' + t2('Every day until', 'প্রতিদিন পর্যন্ত') + '<input type="time" class="inp" data-f="daily_to" value="' + esc(String(f.daily_to || '').slice(0, 5)) + '"></label></div>' +
         '<div class="hb-ar"><label><input type="checkbox" data-f="countdown"' + (f.countdown ? ' checked' : '') + '> ' + t2('Show a countdown to the end time', 'শেষ সময় পর্যন্ত কাউন্টডাউন দেখান') + '</label></div>' +
         '<div class="hb-sec">' + t2('Which upazilas (none ticked = all)', 'কোন উপজেলায় (কোনোটা না বাছলে সব)') + '</div><div class="hb-ar">' + ups.map(function (u) { return '<label><input type="checkbox" data-area="' + esc(u.id) + '"' + ((f.areas || []).indexOf(u.id) > -1 ? ' checked' : '') + '> ' + esc(ZX.t({ en: u.name_en, bn: u.name_bn })) + '</label>'; }).join('') + '</div>' +
-        '<div class="hb-ar" style="margin-top:12px"><label><input type="checkbox" data-f="active"' + (f.active ? ' checked' : '') + '> ' + t2('Switched on', 'চালু') + '</label></div>' +
+        '</details><div class="hb-ar" style="margin-top:12px"><label><input type="checkbox" data-f="active"' + (f.active ? ' checked' : '') + '> ' + t2('Switched on', 'চালু') + '</label></div>' +
         '<div id="hbMs" class="fmsg"></div><div class="hb-bt"><button type="button" class="btn" id="hbSave">' + t2('Save banner', 'ব্যানার সংরক্ষণ') + '</button><button type="button" class="btn o" id="hbCancel">' + t2('Cancel', 'বাতিল') + '</button></div></div>';
     }
     function readForm() {
       var f = st.ed.f;
       el.querySelectorAll('[data-f]').forEach(function (n) {
         var k = n.getAttribute('data-f');
-        if (n.type === 'checkbox') f[k] = n.checked;
+        if (k === 'where') { f.placement = n.value === 'hero' ? 'hero' : 'inline'; f.after_block = n.value === 'hero' ? (f.after_block || 'mosaic') : n.value.split(':')[1]; }
+        else if (n.type === 'checkbox') f[k] = n.checked;
         else if (k === 'starts_at' || k === 'ends_at') f[k] = n.value ? new Date(n.value).toISOString() : '';
         else f[k] = n.value;
       });
@@ -466,8 +491,9 @@
       return f;
     }
     function check(f) {
-      if (!f.title_en.trim() || !f.title_bn.trim()) return t2('Write the title in both English and Bangla.', 'শিরোনাম ইংরেজি ও বাংলা দুই ভাষায় লিখুন।');
-      if (f.placement === 'inline' && !f.after_block) return t2('Choose which section it comes after.', 'কোন সেকশনের পরে বসবে বাছুন।');
+      var hasT = f.title_en.trim() || f.title_bn.trim();
+      if (hasT && (!f.title_en.trim() || !f.title_bn.trim())) return t2('Write the title in both English and Bangla, or leave both empty.', 'শিরোনাম ইংরেজি ও বাংলা দুই ভাষায় লিখুন, নয়তো দুটোই ফাঁকা রাখুন।');
+      if (!hasT && !f.image_path) return t2('Add a photo, or write a title.', 'একটা ছবি দিন, নয়তো শিরোনাম লিখুন।');
       if (f.landing && !f.body_en.trim() && !f.body_bn.trim()) return t2('Write the campaign page text.', 'ক্যাম্পেইন পেজের লেখা লিখুন।');
       if (f.starts_at && f.ends_at && new Date(f.ends_at) <= new Date(f.starts_at)) return t2('The end must be after the start.', 'শেষ সময় শুরুর পরে হতে হবে।');
       if (f.countdown && !f.ends_at) return t2('A countdown needs an end time.', 'কাউন্টডাউনের জন্য শেষ সময় দিন।');
@@ -476,17 +502,24 @@
     }
     function payload(f) { return { placement: f.placement, after_block: f.placement === 'inline' ? f.after_block : null, tag_en: f.tag_en, tag_bn: f.tag_bn, title_en: f.title_en, title_bn: f.title_bn, sub_en: f.sub_en, sub_bn: f.sub_bn, badge: f.badge, cta_en: f.cta_en, cta_bn: f.cta_bn, link: f.link || null, landing: !!f.landing, body_en: f.body_en, body_bn: f.body_bn, image_path: f.image_path || null, starts_at: f.starts_at || null, ends_at: f.ends_at || null, daily_from: f.daily_from || null, daily_to: f.daily_to || null, areas: f.areas || [], countdown: !!f.countdown, active: !!f.active }; }
     function paint() {
-      el.innerHTML = head(t2('Home Builder', 'হোম বিল্ডার'), t2('Choose what the customer home shows, in which order, and for how long. Nothing here changes orders or prices.', 'ক্রেতার হোমে কী, কোন ক্রমে ও কতক্ষণ দেখাবে ঠিক করুন। এখানকার কিছু অর্ডার বা দামে হাত দেয় না।')) +
+      el.innerHTML = head(t2('Home Builder', 'হোম বিল্ডার'), t2('Add banners anywhere on the home page and change the photo of any built-in card. Nothing here changes orders or prices.', 'হোম পেজের যেকোনো জায়গায় ব্যানার বসান আর হোমের যেকোনো কার্ডের ছবি বদলান। এখানকার কিছু অর্ডার বা দামে হাত দেয় না।')) +
         (st.ed ? edHtml() : '') +
-        '<div class="cardx"><h3>' + t2('Home layout', 'হোমের সাজানো') + '</h3><p class="ps">' + t2('Move sections up or down, or switch one off.', 'সেকশন ওপর-নিচ করুন বা বন্ধ করুন।') + '</p>' + layHtml() + '</div>' +
-        '<div class="hrow" style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 4px"><h3 class="pt" style="font-size:19px;margin:0">' + t2('Banners', 'ব্যানার') + '</h3><button type="button" class="btn" id="hbNew">' + t2('Add banner', 'ব্যানার যোগ') + '</button></div>' + listHtml();
+        '<div class="hrow" style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 4px"><h3 class="pt" style="font-size:19px;margin:0">' + t2('Banners', 'ব্যানার') + '</h3><button type="button" class="btn" id="hbNew">' + t2('Add banner', 'ব্যানার যোগ') + '</button></div>' + listHtml() + photosHtml();
     }
     async function refresh() { if (await load()) paint(); }
     function dropNew(keep) { (st.ed && st.ed.newPaths || []).forEach(function (pth) { if (pth !== keep) A.removeHomeImage(pth); }); }
+    el.addEventListener('toggle', function (e) { if (st.ed && e.target.classList && e.target.classList.contains('hb-more')) st.ed.more = e.target.open; }, true);
     el.addEventListener('input', function (e) { if (!st.ed || !e.target.closest('[data-f],[data-area]')) return; readForm(); var pv = el.querySelector('#hbPv'); if (pv) pv.innerHTML = hbPreview(st.ed.f); });
     el.addEventListener('change', async function (e) {
       var t = e.target;
-      if (st.ed && t.matches('[data-f],[data-area]')) { readForm(); el.querySelector('#hbAfterW').style.display = st.ed.f.placement === 'inline' ? '' : 'none'; el.querySelector('#hbBodyW').style.display = st.ed.f.landing ? '' : 'none'; var pv = el.querySelector('#hbPv'); if (pv) pv.innerHTML = hbPreview(st.ed.f); }
+      if (st.ed && t.matches('[data-f],[data-area]')) { readForm(); el.querySelector('#hbBodyW').style.display = st.ed.f.landing ? '' : 'none'; var pv = el.querySelector('#hbPv'); if (pv) pv.innerHTML = hbPreview(st.ed.f); }
+      if (t.matches('[data-hp]') && t.files && t.files[0]) {
+        var hid = t.getAttribute('data-hp'), hms = el.querySelector('#hpMs-' + hid), old = (photos.filter(function (x) { return x.slot === hid; })[0] || {}).image_path, pth2 = null;
+        if (hms) { hms.className = 'fmsg ok'; hms.textContent = t2('Uploading…', 'আপলোড হচ্ছে…'); }
+        try { pth2 = await A.uploadHomeImage(t.files[0]); await A.setHomePhoto(hid, pth2); if (old) A.removeHomeImage(old); ZX.toast(l('done')); refresh(); }
+        catch (er2) { if (pth2) A.removeHomeImage(pth2); if (hms) { hms.className = 'fmsg err'; hms.textContent = A.errMsg(er2); } }
+        return;
+      }
       if (t.id === 'hbFile' && t.files && t.files[0]) {
         var ms = el.querySelector('#hbUp'); ms.className = 'fmsg ok'; ms.textContent = t2('Uploading…', 'আপলোড হচ্ছে…');
         try { var pth = await A.uploadHomeImage(t.files[0]); readForm(); if (st.ed.newPaths.length && st.ed.f.image_path === st.ed.newPaths[st.ed.newPaths.length - 1]) A.removeHomeImage(st.ed.f.image_path); st.ed.newPaths.push(pth); st.ed.f.image_path = pth; paint(); }
@@ -495,13 +528,13 @@
     });
     el.addEventListener('click', async function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      function lay(fn) { fn(); paint(); }
-      if (b.hasAttribute('data-lu')) { var i = +b.getAttribute('data-lu'); return lay(function () { var x = st.lay.splice(i, 1)[0]; st.lay.splice(i - 1, 0, x); }); }
-      if (b.hasAttribute('data-ld')) { var j = +b.getAttribute('data-ld'); return lay(function () { var x = st.lay.splice(j, 1)[0]; st.lay.splice(j + 1, 0, x); }); }
-      if (b.hasAttribute('data-lt')) { var k = +b.getAttribute('data-lt'); return lay(function () { st.lay[k].enabled = !st.lay[k].enabled; }); }
-      if (b.id === 'lySave') { try { await A.saveHomeBlocks(st.lay); ZX.toast(l('done')); refresh(); } catch (er) { ZX.toast(A.errMsg(er)); } return; }
-      if (b.id === 'hbNew') { st.ed = { id: null, f: blankBanner(), orig: '', newPaths: [] }; paint(); window.scrollTo(0, 0); return; }
-      if (b.hasAttribute('data-edit')) { var r = banners.filter(function (x) { return x.id === b.getAttribute('data-edit'); })[0]; if (!r) return; st.ed = { id: r.id, f: Object.assign(blankBanner(), r, { areas: r.areas || [], link: r.link || '', image_path: r.image_path || '', starts_at: r.starts_at || '', ends_at: r.ends_at || '', after_block: r.after_block || 'mosaic' }), orig: r.image_path || '', newPaths: [] }; paint(); window.scrollTo(0, 0); return; }
+      if (b.hasAttribute('data-hr')) {
+        var rid = b.getAttribute('data-hr'), prev = (photos.filter(function (x) { return x.slot === rid; })[0] || {}).image_path;
+        try { await A.setHomePhoto(rid, null); if (prev) A.removeHomeImage(prev); ZX.toast(l('done')); refresh(); } catch (er3) { ZX.toast(A.errMsg(er3)); }
+        return;
+      }
+      if (b.id === 'hbNew') { st.ed = { id: null, f: blankBanner(), orig: '', newPaths: [], more: false }; paint(); window.scrollTo(0, 0); return; }
+      if (b.hasAttribute('data-edit')) { var r = banners.filter(function (x) { return x.id === b.getAttribute('data-edit'); })[0]; if (!r) return; st.ed = { id: r.id, f: Object.assign(blankBanner(), r, { areas: r.areas || [], link: r.link || '', image_path: r.image_path || '', starts_at: r.starts_at || '', ends_at: r.ends_at || '', after_block: r.after_block || 'mosaic' }), orig: r.image_path || '', newPaths: [], more: true }; paint(); window.scrollTo(0, 0); return; }
       if (b.id === 'hbCancel') { dropNew(null); st.ed = null; paint(); return; }
       if (b.id === 'hbNoImg') { readForm(); if (st.ed.newPaths.indexOf(st.ed.f.image_path) > -1) A.removeHomeImage(st.ed.f.image_path); st.ed.f.image_path = ''; paint(); return; }
       if (b.id === 'hbSave') {
@@ -574,6 +607,7 @@
       case 'delete_home_banner': o = { cat: 'home', ico: 'spark', title: T('Banner deleted', 'ব্যানার মুছে ফেলা হয়েছে') + ': ' + ZX.t({ en: bo.title_en || '', bn: bo.title_bn || '' }) }; break;
       case 'move_home_banner': o = { cat: 'home', ico: 'spark', title: T('Banner moved', 'ব্যানার সরানো হয়েছে') + (ao.dir === -1 ? ' ↑' : ' ↓') + ': ' + (ao.title_en || '') }; break;
       case 'set_home_blocks': o = { cat: 'home', ico: 'spark', title: T('Home layout changed', 'হোমের সাজানো বদলানো হয়েছে') }; break;
+      case 'set_home_photo': o = { cat: 'home', ico: 'spark', title: (ao.image_path ? T('Home photo changed', 'হোমের ছবি বদলানো হয়েছে') : T('Home photo set back to the original', 'হোমের ছবি আগেরটায় ফেরানো হয়েছে')) + ': ' + hpName(id) }; break;
       case 'upsert_tech_service': {
         var nmR = ZX.t({ en: ao.name_en || bo.name_en || '', bn: ao.name_bn || bo.name_bn || '' });
         if (b == null) o = { cat: 'pricing', ico: 'tag', title: T('New technician rate', 'নতুন টেকনিশিয়ান রেট') + ': ' + nmR, from: null, to: taka(ao.price) };

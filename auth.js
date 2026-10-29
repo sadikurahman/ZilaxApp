@@ -199,6 +199,8 @@
     deleteHomeBanner: async function (id) { need(); var r = await ZX.sb.rpc('delete_home_banner', { p_id: id }); if (r.error) throw r.error; },
     moveHomeBanner: async function (id, dir) { need(); var r = await ZX.sb.rpc('move_home_banner', { p_id: id, p_dir: dir }); if (r.error) throw r.error; },
     saveHomeBlocks: async function (list) { need(); var r = await ZX.sb.rpc('set_home_blocks', { p: list }); if (r.error) throw r.error; },
+    homePhotos: async function () { if (!ZX.live) return []; var r = await ZX.sb.from('home_photos').select('*'); if (r.error) throw r.error; return r.data || []; },
+    setHomePhoto: async function (slot, path) { need(); var r = await ZX.sb.rpc('set_home_photo', { p_slot: slot, p_path: path || null }); if (r.error) throw r.error; },
     imageUrl: function (path) { if (!path || !ZX.live) return ''; try { return ZX.sb.storage.from('home-media').getPublicUrl(path).data.publicUrl || ''; } catch (e) { return ''; } },
     uploadHomeImage: async function (file) {
       need(); var blob = await resizeImage(file), path = 'banners/' + uid() + '.jpg';
